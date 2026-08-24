@@ -38,17 +38,22 @@ Rules that make it survive contact with real terminals:
 - **Default foreground beats an ink colour.** Emitting `38;5;254` on a light
   terminal is how a tool becomes unreadable. No SGR for ordinary text, `2` (dim)
   or `38;5;245` for muted, the accent only where §4 says.
-- Honour `NO_COLOR`, a non-TTY stdout, and `TERM=dumb`. The check already exists
-  at `main.py:396`; it needs a renderer that reads it.
+- Honour `NO_COLOR`, a non-TTY stdout, and `TERM=dumb`. Two of the three already
+  exist, inline at `main.py:396` rather than as a shared helper; `TERM=dumb` is
+  checked nowhere in the codebase. All three need a renderer that reads them.
 - Colour is never the only carrier of meaning: every coloured state also has a
   glyph and a word.
 - One accent per screen. Two accents means one of them is wrong.
 
 ## 2. Glyphs
 
-This vocabulary already exists in `cli/dashboard.py:30-38`. The spec is that it
-is used **identically everywhere** — `status`, `plan`, `why`, the dashboard, and
-any surface added later — rather than being re-invented per command.
+Every glyph below is already in the codebase, but assembled from three places:
+`✓ ● ↻ ○ ✗` are the `_STATES` dict at `cli/dashboard.py:28-39`, `—` is the
+absent-value placeholder used elsewhere in the same file (`150`, `164-165`, `176`,
+`188`), and `~` is the clip marker in `cli/render.py:27` and `:33`. The spec is
+that this becomes **one vocabulary used identically everywhere** — `status`,
+`plan`, `why`, the dashboard, and any surface added later — rather than three
+conventions that happen to agree.
 
 | Glyph | State | Colour |
 |---|---|---|

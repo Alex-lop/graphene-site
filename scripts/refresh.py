@@ -146,11 +146,12 @@ def build_proof(proof, sha, date):
         f'    <ul class="deferred small muted">{deferred}</ul>\n'
         f'    <div>\n'
         f'      <p class="small muted">Snapshot of <code>contracts/product_proof.json</code> '
-        f'taken {date} at <code>{sha[:12]}</code> &mdash; '
+        f'at commit <code>{sha[:12]}</code>, committed {date}, byte-identical to the file '
+        f'at that commit &mdash; '
         f'<a href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">'
         f'read the live file</a>, or the copy vendored beside this page at '
         f'<a href="assets/product_proof.snapshot.json">assets/product_proof.snapshot.json</a>. '
-        f'Labels here only flip with machine evidence in the same commit.</p>\n'
+        f'Labels here only flip once the machine evidence is in the repository.</p>\n'
         f'    </div>')
     return "\n".join(out)
 
@@ -159,7 +160,7 @@ DEMO = """    <div class="slot">
       <video controls preload="none" poster="assets/poster.png"
              width="1280" height="720">
         <source src="assets/demo.mp4" type="video/mp4">
-        <p>Your browser cannot play this video. <a href="assets/demo.mp4">Download it instead.</a></p>
+        <p class="small muted">This browser cannot play the video.</p>
       </video>
     </div>
     <p class="small muted" style="margin-top:14px">Demo arriving 31&nbsp;August&nbsp;2026 &mdash;

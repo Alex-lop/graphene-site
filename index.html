@@ -330,7 +330,7 @@ TRUST: every line above is derived from hash-chained mission events and resolvab
       rows stay in it. Every capability in that file that carries a status label is below &mdash;
       twenty-one rows, quoted, including every row that is not proven. Where an entry has several
       fields the row quotes the one that states its limit, and the whole file is vendored beside
-      this page. Labels here only flip with machine evidence in the same commit.</p>
+      this page. Labels here only flip once the machine evidence is in the repository.</p>
   </div>
   <div class="wrap">
 <!--PROOF-->
@@ -363,7 +363,7 @@ TRUST: every line above is derived from hash-chained mission events and resolvab
     <p class="small muted">Deferred, and not claimed anywhere:</p>
     <ul class="deferred small muted"><li>truthful Mission Control screenshot/GIF capture and output digests</li><li>operator-complete revision generation/review/reapproval after a recorded replanning request and live browser command-plane operator proof</li><li>transitive delta/cumulative artifact subsumption and end-to-end delete/rename/mode mutation semantics</li><li>automatic retention expiry and purge</li><li>published arbitrary-repository support and live execution matrix</li><li>owned idle STDIO MCP lifecycle cleanup</li><li>live authenticated cloud-to-local claim/heartbeat/result/reconnect proof and full Firestore SchedulerStore mutation parity</li><li>shared Firestore listener and cloud stream fan-out</li><li>live Google Cloud deployment, measured graph benchmark, and submission video</li><li>five-person Mission Control comprehension study</li><li>Shadow Agent real-session report as a reproducible, committed artifact (the claude-code adapter exists and the only real transcript is private)</li><li>live North Star failure laboratory and cold capsule verification; human-attested approval on a live mission</li></ul>
     <div>
-      <p class="small muted">Snapshot of <code>contracts/product_proof.json</code> taken 2026-08-23 at <code>b7b174a02a8e</code> &mdash; <a href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">read the live file</a>, or the copy vendored beside this page at <a href="assets/product_proof.snapshot.json">assets/product_proof.snapshot.json</a>. Labels here only flip with machine evidence in the same commit.</p>
+      <p class="small muted">Snapshot of <code>contracts/product_proof.json</code> at commit <code>b7b174a02a8e</code>, committed 2026-08-23, byte-identical to the file at that commit &mdash; <a href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">read the live file</a>, or the copy vendored beside this page at <a href="assets/product_proof.snapshot.json">assets/product_proof.snapshot.json</a>. Labels here only flip once the machine evidence is in the repository.</p>
     </div>
 <!--/PROOF-->
   </div>
@@ -378,7 +378,7 @@ TRUST: every line above is derived from hash-chained mission events and resolvab
       <video controls preload="none" poster="assets/poster.png"
              width="1280" height="720">
         <source src="assets/demo.mp4" type="video/mp4">
-        <p>Your browser cannot play this video. <a href="assets/demo.mp4">Download it instead.</a></p>
+        <p class="small muted">This browser cannot play the video.</p>
       </video>
     </div>
     <p class="small muted" style="margin-top:14px">Demo arriving 31&nbsp;August&nbsp;2026 &mdash;
@@ -401,8 +401,10 @@ TRUST: every line above is derived from hash-chained mission events and resolvab
       <a href="https://github.com/eyaltoledano/claude-task-master">Task Master</a> hold the plan
       where agents can read it; Graphene&rsquo;s plan is executed by a scheduler that refuses work
       outside it, fences retries, and will not call anything done without its check.</p>
-    <p><b>Not a harness.</b> Your agents keep whatever harness they already run in. Graphene sits
-      above them, holding the scopes, the checks and the evidence.</p>
+    <p><b>Not a harness.</b> Graphene attaches above an agent runtime &mdash; a callback adapter
+      for Google&rsquo;s ADK, an MCP server for anything that speaks MCP &mdash; and holds the
+      scopes, the checks and the evidence there. Its own mission workers are the exception: those
+      it builds and runs itself.</p>
   </div>
 </section>
 
