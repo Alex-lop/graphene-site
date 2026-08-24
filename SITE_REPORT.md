@@ -614,7 +614,14 @@ page states only what each project says about itself.
 |---|---|
 | Live URL | <https://alex-lop.github.io/graphene-site/> |
 | First deploy of this rebuild | `fe6bb6a8af3311dc750e0307ada29e474dce9ad7` — built 2026-08-24T12:17:46Z |
-| Final deploy | recorded below after verification |
+| Content verified live | `61559858dfd5fa6f19993f67ff9c32c0cbf90236` — built 2026-08-24T12:22:40Z, and this commit adds only this line |
+
+Verified against the live URL at that SHA, not locally: `index` 200; every asset
+200 (`site.css`, `design-tokens.css`, `field.js`, `mission.js`, `poster.png`,
+`og.png`, both favicons, `product_proof.snapshot.json`, `404.html`,
+`robots.txt`); a deep missing path returns 404 and renders the self-contained
+404 page; the served HTML carries the final copy; zero console errors or
+warnings.
 
 ## Owner actions and remaining limits
 
