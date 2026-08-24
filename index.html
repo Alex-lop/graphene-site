@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Graphene — draw the route, sign the map</title>
-<meta name="description" content="Graphene turns a goal into a DAG you can reshape and approve. The approved revision becomes binding: every worker scoped, every retry fenced, every result verified.">
+<meta name="description" content="Graphene turns a goal into a DAG you can read, diff and approve. The approved revision becomes binding: every worker scoped, every retry fenced, every result verified.">
 <meta name="theme-color" content="#121316">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Graphene — draw the route, sign the map">
-<meta property="og:description" content="Graphene turns a goal into a DAG you can reshape and approve. The approved revision becomes binding: every worker scoped, every retry fenced, every result verified.">
+<meta property="og:description" content="Graphene turns a goal into a DAG you can read, diff and approve. The approved revision becomes binding: every worker scoped, every retry fenced, every result verified.">
 <meta property="og:image" content="assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Graphene — draw the route, sign the map">
-<meta name="twitter:description" content="A goal becomes a DAG you can reshape and approve. The approved revision becomes binding.">
+<meta name="twitter:description" content="A goal becomes a DAG you can read, diff and approve. The approved revision becomes binding.">
 <meta name="twitter:image" content="assets/og.png">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="assets/favicon.png" sizes="32x32">
@@ -39,9 +39,9 @@
   <canvas data-field aria-hidden="true"></canvas>
   <div class="wrap">
     <h1>Draw the route. Sign the map. Watch your agents keep to it.</h1>
-    <p class="lede">A goal becomes a DAG you can reshape and approve. The approved revision
+    <p class="lede">A goal becomes a DAG you can read, diff and approve. The approved revision
       becomes binding: every worker scoped, every retry fenced, every result verified &mdash;
-      and every file able to answer <code>graphene why</code>.</p>
+      and every file the mission publishes able to answer <code>graphene why</code>.</p>
     <p class="actions">
       <a class="btn" href="https://github.com/Alex-lop/Graphene">View on GitHub</a>
       <a class="btn" href="#demo">Watch the demo</a>
@@ -124,7 +124,7 @@
         <code>fixture-tests</code> (<code>python -m pytest -q -p no:cacheprovider</code>, network
         denied). The first check on the JSON renderer failed on purpose, so its accepted work is
         attempt&nbsp;2 at fence&nbsp;2 &mdash; the retry ran at a strictly higher fence carrying the
-        diagnostic. Node states are taken from the captured run shown further down this page.</figcaption>
+        diagnostic. The two worker states are read off the captured frames further down this page; the isolated result commit is from the end of that same run.</figcaption>
     </figure>
 
     <figure>
@@ -163,8 +163,9 @@
       </div>
       <figcaption><b>(b) What a real change looks like: &ldquo;add rate limiting to the API&rdquo;.</b>
         An illustration, not a captured run &mdash; the shape and the field names are real, the
-        values are invented for the example. Each node carries its own contract, and the
-        scheduler will not dispatch a task whose write scope collides with another running one.
+        values are invented for the example. Each node carries its own contract, and a task whose
+        write scope intersects an active lease is not leased at all &mdash; the store refuses it
+        and the scheduler moves on to the next ready task.
         <span class="muted">One node&rsquo;s contract fields, using the schema&rsquo;s own names:</span></figcaption>
       <table class="fields">
         <caption class="visually-hidden">Contract fields of the rate_limit_middleware task</caption>
@@ -172,8 +173,8 @@
           <tr><td>task_id</td><td>rate_limit_middleware</td></tr>
           <tr><td>dependencies</td><td>scout</td></tr>
           <tr><td>assigned_role</td><td>worker</td></tr>
-          <tr><td>read_paths</td><td>6 exact paths &mdash; glob characters are rejected by the plan validator</td></tr>
-          <tr><td>write_paths</td><td>api/middleware/ratelimit.py, api/app.py</td></tr>
+          <tr><td>read_paths</td><td>6 exact paths</td></tr>
+          <tr><td>write_paths</td><td>api/middleware/ratelimit.py, api/app.py &mdash; write scopes must be exact; the plan validator rejects glob characters outright</td></tr>
           <tr><td>allowed_commands</td><td>fixture-tests</td></tr>
           <tr><td>acceptance_checks</td><td>fixture-tests</td></tr>
           <tr><td>attempt_limit</td><td>2</td></tr>
@@ -225,13 +226,13 @@
       </div>
       <figcaption><b>(c) The edit, and what it costs.</b> The graph is yours to change: add a
         docs task, wire it into assembly, approve revision&nbsp;2. Approval binds the mission, the
-        plan revision, the exact event-log head, and <code>plan_sha256</code> &mdash; the SHA-256
-        of the whole canonical plan, every dependency, scope, check and limit inside it. Change
-        one edge and the digest changes, and every later result must present the same digest or
-        be refused. Both digests above are real: the left one is the digest Graphene recorded for
+        plan revision and the exact event-log head at that moment; the revision is bound to its
+        <code>plan_sha256</code> &mdash; the SHA-256 of the whole canonical plan, every dependency,
+        scope, check and limit inside it &mdash; by the proposal events the store re-verifies.
+        Change one edge and the digest changes, and every later publication and final bundle must
+        re-match it or be refused. Both digests above are real: the left one is the digest Graphene recorded for
         mission <code>mission_start_5291caad50a8ee7a222a9221</code>, and the right one is what the
-        same plan hashes to after the edit. <code>scripts/plan_digest.py</code> in this repo
-        recomputes both.</figcaption>
+        same plan hashes to after the edit. The script beside this page, <code>scripts/plan_digest.py</code>, recomputes both.</figcaption>
     </figure>
   </div>
 </section>
@@ -326,9 +327,10 @@ TRUST: every line above is derived from hash-chained mission events and resolvab
     <p class="eyebrow">Truth</p>
     <h2>What&rsquo;s proven, what isn&rsquo;t.</h2>
     <p>Graphene keeps a machine-readable proof contract in its own repository, and the honest
-      rows stay in it. This is a dated snapshot of that file, rendered whole &mdash; including
-      everything that is not proven. Labels here only flip with machine evidence in the same
-      commit.</p>
+      rows stay in it. Every capability in that file that carries a status label is below &mdash;
+      twenty-one rows, quoted, including every row that is not proven. Where an entry has several
+      fields the row quotes the one that states its limit, and the whole file is vendored beside
+      this page. Labels here only flip with machine evidence in the same commit.</p>
   </div>
   <div class="wrap">
 <!--PROOF-->
