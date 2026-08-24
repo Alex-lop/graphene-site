@@ -25,7 +25,7 @@ a:hover { color: var(--accent); text-decoration-color: currentColor; }
 /* One container, one left edge. Prose is capped at the measure by element;
    figures and the proof table run out to the full width from the same margin. */
 .wrap { max-width: 1180px; margin: 0 auto; padding: 0 var(--pad-x); }
-p, figcaption, .term-cap, .digests, .fields, ul.deferred { max-width: var(--measure); }
+p, figcaption, .term-cap, .fields, ul.deferred { max-width: var(--measure); }
 #terminal figure { max-width: var(--measure); }
 
 /* ---- nav ---------------------------------------------------------- */
