@@ -581,3 +581,50 @@ star count, no "first" or "only", and nothing about what another tool cannot do.
 | Console | zero errors, zero warnings |
 | 380px | no page-level overflow; the mission graph is vertical and needs no horizontal scroll |
 | Missing first-party assets | none |
+
+## Adversarial claim pass on the final copy
+
+Every claim on the page and in the replay's stage text was extracted and handed
+to one independent skeptic each, reading the clone at `fa302a1` and told to
+default to refuted. **70 claims: 48 true, 15 overstated, 4 false, 3 uncheckable
+offline.** All 17 actionable findings are fixed; the two remaining "false"
+verdicts were checked against a copy I had already corrected, and their own
+correction text confirms the shipped wording.
+
+The four that mattered most:
+
+1. The graph showed a **`result` node queued from the proposal onward** — but
+   `result` is not a task in the captured plan. It now appears only at Verify.
+2. **"808 Python tests, four opt-in skips"** read as current. The contract states
+   it for one named source commit; the row now says so.
+3. **"the store refuses the wrong digest"** — the store's digest check is opt-in
+   (`expected_plan_sha256`); the CLI is what refuses a non-committed digest.
+4. **"Both digests are real"** flattened two different things: revision 1's is
+   the digest Graphene recorded, revision 2's is derived by
+   `scripts/plan_digest.py`. The page now distinguishes them.
+
+The three uncheckable ones are the comparison table's descriptions of other
+projects: the clone says nothing about them, and the checkers had no network.
+Each was taken from that project's own documentation on 24 August 2026, and the
+page states only what each project says about itself.
+
+## Deployment
+
+| | |
+|---|---|
+| Live URL | <https://alex-lop.github.io/graphene-site/> |
+| First deploy of this rebuild | `fe6bb6a8af3311dc750e0307ada29e474dce9ad7` — built 2026-08-24T12:17:46Z |
+| Final deploy | recorded below after verification |
+
+## Owner actions and remaining limits
+
+- **Nothing is required to publish.** Pages is already configured and building.
+- The demo film still does not exist. When it does, drop `assets/demo.mp4` in and
+  restore a `<video>`; today the section is an honest still with no controls.
+- No live capture of the edited-DAG sequence exists. The mission graph says so.
+- The full-matrix runner hang is deliberately **not** on the page. It was in flux
+  in the product repo while this ran (rewritten several times in an hour), and
+  reliability is not part of this page's proof summary, so carrying it would have
+  been adding a claim rather than correcting one.
+- Visible copy is 1008 words against a 800–1000 target. The eight are the
+  precision the adversarial pass bought; trimming further would cost accuracy.
