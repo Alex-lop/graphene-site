@@ -4,8 +4,10 @@ This is guidance for post-freeze adoption; it changes no product behavior by its
 
 It describes how Graphene's logic should read in a terminal, using the same
 language as the website and the plugin spec: `assets/design-tokens.css` is the
-source of the palette, and the glyph vocabulary below is the one already in
-`backend/graphene/cli/dashboard.py`. Nothing here asks for a new dependency.
+source of the palette — the `--term-*` tokens, which are the dark inset the site
+reserves for real product output — and the glyph vocabulary below is the one
+already in `backend/graphene/cli/dashboard.py`. Nothing here asks for a new
+dependency.
 
 Everything said about Graphene's current behaviour was read in
 `Alex-lop/Graphene` at `b7b174a02a8eabaad6443348dce75cbed77a78ea`. The palette in
@@ -28,9 +30,14 @@ Three colours. Not four.
 
 | Token | Truecolor | 256-colour | Used for |
 |---|---|---|---|
-| `--ink` `#eae7de` | `38;2;234;231;222` | `38;5;254` | default text — **prefer emitting nothing** and letting the terminal's own foreground win |
-| `--ink-muted` `#8e9088` | `38;2;142;144;136` | `38;5;245` | column labels, units, elapsed, anything the eye should skip |
-| `--accent` `#e08a3c` | `38;2;224;138;60` | `38;5;173` | approval moments and digests, and nothing else |
+| `--term-ink` `#f3eee4` | `38;2;243;238;228` | `38;5;255` | default text — **prefer emitting nothing** and letting the terminal's own foreground win |
+| `--term-muted` `#a8a99f` | `38;2;168;169;159` | `38;5;248` | column labels, units, elapsed, anything the eye should skip |
+| `--term-accent` `#e08a3c` | `38;2;224;138;60` | `38;5;173` | approval moments and digests, and nothing else |
+
+The website is warm paper and graphite; a terminal is not. These are the site's
+`--term-*` tokens — the palette of the dark inset the site uses whenever it shows
+real product output — so the two surfaces still agree without the CLI pretending
+to be a web page.
 
 Rules that make it survive contact with real terminals:
 

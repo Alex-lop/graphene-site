@@ -59,9 +59,9 @@
   function mount(canvas) {
     var ctx = canvas.getContext('2d', { alpha: false });
     var css = getComputedStyle(document.documentElement);
-    var ink = (css.getPropertyValue('--ink') || '#eae7de').trim();
-    var accent = (css.getPropertyValue('--accent') || '#e08a3c').trim();
-    var bg = (css.getPropertyValue('--bg') || '#121316').trim();
+    var ink = (css.getPropertyValue('--ink') || '#242622').trim();
+    var accent = (css.getPropertyValue('--accent') || '#9a4f24').trim();
+    var bg = (css.getPropertyValue('--bg') || '#f3eee4').trim();
     var frozen = canvas.dataset.frozen ? parseFloat(canvas.dataset.frozen) : null;
     var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (still && frozen === null) frozen = 1;   /* motionless users still get the thesis */
@@ -71,6 +71,13 @@
     var seed = { x: 0, y: 0, fx: 0, fy: 0, at: 0, dur: 3000, next: 0 };
     var BUCKETS = 24, bucket = [];
     for (var b0 = 0; b0 < BUCKETS; b0++) bucket.push([]);
+
+    /* Pointer reveals the route it is near. It never moves a node, and it is
+       off entirely for coarse pointers and for reduced motion. */
+    var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    var wantsPointer = fine && !still && frozen === null;
+    var ptr = { x: 0, y: 0, tx: 0, ty: 0, s: 0, ts: 0 };
+    var onscreen = true;
 
     function layout() {
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -94,7 +101,7 @@
           }
           /* smooth falloff so the graph has no hard edge */
           var w = best > PULL ? 0 : 1 - fade(best / PULL);
-          var q = 0.55 + 0.45 * fade(Math.max(0, Math.min(1, (y / H - 0.24) / 0.4)));
+          var q = 0.42 + 0.58 * fade(Math.max(0, Math.min(1, (y / H - 0.26) / 0.42)));
           pts.push({ x: x, y: y, w: w, a: bang, q: q });
         }
       }
@@ -132,6 +139,15 @@
       } else { seed.cx = 0; seed.cy = 0; }
 
       var g = dagPhase(ms);
+
+      /* ease the pointer's position and strength; no per-frame allocation */
+      if (wantsPointer) {
+        ptr.s += (ptr.ts - ptr.s) * 0.09;
+        ptr.x += (ptr.tx - ptr.x) * 0.16;
+        ptr.y += (ptr.ty - ptr.y) * 0.16;
+      }
+      var ps = ptr.s, prx = ptr.x, pry = ptr.y;
+      var PR = 118, PR2 = PR * PR;
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, W, H);
       ctx.lineCap = 'round';
@@ -150,16 +166,27 @@
         var mag = Math.sqrt(gx * gx + gy * gy) / EPS;
         var m = mag * 1.15; if (m > 1) m = 1;
         m = m * 0.6 + noise3(nx * 0.7 + 31.4, ny * 0.7 + 17.7, z * 0.6) * 0.4;
-        var alpha = (0.30 + m * 0.50) * p.q;
+        var alpha = (0.10 + m * 0.26) * p.q;
         var len = 10 + m * 3;
 
-        var pull = p.w * g;
-        if (g > 0) alpha *= 1 - 0.62 * g * (1 - p.w);
+        /* the route near the pointer reveals itself, on top of the cycle */
+        var gp = g;
+        if (ps > 0.002 && p.w > 0) {
+          var ddx = p.x - prx, ddy = p.y - pry, d2 = ddx * ddx + ddy * ddy;
+          if (d2 < PR2) {
+            var near = 1 - fade(Math.sqrt(d2) / PR);
+            var local = near * ps;
+            if (local > gp) gp = local;
+          }
+        }
+
+        var pull = p.w * gp;
+        if (gp > 0) alpha *= 1 - 0.62 * gp * (1 - p.w);
         if (pull > 0) {
           /* segments are undirected: turn the short way, mod pi */
           var d = ((p.a - ang) % Math.PI + Math.PI * 1.5) % Math.PI - Math.PI / 2;
           ang += d * pull;
-          alpha += (0.98 - alpha) * pull;
+          alpha += (0.72 - alpha) * pull;
           len += (16 - len) * pull;
         }
 
@@ -178,9 +205,16 @@
         ctx.stroke();
       }
 
-      if (g > 0.01) {
+      var nodeAlpha = g;
+      if (ps > 0.002) {
+        for (var q2 = 0; q2 < nodes.length; q2++) {
+          var nd = Math.hypot(nodes[q2][0] - prx, nodes[q2][1] - pry);
+          if (nd < PR) nodeAlpha = Math.max(nodeAlpha, (1 - fade(nd / PR)) * ps);
+        }
+      }
+      if (nodeAlpha > 0.01) {
         for (var n = 0; n < nodes.length; n++) {
-          ctx.globalAlpha = g;
+          ctx.globalAlpha = nodeAlpha;
           ctx.fillStyle = n === VERIFIED ? accent : ink;
           ctx.beginPath();
           ctx.arc(nodes[n][0], nodes[n][1], 3, 0, TAU);
@@ -195,14 +229,31 @@
     function start() { if (!raf && frozen === null) { raf = requestAnimationFrame(draw); } }
     function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
 
+    if (wantsPointer) {
+      canvas.addEventListener('pointermove', function (e) {
+        var r = canvas.getBoundingClientRect();
+        ptr.tx = e.clientX - r.left; ptr.ty = e.clientY - r.top; ptr.ts = 1;
+        if (ptr.s < 0.002) { ptr.x = ptr.tx; ptr.y = ptr.ty; }
+      }, { passive: true });
+      canvas.addEventListener('pointerleave', function () { ptr.ts = 0; }, { passive: true });
+    }
+
+    if (window.IntersectionObserver && frozen === null) {
+      new IntersectionObserver(function (es) {
+        onscreen = es[0].isIntersecting;
+        if (onscreen) { if (hid) { t0 += performance.now() - hid; hid = 0; } start(); }
+        else if (!hid) { hid = performance.now(); stop(); }
+      }, { threshold: 0 }).observe(canvas);
+    }
+
     var rt = 0;
     window.addEventListener('resize', function () {
       clearTimeout(rt);
       rt = setTimeout(function () { layout(); if (frozen !== null) draw(0); }, 150);
     });
     document.addEventListener('visibilitychange', function () {
-      if (document.hidden) { hid = performance.now(); stop(); }
-      else { if (hid) { t0 += performance.now() - hid; hid = 0; } start(); }
+      if (document.hidden) { if (!hid) { hid = performance.now(); } stop(); }
+      else if (onscreen) { if (hid) { t0 += performance.now() - hid; hid = 0; } start(); }
     });
 
     layout();

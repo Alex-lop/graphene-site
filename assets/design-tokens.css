@@ -1,37 +1,41 @@
 /* Graphene design tokens.
    One language for the site, the terminal spec, and the plugin spec.
-   Dark, opaque, graphite. No gradients except one hero vignette. */
+   Warm paper, graphite ink, hairline structure, one burnt-orange accent.
+   The terminal inset is this page inverted: ink becomes the surface. */
 
 :root {
-  /* Surface */
-  --bg: #121316;          /* graphite, very slightly warm; never pure black */
-  --bg-raised: #1a1c20;   /* cards and surfaces, opaque */
+  /* Paper */
+  --bg: #f3eee4;          /* warm paper */
+  --bg-raised: #fbf8f1;   /* cards and surfaces, opaque */
 
   /* Ink */
-  --ink: #eae7de;         /* warm off-white: primary text and field strokes */
-  --ink-muted: #8e9088;   /* secondary text, captions, dimmer strokes */
+  --ink: #242622;         /* graphite: primary text, field strokes, node strokes */
+  --ink-muted: #66675f;   /* secondary text, captions, dimmer strokes */
 
-  /* Structure */
-  --hairline: rgba(234, 231, 222, 0.09);
+  /* Structure. 1px hairlines are the page's main structural device. */
+  --hairline: rgba(36, 38, 34, 0.14);
+  --hairline-strong: rgba(36, 38, 34, 0.28);
 
-  /* The one loud colour. Three uses only:
-     approved-digest motif, link/button hover, the added node in the v1 to v2 diff. */
-  --accent: #e08a3c;
+  /* The one loud colour: approval and digests, the user's edit, link hover. */
+  --accent: #9a4f24;
+  --accent-wash: rgba(154, 79, 36, 0.10);
+
+  /* The terminal inset. Real product output deserves the real surface. */
+  --term-bg: #242622;
+  --term-ink: #f3eee4;
+  --term-muted: #a8a99f;
+  --term-accent: #e08a3c;
 
   /* Type */
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace;
 
   /* Rhythm */
-  --measure: 70ch;        /* the text column */
-  --gap-section: 112px;
-  --gap-block: 32px;
+  --measure: 68ch;
+  --gap-section: 104px;
   --pad-x: 24px;
 }
 
 @media (max-width: 720px) {
-  :root {
-    --gap-section: 72px;
-    --pad-x: 18px;
-  }
+  :root { --gap-section: 68px; --pad-x: 18px; }
 }

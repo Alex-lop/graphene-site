@@ -50,9 +50,10 @@ mission id, revision, `plan_sha256` in full, base commit, status, spend.
 
 ## Language
 
-Same tokens as the website, from `assets/design-tokens.css`: `--bg` `#121316`,
-`--bg-raised` `#1a1c20`, `--ink` `#eae7de`, `--ink-muted` `#8e9088`,
-`--hairline` `rgba(234,231,222,.09)`, `--accent` `#e08a3c`.
+Same tokens as the website, from `assets/design-tokens.css`: `--bg` `#f3eee4`,
+`--bg-raised` `#fbf8f1`, `--ink` `#242622`, `--ink-muted` `#66675f`,
+`--hairline` `rgba(36,38,34,.14)`, `--accent` `#9a4f24`. Where the viewer shows
+raw captured output it uses the `--term-*` inset instead, exactly as the site does.
 
 Same glyphs as `specs/TERMINAL_DISPLAY_SPEC.md` §2 — `✓ ● ↻ ○ ✗ — ~` — with the
 same meanings, so a person moving between the dashboard and the viewer is not
@@ -111,7 +112,7 @@ The viewer adopts the website's rule: anything it cannot verify, it labels.
 
 ## Quality floor
 
-Dark by default and legible at WCAG AA on both surfaces. Keyboard navigable —
+Warm paper by default and legible at WCAG AA on both surfaces. Keyboard navigable —
 the graph is a list before it is a picture, and tab order follows the plan order.
 Every node has an accessible name that reads as text: `implement_report_json,
 accepted, attempt 2, fence 2`. `prefers-reduced-motion` removes the state
