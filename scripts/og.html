@@ -1,17 +1,24 @@
 <!doctype html><meta charset="utf-8">
-<!-- Renders the OG frame. Open at 1200x630 and screenshot; see scripts/make-og.sh -->
+<title>Graphene OG frame</title>
+<!-- Renders assets/og.png (1200x630) and assets/poster.png (1600x900).
+     See scripts/make-images.sh. Not part of the site. -->
 <link rel="stylesheet" href="../assets/design-tokens.css">
 <style>
-  html,body{margin:0;background:var(--bg);overflow:hidden}
-  .frame{position:relative;width:1200px;height:630px;overflow:hidden}
+  html,body{margin:0;height:100%;background:var(--bg);overflow:hidden}
+  .frame{position:relative;width:100vw;height:100vh;overflow:hidden}
   canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-  .mark{position:absolute;left:64px;bottom:56px;font:600 46px/1 var(--font-sans);
-        letter-spacing:-.02em;color:var(--ink)}
-  .sub{position:absolute;left:64px;bottom:26px;font:400 19px/1 var(--font-sans);color:var(--ink-muted)}
+  /* image asset only: keeps the wordmark legible over the field */
+  .scrim{position:absolute;inset:0;background:
+    radial-gradient(90% 70% at 8% 100%, rgba(18,19,22,.92), rgba(18,19,22,0) 62%)}
+  .mark{position:absolute;left:5.4%;bottom:11%;margin:0;
+        font:600 4.4vh/1 var(--font-sans);letter-spacing:-.02em;color:var(--ink)}
+  .sub{position:absolute;left:5.4%;bottom:6%;margin:0;
+       font:400 2.1vh/1.3 var(--font-sans);color:var(--ink-muted)}
 </style>
 <div class="frame">
-  <canvas data-field data-frozen="1"></canvas>
-  <div class="mark">Graphene</div>
-  <div class="sub">Draw the route. Sign the map. Watch your agents keep to it.</div>
+  <canvas data-field data-frozen="0.9"></canvas>
+  <div class="scrim"></div>
+  <p class="mark">Graphene</p>
+  <p class="sub">Draw the route. Sign the map. Watch your agents keep to it.</p>
 </div>
 <script src="../assets/field.js"></script>

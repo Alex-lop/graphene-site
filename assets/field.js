@@ -94,7 +94,7 @@
           }
           /* smooth falloff so the graph has no hard edge */
           var w = best > PULL ? 0 : 1 - fade(best / PULL);
-          var q = 0.34 + 0.66 * fade(Math.max(0, Math.min(1, (y / H - 0.06) / 0.5)));
+          var q = 0.55 + 0.45 * fade(Math.max(0, Math.min(1, (y / H - 0.24) / 0.4)));
           pts.push({ x: x, y: y, w: w, a: bang, q: q });
         }
       }
@@ -150,15 +150,16 @@
         var mag = Math.sqrt(gx * gx + gy * gy) / EPS;
         var m = mag * 1.15; if (m > 1) m = 1;
         m = m * 0.6 + noise3(nx * 0.7 + 31.4, ny * 0.7 + 17.7, z * 0.6) * 0.4;
-        var alpha = (0.28 + m * 0.47) * p.q;
+        var alpha = (0.30 + m * 0.50) * p.q;
         var len = 10 + m * 3;
 
         var pull = p.w * g;
+        if (g > 0) alpha *= 1 - 0.62 * g * (1 - p.w);
         if (pull > 0) {
           /* segments are undirected: turn the short way, mod pi */
           var d = ((p.a - ang) % Math.PI + Math.PI * 1.5) % Math.PI - Math.PI / 2;
           ang += d * pull;
-          alpha += (0.95 - alpha) * pull;
+          alpha += (0.98 - alpha) * pull;
           len += (16 - len) * pull;
         }
 

@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graphene — draw the route, sign the map</title>
+<meta name="description" content="Graphene turns a goal into a DAG you can reshape and approve. The approved revision becomes binding: every worker scoped, every retry fenced, every result verified.">
+<meta name="theme-color" content="#121316">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Graphene — draw the route, sign the map">
+<meta property="og:description" content="Graphene turns a goal into a DAG you can reshape and approve. The approved revision becomes binding: every worker scoped, every retry fenced, every result verified.">
+<meta property="og:image" content="assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Graphene — draw the route, sign the map">
+<meta name="twitter:description" content="A goal becomes a DAG you can reshape and approve. The approved revision becomes binding.">
+<meta name="twitter:image" content="assets/og.png">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.png" sizes="32x32">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="nav">
+  <div class="wrap">
+  <b>Graphene</b>
+  <ul>
+    <li><a href="#proof">What&rsquo;s proven</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="https://github.com/Alex-lop/Graphene">GitHub</a></li>
+  </ul>
+  </div>
+</nav>
+
+<main id="main">
+
+<header class="hero">
+  <canvas data-field aria-hidden="true"></canvas>
+  <div class="wrap">
+    <p class="mark">Graphene</p>
+    <h1>Draw the route. Sign the map. Watch your agents keep to it.</h1>
+    <p class="lede">A goal becomes a DAG you can reshape and approve. The approved revision
+      becomes binding: every worker scoped, every retry fenced, every result verified &mdash;
+      and every file able to answer <code>graphene why</code>.</p>
+    <p class="actions">
+      <a class="btn" href="https://github.com/Alex-lop/Graphene">View on GitHub</a>
+      <a class="btn" href="#demo">Watch the demo</a>
+    </p>
+  </div>
+</header>
+
+<section id="contract">
+  <div class="wrap">
+    <p class="eyebrow">The problem</p>
+    <h2>Running one agent is a conversation. Running five is a scheduling problem.</h2>
+    <p>And the scheduler is you. The failures are boringly predictable once you have watched
+      them a few times. Two agents settle the same open question in opposite directions, both
+      confidently. One quietly overwrites the other&rsquo;s file, and nothing notices, because
+      nothing was watching that file. Work piles up in places nobody owns until the next merge
+      is a negotiation. A step fails, the retry gets the same instructions as the first attempt,
+      and fails the same way &mdash; a little slower and a little more expensively.</p>
+    <p>The usual answer is more coordination <em>prompt</em>: sharper instructions, a shared
+      scratchpad, a stricter persona. That is asking the probabilistic part of the system to
+      be the reliable part.</p>
+    <p>Graphene answers with a contract instead. One approved DAG per mission. A read scope and
+      a write scope per worker, enforced rather than requested. Checks as the only definition of
+      done. And a lineage that outlives the run, so &ldquo;why is this file like this?&rdquo; has
+      an answer that is derived rather than remembered.</p>
+    <p>An agent swarm is a compiler that is probabilistic at every step. The plan is the step
+      that does not have to be.</p>
+  </div>
+</section>
+
+<section id="loop">
+  <div class="wrap">
+    <p class="eyebrow">The loop</p>
+    <h2>A mission is a graph, and the graph is the agreement.</h2>
+    <p class="muted">Three views of the same idea: what a real
+      mission looks like, what a working one looks like, and what changes when you edit it.</p>
+
+    <figure>
+      <div class="scroller">
+<svg class="dag" viewBox="0 0 1180 330" role="img" aria-labelledby="dag-a-t dag-a-d">
+<title id="dag-a-t">The demo mission as a directed graph</title>
+<desc id="dag-a-d">Left to right: goal, plan revision 1, two parallel worker tasks implement_report_json and implement_report_markdown, then assemble, then verify, then an isolated result commit. implement_report_json shows attempt 2 at fence 2 because its first check failed and the retry was authorised.</desc>
+<g class="edges">
+<path class="edge" style="--len:164" d="M 98.0 165.0 L 262.0 165.0"/>
+<path class="edge" style="--len:220" d="M 287.2 160.4 L 492.8 82.6"/>
+<path class="edge" style="--len:220" d="M 287.2 169.6 L 492.8 247.4"/>
+<path class="edge" style="--len:225" d="M 517.2 82.5 L 727.8 160.5"/>
+<path class="edge" style="--len:225" d="M 517.2 247.5 L 727.8 169.5"/>
+<path class="edge" style="--len:134" d="M 753.0 165.0 L 887.0 165.0"/>
+<path class="edge" style="--len:139" d="M 913.0 165.0 L 1052.0 165.0"/>
+</g>
+<g class="heads">
+<path class="head" transform="translate(262.0 165.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(492.8 82.6) rotate(-20.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(492.8 247.4) rotate(20.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(727.8 160.5) rotate(20.3)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(727.8 169.5) rotate(-20.3)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(887.0 165.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(1052.0 165.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+</g>
+<circle class="node" cx="85" cy="165" r="7"/>
+<circle class="node" cx="275" cy="165" r="7"/>
+<circle class="node" cx="505" cy="78" r="7"/>
+<circle class="node" cx="505" cy="252" r="7"/>
+<circle class="node" cx="740" cy="165" r="7"/>
+<circle class="node" cx="900" cy="165" r="7"/>
+<circle class="node" cx="1065" cy="165" r="7"/>
+<text class="lbl" x="85" y="113" text-anchor="middle">goal</text>
+<text class="sub" x="85" y="129" text-anchor="middle">one outcome, one policy</text>
+<text class="lbl" x="275" y="113" text-anchor="middle">plan · revision 1</text>
+<text class="sub" x="275" y="129" text-anchor="middle">4 tasks · approved</text>
+<text class="lbl" x="505" y="20" text-anchor="middle">implement_report_json</text>
+<text class="sub" x="505" y="36" text-anchor="middle">writes 2 files</text>
+<text class="sub" x="505" y="52" text-anchor="middle">✓ accepted · attempt 2 · fence 2</text>
+<text class="lbl" x="505" y="284" text-anchor="middle">implement_report_markdown</text>
+<text class="sub" x="505" y="300" text-anchor="middle">writes 2 files</text>
+<text class="sub" x="505" y="316" text-anchor="middle">✓ accepted · attempt 1 · fence 1</text>
+<text class="lbl" x="740" y="113" text-anchor="middle">assemble</text>
+<text class="sub" x="740" y="129" text-anchor="middle">writes nothing</text>
+<text class="lbl" x="900" y="113" text-anchor="middle">verify</text>
+<text class="sub" x="900" y="129" text-anchor="middle">check fixture-tests</text>
+<text class="lbl" x="1065" y="113" text-anchor="middle">result</text>
+<text class="sub" x="1065" y="129" text-anchor="middle">isolated commit 7ffc514879b8</text>
+</svg>
+      </div>
+      <figcaption><b>(a) The demo mission, as it ran.</b> Four tasks under one approved plan.
+        <code>implement_report_json</code> and <code>implement_report_markdown</code> each write
+        exactly two files and nothing else; <code>assemble</code> writes nothing and only
+        collects accepted work; <code>verify</code> runs the one check the policy allows,
+        <code>fixture-tests</code> (<code>python -m pytest -q -p no:cacheprovider</code>, network
+        denied). The first check on the JSON renderer failed on purpose, so its accepted work is
+        attempt&nbsp;2 at fence&nbsp;2 &mdash; the retry ran at a strictly higher fence carrying the
+        diagnostic. Node states are taken from the captured run shown further down this page.</figcaption>
+    </figure>
+
+    <figure>
+      <div class="scroller">
+<svg class="dag" viewBox="0 0 1000 320" role="img" aria-labelledby="dag-b-t dag-b-d">
+<title id="dag-b-t">An illustrative rate-limiting mission as a directed graph</title>
+<desc id="dag-b-d">A scout task feeds two implementation tasks, rate_limit_middleware and rate_limit_config; both feed a tests task, the config task also feeds a docs task, and tests and docs both feed a verify task. Each node shows how many paths it may read and write.</desc>
+<g class="edges">
+<path class="edge" style="--len:237" d="M 112.4 155.9 L 337.6 82.1"/>
+<path class="edge" style="--len:237" d="M 112.4 164.1 L 337.6 237.9"/>
+<path class="edge" style="--len:264" d="M 363.0 78.0 L 627.0 78.0"/>
+<path class="edge" style="--len:307" d="M 361.3 235.6 L 628.7 84.4"/>
+<path class="edge" style="--len:264" d="M 363.0 242.0 L 627.0 242.0"/>
+<path class="edge" style="--len:247" d="M 652.4 81.9 L 887.6 156.1"/>
+<path class="edge" style="--len:247" d="M 652.4 238.1 L 887.6 163.9"/>
+</g>
+<g class="heads">
+<path class="head" transform="translate(337.6 82.1) rotate(-18.2)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(337.6 237.9) rotate(18.2)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(627.0 78.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(628.7 84.4) rotate(-29.5)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(627.0 242.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(887.6 156.1) rotate(17.5)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(887.6 163.9) rotate(-17.5)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+</g>
+<circle class="node" cx="100" cy="160" r="7"/>
+<circle class="node" cx="350" cy="78" r="7"/>
+<circle class="node" cx="350" cy="242" r="7"/>
+<circle class="node" cx="640" cy="78" r="7"/>
+<circle class="node" cx="640" cy="242" r="7"/>
+<circle class="node" cx="900" cy="160" r="7"/>
+<text class="lbl" x="100" y="108" text-anchor="middle">scout</text>
+<text class="sub" x="100" y="124" text-anchor="middle">reads 34 · writes 0</text>
+<text class="lbl" x="350" y="36" text-anchor="middle">rate_limit_middleware</text>
+<text class="sub" x="350" y="52" text-anchor="middle">reads 6 · writes 2</text>
+<text class="lbl" x="350" y="274" text-anchor="middle">rate_limit_config</text>
+<text class="sub" x="350" y="290" text-anchor="middle">reads 4 · writes 2</text>
+<text class="lbl" x="640" y="36" text-anchor="middle">rate_limit_tests</text>
+<text class="sub" x="640" y="52" text-anchor="middle">reads 8 · writes 3</text>
+<text class="lbl" x="640" y="274" text-anchor="middle">rate_limit_docs</text>
+<text class="sub" x="640" y="290" text-anchor="middle">reads 3 · writes 1</text>
+<text class="lbl" x="900" y="108" text-anchor="middle">verify</text>
+<text class="sub" x="900" y="124" text-anchor="middle">reads 12 · writes 0</text>
+</svg>
+      </div>
+      <figcaption><b>(b) What a real change looks like: &ldquo;add rate limiting to the API&rdquo;.</b>
+        An illustration, not a captured run &mdash; the shape and the field names are real, the
+        values are invented for the example. Each node carries its own contract, and the
+        scheduler will not dispatch a task whose write scope collides with another running one.
+        <span class="muted">One node&rsquo;s contract fields, using the schema&rsquo;s own names:</span></figcaption>
+      <table class="fields">
+        <caption class="visually-hidden">Contract fields of the rate_limit_middleware task</caption>
+        <tbody>
+          <tr><td>task_id</td><td>rate_limit_middleware</td></tr>
+          <tr><td>dependencies</td><td>scout</td></tr>
+          <tr><td>assigned_role</td><td>worker</td></tr>
+          <tr><td>read_paths</td><td>6 exact paths &mdash; glob characters are rejected by the plan validator</td></tr>
+          <tr><td>write_paths</td><td>api/middleware/ratelimit.py, api/app.py</td></tr>
+          <tr><td>allowed_commands</td><td>fixture-tests</td></tr>
+          <tr><td>acceptance_checks</td><td>fixture-tests</td></tr>
+          <tr><td>attempt_limit</td><td>2</td></tr>
+        </tbody>
+      </table>
+    </figure>
+
+    <figure>
+      <div class="scroller">
+<svg class="dag" viewBox="0 0 1030 260" role="img" aria-labelledby="dag-c-t dag-c-d">
+<title id="dag-c-t">The same plan at revision 1 and revision 2, with different digests</title>
+<desc id="dag-c-d">Two copies of the same four-node plan. Revision 2 adds a docs task and an edge from it into assemble, drawn in the accent colour. Underneath, the two plan_sha256 digests are shown: they share no prefix.</desc>
+<g class="edges">
+<path class="edge" style="--len:159" d="M 82.6 49.1 L 237.4 86.9"/>
+<path class="edge" style="--len:159" d="M 82.6 130.9 L 237.4 93.1"/>
+<path class="edge" style="--len:124" d="M 263.0 90.0 L 387.0 90.0"/>
+<path class="edge" style="--len:159" d="M 682.6 49.1 L 837.4 86.9"/>
+<path class="edge" style="--len:159" d="M 682.6 130.9 L 837.4 93.1"/>
+<path class="edge" style="--len:124" d="M 863.0 90.0 L 987.0 90.0"/>
+<path class="edge-new" style="--len:197" d="M 680.5 214.3 L 839.5 97.7"/>
+</g>
+<g class="heads">
+<path class="head" transform="translate(237.4 86.9) rotate(13.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(237.4 93.1) rotate(-13.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(387.0 90.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(837.4 86.9) rotate(13.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(837.4 93.1) rotate(-13.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head" transform="translate(987.0 90.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="head-new" transform="translate(839.5 97.7) rotate(-36.3)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+</g>
+<circle class="node" cx="70" cy="46" r="7"/>
+<circle class="node" cx="70" cy="134" r="7"/>
+<circle class="node" cx="250" cy="90" r="7"/>
+<circle class="node" cx="400" cy="90" r="7"/>
+<circle class="node" cx="670" cy="46" r="7"/>
+<circle class="node" cx="670" cy="134" r="7"/>
+<circle class="node" cx="850" cy="90" r="7"/>
+<circle class="node" cx="1000" cy="90" r="7"/>
+<circle class="node node-new" cx="670" cy="222" r="7"/>
+<text class="lbl" x="70" y="28" text-anchor="middle">json</text>
+<text class="lbl" x="70" y="158" text-anchor="middle">markdown</text>
+<text class="lbl" x="250" y="114" text-anchor="middle">assemble</text>
+<text class="lbl" x="400" y="114" text-anchor="middle">verify</text>
+<text class="lbl" x="670" y="28" text-anchor="middle">json</text>
+<text class="lbl" x="670" y="158" text-anchor="middle">markdown</text>
+<text class="lbl" x="850" y="114" text-anchor="middle">assemble</text>
+<text class="lbl" x="1000" y="114" text-anchor="middle">verify</text>
+<text class="lbl" x="670" y="246" text-anchor="middle">docs</text>
+<text class="lane-lbl" x="0" y="14">revision 1</text>
+<text class="lane-lbl" x="600" y="14">revision 2 — one task added</text>
+</svg>
+      </div>
+      <div class="digests">
+        <div><span class="eyebrow">revision 1 &mdash; plan_sha256</span>
+          <code>83762ff17f47726d8fd22d53f1865b52926101eb6aea094a3d1a8c643f42da48</code></div>
+        <div><span class="eyebrow">revision 2 &mdash; plan_sha256</span>
+          <code class="accent">4657377bb718c385427be0ddda84a4f62f9b679a8ebb0b93b859b626086059f2</code></div>
+      </div>
+      <figcaption><b>(c) The edit, and what it costs.</b> The graph is yours to change: add a
+        docs task, wire it into assembly, approve revision&nbsp;2. Approval binds the mission, the
+        plan revision, the exact event-log head, and <code>plan_sha256</code> &mdash; the SHA-256
+        of the whole canonical plan, every dependency, scope, check and limit inside it. Change
+        one edge and the digest changes, and every later result must present the same digest or
+        be refused. Both digests above are real: the left one is the digest Graphene recorded for
+        mission <code>mission_start_5291caad50a8ee7a222a9221</code>, and the right one is what the
+        same plan hashes to after the edit. <code>scripts/plan_digest.py</code> in this repo
+        recomputes both.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="terminal">
+  <div class="wrap">
+    <p class="eyebrow">The terminal</p>
+    <h2>As it actually looks.</h2>
+    <p>Every block below is captured output from a real run in the Graphene repository, copied
+      byte for byte. Nothing here was written for this page.</p>
+  </div>
+  <div class="wrap">
+<!--TERMINAL-->
+    <figure>
+      <!-- graphene demo --live
+           captured in Alex-lop/Graphene at b7b174a02a8eabaad6443348dce75cbed77a78ea
+           evidence/convergence/2026-08-23-demo-live/run-1.txt lines 29-36, verbatim -->
+      <pre><code>Bounded plan, revision 1:
+  assemble  assembly  needs implement_report_json, implement_report_markdown  
+writes nothing
+  implement_report_json  work  needs nothing  writes 
+ledger_service/report_json.py, tests/test_report_json.py
+  implement_report_markdown  work  needs nothing  writes 
+ledger_service/report_markdown.py, tests/test_report_markdown.py
+  verify  verification  needs assemble  writes nothing</code></pre>
+      <figcaption>The bounded plan, printed for review before anything runs. Each task states what it needs and exactly what it may write. Wrapped at 80 columns by the program itself. <span class="muted">&mdash; <code>evidence/convergence/2026-08-23-demo-live/run-1.txt</code> lines&nbsp;29&ndash;36.</span></figcaption>
+    </figure>
+    <figure>
+      <!-- graphene demo --live
+           captured in Alex-lop/Graphene at b7b174a02a8eabaad6443348dce75cbed77a78ea
+           evidence/convergence/2026-08-23-demo-live/run-1.txt lines 67-101, verbatim -->
+      <pre><code>GOAL Add a redacted JSON status repo~ | STATUS running | ELAPSED 00:02 | SPEND —
+assemble                   ○ queued    attempt —  fence —
+implement_report_json      ● running   attempt 1  fence 1
+implement_report_markdown  ● running   attempt 1  fence 1
+verify                     ○ queued    attempt —  fence —
+Latest: worker started
+Result: No final result decision has been committed.
+GOAL Add a redacted JSON status ~ | STATUS running | ELAPSED 00:17 | SPEND $0.04
+assemble                   ○ queued    attempt —  fence —
+implement_report_json      ↻ retrying  attempt 1  fence 1
+implement_report_markdown  ● running   attempt 1  fence 1
+verify                     ○ queued    attempt —  fence —
+Latest: check failed → retry authorized with diagnostic
+Result: No final result decision has been committed.
+GOAL Add a redacted JSON status ~ | STATUS running | ELAPSED 00:30 | SPEND $0.11
+assemble                   ○ queued    attempt —  fence —
+implement_report_json      ↻ retrying  attempt 1  fence 1
+implement_report_markdown  ✓ accepted  attempt 1  fence 1
+verify                     ○ queued    attempt —  fence —
+Latest: task accepted
+Result: No final result decision has been committed.
+GOAL Add a redacted JSON status ~ | STATUS running | ELAPSED 00:31 | SPEND $0.11
+assemble                   ○ queued    attempt —  fence —
+implement_report_json      ● running   attempt 2  fence 2
+implement_report_markdown  ✓ accepted  attempt 1  fence 1
+verify                     ○ queued    attempt —  fence —
+Latest: worker started
+Result: No final result decision has been committed.
+GOAL Add a redacted JSON status ~ | STATUS running | ELAPSED 00:44 | SPEND $0.14
+assemble                   ○ queued    attempt —  fence —
+implement_report_json      ✓ accepted  attempt 2  fence 2
+implement_report_markdown  ✓ accepted  attempt 1  fence 1
+verify                     ○ queued    attempt —  fence —
+Latest: task accepted
+Result: No final result decision has been committed.</code></pre>
+      <figcaption>The same mission on the dashboard, five frames apart. A check on <code>implement_report_json</code> fails on purpose; the retry comes back at attempt 2, fence 2, and is accepted. <code>○</code> queued, <code>●</code> running, <code>↻</code> retrying, <code>✓</code> accepted. <span class="muted">&mdash; <code>evidence/convergence/2026-08-23-demo-live/run-1.txt</code> lines&nbsp;67&ndash;101.</span></figcaption>
+    </figure>
+    <figure>
+      <!-- graphene why ledger_service/cli.py --mission mission_start_5291caad50a8ee7a222a9221
+           captured in Alex-lop/Graphene at b7b174a02a8eabaad6443348dce75cbed77a78ea
+           evidence/north_star/2026-08-23-mission1/why_ledger_service_cli.py.txt lines 27-32, verbatim -->
+      <pre><code>STAGE approval established
+  node event mission_event_c5034ff29d43388cb6f45981c8b49919 kind=none task=none attempt=none worker=none attempt_number=none fence=none sha256=none
+  events mission_event_c5034ff29d43388cb6f45981c8b49919
+  note A committed final approval references the assembly candidate.
+UNKNOWN The model-proposed plan awaits operator review.
+TRUST: every line above is derived from hash-chained mission events and resolvable evidence references; unknowns are listed, never guessed.</code></pre>
+      <figcaption>The last six lines of a lineage answer, from a different mission: <code>mission_start_5291caad50a8ee7a222a9221</code>. Note the <code>UNKNOWN</code> line. Graphene lists what it cannot derive instead of filling it in. <span class="muted">&mdash; <code>evidence/north_star/2026-08-23-mission1/why_ledger_service_cli.py.txt</code> lines&nbsp;27&ndash;32.</span></figcaption>
+    </figure>
+    <div class="term-cap">
+      <div><code>graphene plan</code><span>design it</span></div>
+      <div><code>graphene mission approve-plan</code><span>approve it</span></div>
+      <div><code>graphene why</code><span>ask it why</span></div>
+    </div>
+<!--/TERMINAL-->
+  </div>
+</section>
+
+<section id="proof">
+  <div class="wrap">
+    <p class="eyebrow">Truth</p>
+    <h2>What&rsquo;s proven, what isn&rsquo;t.</h2>
+    <p>Graphene keeps a machine-readable proof contract in its own repository, and the honest
+      rows stay in it. This is a dated snapshot of that file, rendered whole &mdash; including
+      everything that is not proven. Labels here only flip with machine evidence in the same
+      commit.</p>
+  </div>
+  <div class="wrap">
+<!--PROOF-->
+    <table class="proof">
+      <thead><tr><th scope="col">Capability</th><th scope="col">Label, and what it is limited to</th></tr></thead>
+      <tbody>
+        <tr><td>Credential-free core test matrix</td><td><span class="label yes">verified_local</span><br>On source commit 581d6bf4e1c2ba4810f16d93b295637c7203a7b5, the credential-free Python matrix passed 808 tests with four explicit opt-in skips; MCP passed 6 and frontend passed 39. Deterministic replay, the macOS scripted fixture, V2 evidence/final decisions, bounded worker runtime, SQLite authority, and the recorded official Firestore emulator production vertical are locally verified.</td></tr>
+        <tr><td>Live Gemini planning and two workers</td><td><span class="label yes">verified_live</span><br>On 2026-08-23 mission mission_start_5291caad50a8ee7a222a9221 ran two gemini-3.5-flash workers through Vertex AI (location global) with evidence-bound provider receipts, overlap measured on the store clock (28491 ms), the runtime-stamped provider call window (26463 ms), and the provider&#x27;s own clock (25364 ms), exact fan-in and verification, a bundle-bound operator-delegated approval, and an isolated local result commit; evidence: evidence/north_star/2026-08-23-north-star-live.md. Human attestation and the live failure laboratory are not part of this claim. On 2026-08-23 the completion gate was met against the narrowed North Star: 9/10 ordinary and 3/3 controlled-failure missions completed end to end, $2.30 of receipt-derived spend across 14 missions; evidence: evidence/convergence/2026-08-23-completion-gate.</td></tr>
+        <tr><td>Failure-aware retry</td><td><span class="label yes">verified_live</span><br>A failed trusted check leaves a redacted CheckDiagnostic bound to the attempt; the retry&#x27;s worker payload carries the prior attempt id, its fence, the result code, the failed check names, the receipt digest and the summary, with an unchanged repair scope. A repeat of the same failure signature is terminal. Observed live in both directions on 2026-08-23: 3/3 injected faults repaired on the retry, and mission_start_b6be7f35ba803c6dc34597b1 terminalized on a repeated signature instead of taking a third attempt.</td></tr>
+        <tr><td>North Star claim</td><td><span class="label yes">verified_live</span><br>Graphene coordinates two real Gemini coding workers, survives one of them failing, and proves exactly why the final repository result should be trusted.</td></tr>
+        <tr><td>Mission capsule export and cold verification</td><td><span class="label yes">verified_live_cold</span><br>MISSION CAPSULE — COLD-VERIFIED FROM A CLEAN CHECKOUT ON LIVE GEMINI MISSIONS; INTERNAL CONSISTENCY, NOT PRODUCER AUTHENTICITY</td></tr>
+        <tr><td>Final bundle verification receipt</td><td><span class="label yes">verified_local</span><br>register_final_result_bundle fails closed unless a repository-aware recompute is bound, runs it, and issues a FinalBundleVerificationReceiptV1 into the FINAL_RESULT_BUNDLE_READY event. Approval, rejection and cold verification all refuse a bundle that does not carry a server receipt binding it exactly. The adversarial test that used to document the hole now enforces the fix.</td></tr>
+        <tr><td>Planner reads the commit workers clone</td><td><span class="label yes">verified_local</span><br>Planning reads the manifest from `git ls-tree -r -l -z --full-tree &lt;base_sha&gt;` and excerpt bytes from `git cat-file blob`, so the planner sees exactly the commit the workers clone and detach to. Tracked or staged drift from that commit is rejected by name before any byte is selected. No path under the repository is opened during planning, which removes the intermediate-directory-symlink escape by construction rather than by a stronger open().</td></tr>
+        <tr><td>Working-tree integrity (v2 store, tree hashing)</td><td><span class="label yes">credential_free_release_matrix_verified</span><br></td></tr>
+        <tr><td>Mission path: live Gemini ADK planner</td><td><span class="label yes">verified_live</span><br>VERIFIED LIVE — gemini-3.5-flash ON VERTEX AI (global); TWO WORKERS WITH EVIDENCE-BOUND RECEIPTS AND DUAL-CLOCK OVERLAP; OPERATOR-DELEGATED (server_derived) APPROVAL, NOT HUMAN-ATTESTED</td></tr>
+        <tr><td>Mission path: ADK runner, deterministic fake planner</td><td><span class="label yes">verified_local</span><br>REAL ADK RUNNER + DETERMINISTIC FAKE PLANNER — NOT GEMINI OR MODEL-WORKER PROOF</td></tr>
+        <tr><td>Mission path: scripted local fixture</td><td><span class="label yes">verified_local</span><br>SCRIPTED LOCAL MISSION FIXTURE — NOT GEMINI, ARBITRARY-REPOSITORY, OR CLOUD PROOF</td></tr>
+        <tr><td>Mission path: verified mission replay</td><td><span class="label yes">verified_local</span><br>VERIFIED MISSION REPLAY — GENERATED SCRIPTED FIXTURE; NO LIVE AGENT, HUMAN ATTESTATION, NEW TEST EXECUTION, GEMINI, OR CLOUD</td></tr>
+        <tr><td>Watcher (inbox and GitHub issue triggers)</td><td><span class="label yes">verified_local</span><br>WATCHER — VERIFIED_LOCAL ON FIXTURES; LIVE GITHUB POLLING NOT PROVEN</td></tr>
+        <tr><td>Cloud check authority</td><td><span class="label part">executor_attested</span><br>For the cloud dispatch path an authenticated remote executor is part of the trusted computing base. The coordinator recomputes the receipt&#x27;s bindings — mission/task/attempt/plan/fence/policy identity, the exact publication envelopes, and the receipt-to-evidence digest — and does NOT recompute template_sha256, candidate_tree_sha256, output_sha256, exit_code, timed_out or cleanup_complete, nor re-run any check. A hand-built passing receipt with arbitrary digests is accepted at this boundary by design. Every successful cloud completion records check_authority: executor_attested in the committed task.completed payload, inside payload_sha256 and the event_sha256 chain.</td></tr>
+        <tr><td>Cloud abandon and second-executor transitions</td><td><span class="label yes">fails_closed</span><br></td></tr>
+        <tr><td>Docker isolated executor</td><td><span class="label no">not_proven</span><br>NOT PROVEN — RESPONSIVE DAEMON AND BUILT IMMUTABLE IMAGE REQUIRED</td></tr>
+        <tr><td>Cloud Run and Firestore deployment</td><td><span class="label no">not_deployed</span><br>NOT DEPLOYED — AUTHORIZED PROJECT, GCLOUD, DEPLOYMENT, AND CAPTURED SMOKE REQUIRED</td></tr>
+        <tr><td>Live cloud delivery gate</td><td><span class="label no">not_deployed</span><br>Cloud Run/real Firestore requires an explicitly authorized project and captured authenticated smoke; packaging, unit tests, and the verified official emulator are not deployment proof.</td></tr>
+        <tr><td>Graph economics benchmark</td><td><span class="label no">not_proven</span><br>The equal-quality-gate, three-mode, non-overwriting harness has a credential-free unit test. No real repeated run, token/cost/latency result, median, or P95 is claimed.</td></tr>
+        <tr><td>Shadow agent (Claude Code ingest)</td><td><span class="label no">not_proven</span><br>SHADOW AGENT v0 — NDJSON AND CLAUDE-CODE ADAPTERS VERIFIED LOCALLY ON SYNTHETIC FIXTURES; REAL CLAUDE CODE SESSION INGESTED ONLY IN A PRIVATE COUNTS-ONLY SMOKE, NOT PROVEN</td></tr>
+        <tr><td>Product media and submission video</td><td><span class="label no">not_proven_capture_pending</span><br></td></tr>
+      </tbody>
+    </table>
+    <p class="small muted">Deferred, and not claimed anywhere:</p>
+    <ul class="deferred small muted"><li>truthful Mission Control screenshot/GIF capture and output digests</li><li>operator-complete revision generation/review/reapproval after a recorded replanning request and live browser command-plane operator proof</li><li>transitive delta/cumulative artifact subsumption and end-to-end delete/rename/mode mutation semantics</li><li>automatic retention expiry and purge</li><li>published arbitrary-repository support and live execution matrix</li><li>owned idle STDIO MCP lifecycle cleanup</li><li>live authenticated cloud-to-local claim/heartbeat/result/reconnect proof and full Firestore SchedulerStore mutation parity</li><li>shared Firestore listener and cloud stream fan-out</li><li>live Google Cloud deployment, measured graph benchmark, and submission video</li><li>five-person Mission Control comprehension study</li><li>Shadow Agent real-session report as a reproducible, committed artifact (the claude-code adapter exists and the only real transcript is private)</li><li>live North Star failure laboratory and cold capsule verification; human-attested approval on a live mission</li></ul>
+    <div>
+      <p class="small muted">Snapshot of <code>contracts/product_proof.json</code> taken 2026-08-23 at <code>b7b174a02a8e</code> &mdash; <a href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">read the live file</a>, or the copy vendored beside this page at <a href="assets/product_proof.snapshot.json">assets/product_proof.snapshot.json</a>. Labels here only flip with machine evidence in the same commit.</p>
+    </div>
+<!--/PROOF-->
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <p class="eyebrow">The demo</p>
+    <h2>One terminal, one continuous run.</h2>
+<!--DEMOSLOT-->
+    <div class="slot">
+      <video controls preload="none" poster="assets/poster.png"
+             width="1600" height="900">
+        <source src="assets/demo.mp4" type="video/mp4">
+        <p>Your browser cannot play this video. <a href="assets/demo.mp4">Download it instead.</a></p>
+      </video>
+    </div>
+    <p class="small muted" style="margin-top:14px">Demo arriving 31&nbsp;August&nbsp;2026 &mdash;
+      one terminal, one continuous run, no splicing. Until then this is a still of the field.</p>
+<!--/DEMOSLOT-->
+  </div>
+</section>
+
+<section id="not">
+  <div class="wrap">
+    <p class="eyebrow">Boundaries</p>
+    <h2>What Graphene is not.</h2>
+    <p><b>Not a context layer.</b> <a href="https://github.com/NanoNets/Graft">Graft</a> and
+      <a href="https://aider.chat/docs/repomap.html">Aider&rsquo;s repo map</a> give an agent a better
+      picture of your codebase so it chooses well; Graphene assumes the choice is already made and
+      makes it binding.</p>
+    <p><b>Not a planning notebook.</b>
+      <a href="https://github.com/microsoft/RPG-ZeroRepo/tree/main/CoderMind">CoderMind</a>,
+      <a href="https://github.com/steveyegge/beads">Beads</a> and
+      <a href="https://github.com/eyaltoledano/claude-task-master">Task Master</a> hold the plan
+      where agents can read it; Graphene&rsquo;s plan is executed by a scheduler that refuses work
+      outside it, fences retries, and will not call anything done without its check.</p>
+    <p><b>Not a harness.</b> Your agents keep whatever harness they already run in. Graphene sits
+      above them, holding the scopes, the checks and the evidence.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Built for the All Things Agentic hackathon &mdash; Taskmaster.</p>
+    <ul>
+      <li><a href="https://github.com/Alex-lop/Graphene">Source</a></li>
+      <li><a href="https://github.com/Alex-lop/Graphene/blob/main/LICENSE">Apache&nbsp;2.0</a></li>
+      <li><a href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">Proof contract</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="assets/field.js" defer></script>
+<script>
+/* one-shot draw-in for the diagrams; reduced motion skips it via CSS */
+document.addEventListener('DOMContentLoaded', function () {
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { rootMargin: '-10% 0px' });
+  document.querySelectorAll('.dag').forEach(function (d) { io.observe(d); });
+});
+</script>
+</body>
+</html>
