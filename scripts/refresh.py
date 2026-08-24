@@ -161,7 +161,7 @@ DEMO = """    <div class="slot">
     <p class="small muted" style="margin-top:14px">There is no demo film yet, so this is a
       still rather than a play button that would not play. The submission video is labelled
       <code>not_proven_capture_pending</code> in the proof contract above, and stays that way
-      until something has been filmed.</p>"""
+      until something is filmed.</p>"""
 
 def replace(doc, marker, body):
     pattern = re.compile(
