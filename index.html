@@ -17,6 +17,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="assets/favicon.png" sizes="32x32">
 <link rel="stylesheet" href="assets/site.css">
+<script>document.documentElement.className = "js";</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -84,22 +85,13 @@
 <title id="dag-a-t">The demo mission as a directed graph</title>
 <desc id="dag-a-d">Left to right: goal, plan revision 1, two parallel worker tasks implement_report_json and implement_report_markdown, then assemble, then verify, then an isolated result commit. implement_report_json shows attempt 2 at fence 2 because its first check failed and the retry was authorised.</desc>
 <g class="edges">
-<path class="edge" style="--len:164" d="M 98.0 165.0 L 262.0 165.0"/>
-<path class="edge" style="--len:220" d="M 287.2 160.4 L 492.8 82.6"/>
-<path class="edge" style="--len:220" d="M 287.2 169.6 L 492.8 247.4"/>
-<path class="edge" style="--len:225" d="M 517.2 82.5 L 727.8 160.5"/>
-<path class="edge" style="--len:225" d="M 517.2 247.5 L 727.8 169.5"/>
-<path class="edge" style="--len:134" d="M 753.0 165.0 L 887.0 165.0"/>
-<path class="edge" style="--len:139" d="M 913.0 165.0 L 1052.0 165.0"/>
-</g>
-<g class="heads">
-<path class="head" transform="translate(262.0 165.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(492.8 82.6) rotate(-20.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(492.8 247.4) rotate(20.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(727.8 160.5) rotate(20.3)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(727.8 169.5) rotate(-20.3)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(887.0 165.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(1052.0 165.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="edge" style="--len:175" d="M 98.0 165.0 L 262.0 165.0 M 256.5 168.3 L 262.0 165.0 L 256.5 161.7"/>
+<path class="edge" style="--len:231" d="M 287.2 160.4 L 492.8 82.6 M 488.9 87.6 L 492.8 82.6 L 486.5 81.5"/>
+<path class="edge" style="--len:231" d="M 287.2 169.6 L 492.8 247.4 M 486.5 248.5 L 492.8 247.4 L 488.9 242.4"/>
+<path class="edge" style="--len:236" d="M 517.2 82.5 L 727.8 160.5 M 721.5 161.7 L 727.8 160.5 L 723.8 155.5"/>
+<path class="edge" style="--len:236" d="M 517.2 247.5 L 727.8 169.5 M 723.8 174.5 L 727.8 169.5 L 721.5 168.3"/>
+<path class="edge" style="--len:145" d="M 753.0 165.0 L 887.0 165.0 M 881.5 168.3 L 887.0 165.0 L 881.5 161.7"/>
+<path class="edge" style="--len:150" d="M 913.0 165.0 L 1052.0 165.0 M 1046.5 168.3 L 1052.0 165.0 L 1046.5 161.7"/>
 </g>
 <circle class="node" cx="85" cy="165" r="7"/>
 <circle class="node" cx="275" cy="165" r="7"/>
@@ -142,22 +134,13 @@
 <title id="dag-b-t">An illustrative rate-limiting mission as a directed graph</title>
 <desc id="dag-b-d">A scout task feeds two implementation tasks, rate_limit_middleware and rate_limit_config; both feed a tests task, the config task also feeds a docs task, and tests and docs both feed a verify task. Each node shows how many paths it may read and write.</desc>
 <g class="edges">
-<path class="edge" style="--len:237" d="M 112.4 155.9 L 337.6 82.1"/>
-<path class="edge" style="--len:237" d="M 112.4 164.1 L 337.6 237.9"/>
-<path class="edge" style="--len:264" d="M 363.0 78.0 L 627.0 78.0"/>
-<path class="edge" style="--len:307" d="M 361.3 235.6 L 628.7 84.4"/>
-<path class="edge" style="--len:264" d="M 363.0 242.0 L 627.0 242.0"/>
-<path class="edge" style="--len:247" d="M 652.4 81.9 L 887.6 156.1"/>
-<path class="edge" style="--len:247" d="M 652.4 238.1 L 887.6 163.9"/>
-</g>
-<g class="heads">
-<path class="head" transform="translate(337.6 82.1) rotate(-18.2)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(337.6 237.9) rotate(18.2)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(627.0 78.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(628.7 84.4) rotate(-29.5)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(627.0 242.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(887.6 156.1) rotate(17.5)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(887.6 163.9) rotate(-17.5)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="edge" style="--len:248" d="M 112.4 155.9 L 337.6 82.1 M 333.4 86.9 L 337.6 82.1 L 331.4 80.6"/>
+<path class="edge" style="--len:248" d="M 112.4 164.1 L 337.6 237.9 M 331.4 239.4 L 337.6 237.9 L 333.4 233.1"/>
+<path class="edge" style="--len:275" d="M 363.0 78.0 L 627.0 78.0 M 621.5 81.3 L 627.0 78.0 L 621.5 74.7"/>
+<path class="edge" style="--len:318" d="M 361.3 235.6 L 628.7 84.4 M 625.5 90.0 L 628.7 84.4 L 622.3 84.2"/>
+<path class="edge" style="--len:275" d="M 363.0 242.0 L 627.0 242.0 M 621.5 245.3 L 627.0 242.0 L 621.5 238.7"/>
+<path class="edge" style="--len:258" d="M 652.4 81.9 L 887.6 156.1 M 881.4 157.6 L 887.6 156.1 L 883.3 151.3"/>
+<path class="edge" style="--len:258" d="M 652.4 238.1 L 887.6 163.9 M 883.3 168.7 L 887.6 163.9 L 881.4 162.4"/>
 </g>
 <circle class="node" cx="100" cy="160" r="7"/>
 <circle class="node" cx="350" cy="78" r="7"/>
@@ -205,22 +188,13 @@
 <title id="dag-c-t">The same plan at revision 1 and revision 2, with different digests</title>
 <desc id="dag-c-d">Two copies of the same four-node plan. Revision 2 adds a docs task and an edge from it into assemble, drawn in the accent colour. Underneath, the two plan_sha256 digests are shown: they share no prefix.</desc>
 <g class="edges">
-<path class="edge" style="--len:159" d="M 82.6 49.1 L 237.4 86.9"/>
-<path class="edge" style="--len:159" d="M 82.6 130.9 L 237.4 93.1"/>
-<path class="edge" style="--len:124" d="M 263.0 90.0 L 387.0 90.0"/>
-<path class="edge" style="--len:159" d="M 682.6 49.1 L 837.4 86.9"/>
-<path class="edge" style="--len:159" d="M 682.6 130.9 L 837.4 93.1"/>
-<path class="edge" style="--len:124" d="M 863.0 90.0 L 987.0 90.0"/>
-<path class="edge-new" style="--len:197" d="M 680.5 214.3 L 839.5 97.7"/>
-</g>
-<g class="heads">
-<path class="head" transform="translate(237.4 86.9) rotate(13.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(237.4 93.1) rotate(-13.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(387.0 90.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(837.4 86.9) rotate(13.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(837.4 93.1) rotate(-13.7)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head" transform="translate(987.0 90.0) rotate(0.0)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
-<path class="head-new" transform="translate(839.5 97.7) rotate(-36.3)" d="M -5.5 -3.4 L 0 0 L -5.5 3.4"/>
+<path class="edge" style="--len:170" d="M 82.6 49.1 L 237.4 86.9 M 231.2 88.8 L 237.4 86.9 L 232.8 82.4"/>
+<path class="edge" style="--len:170" d="M 82.6 130.9 L 237.4 93.1 M 232.8 97.6 L 237.4 93.1 L 231.2 91.2"/>
+<path class="edge" style="--len:135" d="M 263.0 90.0 L 387.0 90.0 M 381.5 93.3 L 387.0 90.0 L 381.5 86.7"/>
+<path class="edge" style="--len:170" d="M 682.6 49.1 L 837.4 86.9 M 831.2 88.8 L 837.4 86.9 L 832.8 82.4"/>
+<path class="edge" style="--len:170" d="M 682.6 130.9 L 837.4 93.1 M 832.8 97.6 L 837.4 93.1 L 831.2 91.2"/>
+<path class="edge" style="--len:135" d="M 863.0 90.0 L 987.0 90.0 M 981.5 93.3 L 987.0 90.0 L 981.5 86.7"/>
+<path class="edge-new" style="--len:208" d="M 680.5 214.3 L 839.5 97.7 M 837.0 103.6 L 839.5 97.7 L 833.1 98.3"/>
 </g>
 <circle class="node" cx="70" cy="46" r="7"/>
 <circle class="node" cx="70" cy="134" r="7"/>
@@ -369,20 +343,20 @@ TRUST: every line above is derived from hash-chained mission events and resolvab
         <tr><td>Mission capsule export and cold verification</td><td><span class="label yes">verified_live_cold</span><br>MISSION CAPSULE — COLD-VERIFIED FROM A CLEAN CHECKOUT ON LIVE GEMINI MISSIONS; INTERNAL CONSISTENCY, NOT PRODUCER AUTHENTICITY</td></tr>
         <tr><td>Final bundle verification receipt</td><td><span class="label yes">verified_local</span><br>register_final_result_bundle fails closed unless a repository-aware recompute is bound, runs it, and issues a FinalBundleVerificationReceiptV1 into the FINAL_RESULT_BUNDLE_READY event. Approval, rejection and cold verification all refuse a bundle that does not carry a server receipt binding it exactly. The adversarial test that used to document the hole now enforces the fix.</td></tr>
         <tr><td>Planner reads the commit workers clone</td><td><span class="label yes">verified_local</span><br>Planning reads the manifest from `git ls-tree -r -l -z --full-tree &lt;base_sha&gt;` and excerpt bytes from `git cat-file blob`, so the planner sees exactly the commit the workers clone and detach to. Tracked or staged drift from that commit is rejected by name before any byte is selected. No path under the repository is opened during planning, which removes the intermediate-directory-symlink escape by construction rather than by a stronger open().</td></tr>
-        <tr><td>Working-tree integrity (v2 store, tree hashing)</td><td><span class="label yes">credential_free_release_matrix_verified</span><br></td></tr>
+        <tr><td>Working-tree integrity (v2 store, tree hashing)</td><td><span class="label yes">credential_free_release_matrix_verified</span><br>Only check.completed from the check-runner authority can bind deterministic success to the exact attempt/fence, plan/policy, inputs, template, candidate tree, and result.</td></tr>
         <tr><td>Mission path: live Gemini ADK planner</td><td><span class="label yes">verified_live</span><br>VERIFIED LIVE — gemini-3.5-flash ON VERTEX AI (global); TWO WORKERS WITH EVIDENCE-BOUND RECEIPTS AND DUAL-CLOCK OVERLAP; OPERATOR-DELEGATED (server_derived) APPROVAL, NOT HUMAN-ATTESTED</td></tr>
         <tr><td>Mission path: ADK runner, deterministic fake planner</td><td><span class="label yes">verified_local</span><br>REAL ADK RUNNER + DETERMINISTIC FAKE PLANNER — NOT GEMINI OR MODEL-WORKER PROOF</td></tr>
         <tr><td>Mission path: scripted local fixture</td><td><span class="label yes">verified_local</span><br>SCRIPTED LOCAL MISSION FIXTURE — NOT GEMINI, ARBITRARY-REPOSITORY, OR CLOUD PROOF</td></tr>
         <tr><td>Mission path: verified mission replay</td><td><span class="label yes">verified_local</span><br>VERIFIED MISSION REPLAY — GENERATED SCRIPTED FIXTURE; NO LIVE AGENT, HUMAN ATTESTATION, NEW TEST EXECUTION, GEMINI, OR CLOUD</td></tr>
         <tr><td>Watcher (inbox and GitHub issue triggers)</td><td><span class="label yes">verified_local</span><br>WATCHER — VERIFIED_LOCAL ON FIXTURES; LIVE GITHUB POLLING NOT PROVEN</td></tr>
         <tr><td>Cloud check authority</td><td><span class="label part">executor_attested</span><br>For the cloud dispatch path an authenticated remote executor is part of the trusted computing base. The coordinator recomputes the receipt&#x27;s bindings — mission/task/attempt/plan/fence/policy identity, the exact publication envelopes, and the receipt-to-evidence digest — and does NOT recompute template_sha256, candidate_tree_sha256, output_sha256, exit_code, timed_out or cleanup_complete, nor re-run any check. A hand-built passing receipt with arbitrary digests is accepted at this boundary by design. Every successful cloud completion records check_authority: executor_attested in the committed task.completed payload, inside payload_sha256 and the event_sha256 chain.</td></tr>
-        <tr><td>Cloud abandon and second-executor transitions</td><td><span class="label yes">fails_closed</span><br></td></tr>
+        <tr><td>Cloud abandon and second-executor transitions</td><td><span class="label yes">fails_closed</span><br>Refused at registration with MultiExecutorUnsupported -&gt; 409 MULTI_EXECUTOR_UNSUPPORTED. One mission-wide expected head means a second executor&#x27;s claim would conflict at a random later moment; it now fails closed immediately with a named reason. Same-id reconnect still works and a session idle past the lease bound stops blocking. Cloud parallelism is NOT claimed anywhere.</td></tr>
         <tr><td>Docker isolated executor</td><td><span class="label no">not_proven</span><br>NOT PROVEN — RESPONSIVE DAEMON AND BUILT IMMUTABLE IMAGE REQUIRED</td></tr>
         <tr><td>Cloud Run and Firestore deployment</td><td><span class="label no">not_deployed</span><br>NOT DEPLOYED — AUTHORIZED PROJECT, GCLOUD, DEPLOYMENT, AND CAPTURED SMOKE REQUIRED</td></tr>
         <tr><td>Live cloud delivery gate</td><td><span class="label no">not_deployed</span><br>Cloud Run/real Firestore requires an explicitly authorized project and captured authenticated smoke; packaging, unit tests, and the verified official emulator are not deployment proof.</td></tr>
         <tr><td>Graph economics benchmark</td><td><span class="label no">not_proven</span><br>The equal-quality-gate, three-mode, non-overwriting harness has a credential-free unit test. No real repeated run, token/cost/latency result, median, or P95 is claimed.</td></tr>
         <tr><td>Shadow agent (Claude Code ingest)</td><td><span class="label no">not_proven</span><br>SHADOW AGENT v0 — NDJSON AND CLAUDE-CODE ADAPTERS VERIFIED LOCALLY ON SYNTHETIC FIXTURES; REAL CLAUDE CODE SESSION INGESTED ONLY IN A PRIVATE COUNTS-ONLY SMOKE, NOT PROVEN</td></tr>
-        <tr><td>Product media and submission video</td><td><span class="label no">not_proven_capture_pending</span><br></td></tr>
+        <tr><td>Product media and submission video</td><td><span class="label no">not_proven_capture_pending</span><br>docs/assets/demo-capture.json records the verified replay source/checkpoint, but no reproducible screenshot, GIF, or four-minute submission video has completed. No product media or video proof is claimed.</td></tr>
       </tbody>
     </table>
     <p class="small muted">Deferred, and not claimed anywhere:</p>
@@ -401,7 +375,7 @@ TRUST: every line above is derived from hash-chained mission events and resolvab
 <!--DEMOSLOT-->
     <div class="slot">
       <video controls preload="none" poster="assets/poster.png"
-             width="1600" height="900">
+             width="1280" height="720">
         <source src="assets/demo.mp4" type="video/mp4">
         <p>Your browser cannot play this video. <a href="assets/demo.mp4">Download it instead.</a></p>
       </video>

@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>Graphene at narrow widths</title>
+<!-- Chrome clamps a real window to ~500px on macOS, so narrow widths are checked
+     inside iframes, whose layout viewport is exactly the width given here.
+     Serve the repo root (python3 -m http.server) and open this file. -->
+<style>
+  body{margin:0;background:#000;display:flex;gap:16px;padding:16px;font:12px system-ui;color:#888}
+  figure{margin:0}
+  iframe{border:1px solid #333;display:block;background:#121316}
+</style>
+<figure><figcaption>380 x 3400</figcaption><iframe src="../index.html" width="380" height="3400"></iframe></figure>
+<figure><figcaption>768 x 3400</figcaption><iframe src="../index.html" width="768" height="3400"></iframe></figure>

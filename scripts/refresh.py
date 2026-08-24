@@ -54,7 +54,7 @@ CAPTIONS = [
 ]
 
 # capability -> where its label lives in contracts/product_proof.json
-ROWS = [
+ROWS = [  # (label shown, path into the JSON, optional key to prefer for the detail line)
     ("Credential-free core test matrix", ["delivery_gates", "credential_free_core"]),
     ("Live Gemini planning and two workers", ["delivery_gates", "live_gemini"]),
     ("Failure-aware retry", ["failure_aware_retry"]),
@@ -62,20 +62,20 @@ ROWS = [
     ("Mission capsule export and cold verification", ["mission_capsule"]),
     ("Final bundle verification receipt", ["final_bundle_authority"]),
     ("Planner reads the commit workers clone", ["planning_source_binding"]),
-    ("Working-tree integrity (v2 store, tree hashing)", ["working_tree_integrity"]),
+    ("Working-tree integrity (v2 store, tree hashing)", ["working_tree_integrity"], "trusted_checks"),
     ("Mission path: live Gemini ADK planner", ["mission_paths", "gemini-adk-planner"]),
     ("Mission path: ADK runner, deterministic fake planner", ["mission_paths", "adk-fake-planner"]),
     ("Mission path: scripted local fixture", ["mission_paths", "scripted-local"]),
     ("Mission path: verified mission replay", ["mission_paths", "verified-mission-replay"]),
     ("Watcher (inbox and GitHub issue triggers)", ["watch"]),
     ("Cloud check authority", ["cloud_check_authority"]),
-    ("Cloud abandon and second-executor transitions", ["cloud_unsupported_transitions"]),
+    ("Cloud abandon and second-executor transitions", ["cloud_unsupported_transitions"], "multi_executor"),
     ("Docker isolated executor", ["mission_paths", "docker-executor"]),
     ("Cloud Run and Firestore deployment", ["mission_paths", "cloud-run-firestore"]),
     ("Live cloud delivery gate", ["delivery_gates", "live_cloud"]),
     ("Graph economics benchmark", ["graph_economics"]),
     ("Shadow agent (Claude Code ingest)", ["shadow_agent"]),
-    ("Product media and submission video", ["product_media"]),
+    ("Product media and submission video", ["product_media"], "blocker"),
 ]
 
 GOOD = {"verified_live", "verified_live_cold", "verified_local",
@@ -89,13 +89,16 @@ def dig(doc, path):
     return doc
 
 
-def detail(obj):
+def detail(obj, prefer=None):
     """The most specific honest sentence this object carries."""
-    for key in ("truth_label", "truth", "limit", "sentence", "evidence"):
+    keys = ([prefer] if prefer else []) + ["truth_label", "truth", "limit", "sentence", "evidence"]
+    for key in keys:
         value = obj.get(key)
         if isinstance(value, str) and value:
             return value
-    return ""
+    # last resort: the longest string field that is not the status label
+    strings = [v for k, v in sorted(obj.items()) if k != "status" and isinstance(v, str)]
+    return max(strings, key=len) if strings else ""
 
 
 def pre_block(repo, src, first, last, command, caption, sha):
@@ -126,14 +129,15 @@ def build_proof(proof, sha, date):
            '      <thead><tr><th scope="col">Capability</th>'
            '<th scope="col">Label, and what it is limited to</th></tr></thead>',
            '      <tbody>']
-    for name, path in ROWS:
+    for row in ROWS:
+        name, path, prefer = (row + (None,))[:3]
         obj = dig(proof, path)
         status = obj.get("status", "")
         cls = "yes" if status in GOOD else "no" if status in BAD else "part"
         out.append(
             f'        <tr><td>{html.escape(name)}</td><td>'
             f'<span class="label {cls}">{html.escape(status)}</span><br>'
-            f'{html.escape(detail(obj))}</td></tr>')
+            f'{html.escape(detail(obj, prefer))}</td></tr>')
     out.append('      </tbody>')
     out.append('    </table>')
     deferred = "".join(f'<li>{html.escape(d)}</li>' for d in proof.get("deferred", []))
@@ -153,7 +157,7 @@ def build_proof(proof, sha, date):
 
 DEMO = """    <div class="slot">
       <video controls preload="none" poster="assets/poster.png"
-             width="1600" height="900">
+             width="1280" height="720">
         <source src="assets/demo.mp4" type="video/mp4">
         <p>Your browser cannot play this video. <a href="assets/demo.mp4">Download it instead.</a></p>
       </video>
