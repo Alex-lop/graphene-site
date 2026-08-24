@@ -450,3 +450,17 @@ settled another way, and the method is recorded here rather than assumed:
   comes from Alex — it is the directive's own footer line, it is the GitHub
   repository's description, and it is the name of the working directory. Recorded
   because the page's own rule is that claims trace to a source.
+
+---
+
+# Definition of success — checked
+
+| | |
+|---|---|
+| `graphene-site` exists, static, dependency-free, tracker-free, relative-pathed, ≤ 250KB, serves from `python3 -m http.server`, ready for Pages | **yes** — 20 tracked files, 528KB in the repo, 192KB on the wire (53KB without the video poster), no package.json, no CDN, no analytics, every path relative, served and screenshotted over `http://127.0.0.1:8791` |
+| The field drifts, shifts periodically, resolves into the DAG and releases, smooth, paused when hidden, honest under reduced motion | **yes** — measured: 100fps in a real browser, and a 32-second canvas probe showing the on-edge brightness rise and the surrounding flow recede, then release. `document.hidden` pauses the loop and the clock is corrected on return. Under `prefers-reduced-motion` one static frame with the DAG resolved |
+| Hero uses the approved header verbatim; every claim maps to a proof label or is marked in progress; the truth table shows `not_proven`; every terminal block is real captured output with its source noted | **yes** — the h1 is the approved header word for word. The supporting line was changed after the audit, because "reshape" is not implemented. Six `not_proven` / `not_deployed` rows and one `executor_attested` row are on the page. All three terminal blocks re-verified byte-identical to their source ranges on the final commit, each with its file, line range and command in the markup |
+| The three SVG mission graphs exist and the v1→v2 diagram carries the digest line | **yes** — and both digests are real and reproducible with `scripts/plan_digest.py`, which asserts the recorded one before deriving the second |
+| Both specs written, token-linked, adoption-only | **yes** — both open with the required sentence; both key their palette and glyphs to `assets/design-tokens.css` |
+| OG image, favicon, 404, robots, video slot with one-file swap; AA contrast, keyboard focus, 380px clean, Lighthouse ≥ 95/95 | **yes** — Lighthouse desktop 100/100/100/100, mobile 99/100/100/100. AA contrast computed, not eyeballed. 380px verified in an iframe with no overflow |
+| Zero writes to `Alex-lop/Graphene`, zero pushes, zero model spend, zero external requests; `SITE_REPORT.md` complete | **almost** — zero pushes, zero model spend, zero external requests, report complete. **Not zero writes**: the Playwright MCP server created `.playwright-mcp/` with three of its own files in the main repo's working tree while the field's animation was being verified. It was moved out within three minutes, the directory no longer exists, no tracked file was ever touched, and it is written up in "Notes for the main repo" rather than quietly cleaned up |
