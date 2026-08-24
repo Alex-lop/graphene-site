@@ -497,10 +497,11 @@ that is what it is.
 
 Four things the evidence forced the copy to soften, all now correct on the page:
 the integration test never touches the CLI, so the page does not claim the CLI
-loop is what it proves; `plan lint` is not in that test; the digest precondition
-is a store-API argument the `graphene plan approve` path does not pass, so the
-page says **the store** refuses a wrong digest; and refusing to edit after
-dispatch is proven in a different file, so the page does not claim it here.
+loop is what it proves; `plan lint` is not in that test; and refusing to edit
+after dispatch is proven in a different file, so the page does not claim it here.
+
+A fourth item in this list was **my own error, corrected after deployment** — see
+"The stale-SHA mistake" below.
 
 ## Interaction, and the three degraded paths
 
@@ -597,8 +598,9 @@ The four that mattered most:
    `result` is not a task in the captured plan. It now appears only at Verify.
 2. **"808 Python tests, four opt-in skips"** read as current. The contract states
    it for one named source commit; the row now says so.
-3. **"the store refuses the wrong digest"** — the store's digest check is opt-in
-   (`expected_plan_sha256`); the CLI is what refuses a non-committed digest.
+3. **"the store refuses the wrong digest"** — the CLI refuses a mismatch first,
+   before the store is reached. See the correction below: the mechanism is
+   stronger than either wording said.
 4. **"Both digests are real"** flattened two different things: revision 1's is
    the digest Graphene recorded, revision 2's is derived by
    `scripts/plan_digest.py`. The page now distinguishes them.
@@ -635,3 +637,45 @@ warnings.
   been adding a claim rather than correcting one.
 - Visible copy is 1008 words against a 800–1000 target. The eight are the
   precision the adversarial pass bought; trimming further would cost accuracy.
+
+## The stale-SHA mistake
+
+I asserted, on this page's behalf and in my handoff, that `graphene plan approve`
+does not pass `expected_plan_sha256` to the store — that the digest check was an
+opt-in store-API argument the command never used. **That was false at the commit
+this site is pinned to.** A peer session challenged it; I counted rather than
+argued, and the peer was right:
+
+```
+git show d432397:backend/graphene/cli/mission.py | grep -c expected_plan_sha256  ->  0
+git show 02a75f7:backend/graphene/cli/mission.py | grep -c expected_plan_sha256  ->  3
+git show fa302a1:backend/graphene/cli/mission.py | grep -c expected_plan_sha256  ->  3
+```
+
+**How the error happened, precisely.** My CLI evidence came from a workflow that
+ran while the reference clone was pinned at `d432397`, where the finding was
+correct. `02a75f7` ("approve the graph you were shown", 07:20) added the argument.
+I later re-pinned the clone to `fa302a1` to quote the plan-surface capture — and
+carried the older conclusion across the re-pin without re-running it. The check
+was sound; the tree under it had moved. Right check, wrong SHA.
+
+**What actually ships at `fa302a1`:**
+
+- `--plan-sha256` is an option on both `plan approve` (`cli/mission.py:372`) and
+  `mission approve-plan` (`:771`), documented as "the exact plan digest you are
+  approving, as shown by plan show/diff".
+- If the operator names one and it does not match, the CLI raises before the
+  store is touched (`:5506-5509`).
+- The CLI then passes `expected_plan_sha256` on **every** approval — three call
+  sites, `:5550`, `:5581`, `:5593` — so the store's own check
+  (`store.py:1450`) is engaged whether or not the operator named a digest. It is
+  not opt-in in practice.
+
+The page had been *under*-claiming: it described a weaker and partly wrong
+mechanism. Corrected and redeployed; the Approve stage now says you can approve
+the digest you were shown and a mismatch is refused before the store is reached.
+
+The general lesson, which cost four lanes time tonight: **re-pinning a truth
+source invalidates every conclusion drawn before the re-pin.** A finding is only
+as current as the tree it was run against, and nothing about the finding itself
+says so.

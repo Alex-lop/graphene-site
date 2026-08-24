@@ -25,7 +25,7 @@
 
     { id: 'approve', label: 'Approve', rev: '2', digest: V2, hidden: ['result'],
       approval: 'event records revision 2, plan_sha256 and base_sha',
-      note: 'The recorded approval names four things at once. Name a superseded revision and the store refuses it; name a digest that is not the committed one and the CLI refuses before anything is recorded — and nothing can be dispatched under a revision nobody approved.',
+      note: 'The recorded approval names four things at once. Approve with --plan-sha256 and you are approving the graph you were shown: a digest that is not the committed one is refused before the store is touched. A superseded revision is refused too, and nothing dispatches under a revision nobody approved.',
       state: { 'task-json-renderer': Q, 'task-markdown-renderer': Q, 'task-docs': Q,
                'task-cli-integration': Q, 'assemble': Q, 'verify': Q, 'result': Q } },
 
