@@ -7,8 +7,9 @@ language as the website and the plugin spec: `assets/design-tokens.css` is the
 source of the palette, and the glyph vocabulary below is the one already in
 `backend/graphene/cli/dashboard.py`. Nothing here asks for a new dependency.
 
-Everything said about today was read in `Alex-lop/Graphene` at
-`b7b174a02a8eabaad6443348dce75cbed77a78ea`. Quotes are marked as captured output
+Everything said about Graphene's current behaviour was read in
+`Alex-lop/Graphene` at `b7b174a02a8eabaad6443348dce75cbed77a78ea`. The palette in
+§1 comes from this site's `assets/design-tokens.css`, not from that repository. Quotes are marked as captured output
 or as source with a file and line — a source string is not the same evidence as
 a captured run. Nothing here asks for spinners, progress bars for work of unknown
 duration, emoji, or a second colour for "warning".
@@ -67,20 +68,29 @@ conventions that happen to agree.
 
 `○` is also the fallback for an unrecognised state (`dashboard.py:119-120`), so
 it must always be printed beside the state's own word — the glyph alone cannot
-tell "queued" from "a state this build has never heard of". `—` means *not
-known*, never zero: a spend of `$0.00` is a fact and prints as `$0.00`.
+tell "queued" from "a state this build has never heard of".
+
+`—` means *not known*, never zero — and that one is a request, not a description.
+Only the spend field tests for absence today (`spend_usd is None`,
+`dashboard.py:150`); attempt and fence use `or '—'` on integers
+(`dashboard.py:164-165`), so a genuine zero currently prints as `—`. A spend of
+`$0.00` is a fact and should print as `$0.00`.
 Terminals that cannot render these fall back to `[x] [>] [o] [ ] [!]`, decided
 once at startup from the encoding, not per line.
 
 ## 3. Tables
 
-- Columns left-aligned, numbers right-aligned, ids padded to the longest id in
-  the frame — the non-TTY dashboard already does this (`dashboard.py:183-187`).
+- Columns left-aligned and ids padded to the longest id in the frame — the
+  non-TTY dashboard already does this (`dashboard.py:183-187`). Numbers should be
+  right-aligned, which is new: attempt and fence print today as unpadded
+  `attempt N` / `fence N` strings (`dashboard.py:160-166`).
 - **No box drawing.** A header line, one `─` rule under it if genuinely needed,
   nothing else. The website makes the same choice: one hairline, everywhere.
-- Clip to the real terminal width. `render_human` hard-caps at 80 columns
-  (`render.py:97`) even on a 200-column terminal, so wide screens waste two
-  thirds of themselves. Use `shutil.get_terminal_size()` as the cap.
+- Clip to the real terminal width. `render_human` is already handed
+  `shutil.get_terminal_size()` by the CLI (`main.py:397`) and then clamps it away
+  with `width = max(1, min(width, 80))` (`render.py:97`), so a 200-column terminal
+  renders at 80 and leaves 60% of the screen unused. Remove the upper clamp
+  rather than adding a second width source.
 - Clip the *middle* of an identifier, never the end: `mission_start_5291…22a9221`
   is greppable, `mission_start_5291caad50a8e~` is not.
 
@@ -94,8 +104,12 @@ preceded only by `PLAN {mission_id} VALID tasks={n}` and one line per task
 (`mission.py:4251`), and **no digest is shown at all** — not truncated, not in
 full. The operator approves on a mission id and a list of task names.
 
-That is the one thing this spec most wants changed, because `plan_sha256` is
-what the approval actually binds. Requirements:
+That is the one thing this spec most wants changed. What the approval literally
+binds is the mission id, the plan revision, and the event-log head
+(`store.py:1410-1446`); `plan_sha256` is pinned through that head, because the
+chain covers the proposal and validation events that carry the digest and the
+store re-verifies the plan bytes against them. The operator is therefore
+approving a digest — they just never see it. Requirements:
 
 1. Print the full 64-character `plan_sha256` in the accent colour. Not
    truncated. A digest you cannot compare is decoration.
@@ -105,12 +119,16 @@ what the approval actually binds. Requirements:
    scope. The write scope is the part a human can actually audit.
 4. Ask explicitly, defaulting to no, and say what each answer does.
 5. On anything other than yes, **say what happened**. Today a non-`y` answer
-   leaves the mission proposed without printing anything.
+   leaves the mission proposed and prints only the generic
+   `GRAPHENE status=proposed mission_id=… review_required=True` summary
+   (`mission.py:5109-5114`) — nothing that says the approval was declined.
 
 ### Before → after: the approval moment
 
 Before — real captured output, `evidence/convergence/2026-08-23-demo-live/run-1.txt`
-lines 29-36 and 51-52, verbatim, from `graphene demo --live`:
+lines 29-36 followed by 51-52, verbatim, from `graphene demo --live`. The trailing
+spaces and the wraps that split each plan entry across two lines are the program's
+own, at 80 columns:
 
 ```text
 Bounded plan, revision 1:
@@ -156,13 +174,15 @@ On `n`: `PLAN mission_start_93ff… NOT APPROVED — the mission stays proposed.
 
 ## 5. Errors
 
-Today every call site hand-writes `sys.stderr.write("PREFIX: message\n")` and
-returns 1; there is no shared helper, and seven distinct exception types
-(`BootstrapError`, `ConsumerStartError`, `HandoffCompileError`,
+Today most call sites hand-write `sys.stderr.write("PREFIX: message\n")` and
+return 1. The helpers that exist are narrow and disagree with each other —
+`_evidence_invalid` covers one error type, `integrations/stdio.py:50` just
+forwards preformatted text and its callers return 2. And seven distinct exception
+types (`BootstrapError`, `ConsumerStartError`, `HandoffCompileError`,
 `HumanWorkflowError`, `LocalCommitError`, `PromotionError`, `RuntimeBindingError`)
-all collapse into the single string `WORKFLOW_ERROR: operation rejected`
-(`main.py:1723`). The specific reason is discarded before it reaches the person
-who could act on it.
+share one handler at `main.py:1723` that writes the single string
+`WORKFLOW_ERROR: operation rejected` (`main.py:1732`). The specific reason is
+discarded before it reaches the person who could act on it.
 
 Every error gets exactly three lines, in this order:
 
@@ -231,6 +251,6 @@ Density rules: one line per task and never two; the goal is truncated only if it
 does not fit on its own full-width line; spend prints only once it is non-zero
 and prints `$0.00`, not `—`, when it is genuinely zero; the latest-event line is
 one event, the most recent, never a scrolling log. If the terminal is not a TTY,
-print a frame only when something changed — `dashboard.py:239-251` already does
+print a frame only when something changed — `dashboard.py:245-253` already does
 this and it is correct.
 

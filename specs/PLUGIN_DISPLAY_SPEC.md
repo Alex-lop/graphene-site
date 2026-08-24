@@ -9,8 +9,11 @@ line: `mission_capture_boundary.browser_authority` reads *"Authenticated
 read-only public projection; operator changes use the idempotent CLI/store
 path."* The viewer inherits that sentence.
 
-Everything cited here was read in `Alex-lop/Graphene` at
-`b7b174a02a8eabaad6443348dce75cbed77a78ea`.
+Everything cited here from `Alex-lop/Graphene` was read at
+`b7b174a02a8eabaad6443348dce75cbed77a78ea`; source paths below are relative to
+`backend/graphene/`. `assets/design-tokens.css` and
+`specs/TERMINAL_DISPLAY_SPEC.md` are files of this website, not of that
+repository.
 
 ## Out of scope, explicitly
 
@@ -69,10 +72,14 @@ Node kind is drawn, not coloured: `work` a circle, `assembly` a square,
 
 Existing surfaces only. No new endpoint is required for the read path:
 
-- `graphene status MISSION_ID --json` for the mission and plan snapshot.
-- `graphene watch RUN_ID --json`, which already streams canonical event
-  envelopes as NDJSON (`cli/main.py:441`), for the overlay.
+- `graphene --json status MISSION_ID` for the mission and plan snapshot.
+- `graphene --json watch RUN_ID`, which already streams canonical event
+  envelopes as NDJSON (`cli/main.py:441-442`), for the overlay.
 - `graphene why PATH --mission MISSION_ID --json` for a file's lineage.
+
+`--json` is a global flag declared on the root parser (`cli/main.py:142`) and has
+to precede the subcommand; `why` is the only subcommand that also accepts it in
+trailing position (`cli/main.py:195`).
 
 The viewer renders what those return and derives nothing of its own. If a value
 is not in the projection, it is not on screen.
@@ -88,18 +95,19 @@ The viewer adopts the website's rule: anything it cannot verify, it labels.
 
 - A value the projection does not carry renders as `—`, never as `0` and never
   as a blank cell.
-- An `UNKNOWN` from a lineage answer is shown as a row, not swallowed. The CLI's
-  own closing line is the standard to meet: *"unknowns are listed, never
-  guessed."*
+- An `UNKNOWN` from a lineage answer is shown as a row, not swallowed. The
+  standard to meet is the CLI's own closing line, in full: *"TRUST: every line
+  above is derived from hash-chained mission events and resolvable evidence
+  references; unknowns are listed, never guessed."*
 - Digests are shown in full or not at all. A truncated digest cannot be compared,
   and a viewer that shows `8376…da48` invites a reader to believe they checked
   something they did not.
 - Evidence the viewer cannot resolve is marked unresolvable rather than omitted.
   `resolvable=True` already travels in the `why` output; when it is false, say so.
 - Nothing in the private set is ever displayed, because it is never in the
-  projection: raw prompts and reasoning, credentials and environment, raw command
-  arguments, stdout, stderr, source and diffs
-  (`mission_capture_boundary.private_or_excluded`).
+  projection: raw prompts, context and reasoning; credentials and unrestricted
+  environment variables; and raw command arguments, stdout, stderr, source, diffs
+  and private artifacts (`mission_capture_boundary.private_or_excluded`).
 
 ## Quality floor
 
