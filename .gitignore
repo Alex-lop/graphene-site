@@ -1,0 +1,7 @@
+# The authority document for this session. Never committed.
+local/
+
+# Read-only reference clone of Alex-lop/Graphene, pinned for fact-checking. Never committed.
+reference/
+
+.DS_Store
