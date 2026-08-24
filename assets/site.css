@@ -55,7 +55,9 @@ code { font: 400 .92em/1.4 var(--font-mono); }
 .mission { margin-top: 34px; display: grid; gap: 28px; }
 @media (min-width: 900px) { .mission { grid-template-columns: minmax(360px, 460px) 1fr; align-items: start; } }
 
-.mg-stages { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--hairline-strong);
+/* the stage controls exist only if the script that drives them does */
+.mg-stages { display: none; }
+.js .mg-stages { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--hairline-strong);
   background: var(--bg-raised); width: fit-content; max-width: 100%; }
 .mg-stages button {
   appearance: none; border: 0; border-right: 1px solid var(--hairline);
@@ -74,7 +76,6 @@ code { font: 400 .92em/1.4 var(--font-mono); }
 .mg-edge.mg-added { stroke: var(--accent); stroke-width: 1.5; opacity: 1; }
 .mg-node .mg-mark > * { fill: var(--bg-raised); stroke: var(--ink); stroke-width: 1.6; }
 .mg-node.mg-added .mg-mark > * { stroke: var(--accent); }
-.mg-node.mg-result .mg-mark > * { fill: var(--ink); }
 .mg-lbl { fill: var(--ink); font: 500 13px/1 var(--font-mono); }
 .mg-state { fill: var(--ink-muted); font: 400 11px/1 var(--font-sans); }
 .mg-node { cursor: pointer; }
@@ -108,7 +109,8 @@ code { font: 400 .92em/1.4 var(--font-mono); }
 .mg-fields dt { color: var(--ink-muted); }
 .mg-fields dd { margin: 0; font-family: var(--font-mono); font-size: .95em; overflow-wrap: anywhere; }
 .mg-added-note { margin: 12px 0 0; font-size: .84rem; color: var(--accent); }
-.mg-replay { appearance: none; border: 1px solid var(--hairline-strong); background: transparent;
+.mg-replay { display: none; }
+.js .mg-replay { display: inline-block; appearance: none; border: 1px solid var(--hairline-strong); background: transparent;
   color: var(--ink-muted); font: 400 .82rem/1 var(--font-sans); padding: 11px 14px; min-height: 44px; cursor: pointer; }
 .mg-replay:hover { color: var(--ink); border-color: var(--accent); }
 
@@ -130,7 +132,17 @@ th { font-weight: 600; color: var(--ink-muted); font-size: .7rem; letter-spacing
 .proof .no { color: var(--accent); }
 
 /* ---- terminal inset ------------------------------------------------ */
-figure { margin: 30px 0 0; max-width: var(--measure); }
+figure { margin: 30px 0 0; }
+figure figcaption { max-width: var(--measure); }
+/* Captured terminal output is as wide as it is; give it the container, and say
+   so where it still has to scroll. */
+@media (max-width: 1080px) {
+  #terminal figure::before {
+    content: "Scroll the block sideways to read the full lines";
+    display: block; margin-bottom: 10px; font-size: .72rem; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ink-muted);
+  }
+}
 pre { margin: 0; padding: 18px 20px; overflow-x: auto;
   background: var(--term-bg); border: 1px solid var(--term-bg);
   font: 400 12.5px/1.55 var(--font-mono); color: var(--term-ink); tab-size: 4; }

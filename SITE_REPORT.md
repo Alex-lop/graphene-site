@@ -464,3 +464,120 @@ settled another way, and the method is recorded here rather than assumed:
 | Both specs written, token-linked, adoption-only | **yes** — both open with the required sentence; both key their palette and glyphs to `assets/design-tokens.css` |
 | OG image, favicon, 404, robots, video slot with one-file swap; AA contrast, keyboard focus, 380px clean, Lighthouse ≥ 95/95 | **yes** — Lighthouse desktop 100/100/100/100, mobile 99/100/100/100. AA contrast computed, not eyeballed. 380px verified in an iframe with no overflow |
 | Zero writes to `Alex-lop/Graphene`, zero pushes, zero model spend, zero external requests; `SITE_REPORT.md` complete | **almost** — zero pushes, zero model spend, zero external requests, report complete. **Not zero writes**: the Playwright MCP server created `.playwright-mcp/` with three of its own files in the main repo's working tree while the field's animation was being verified. It was moved out within three minutes, the directory no longer exists, no tracked file was ever touched, and it is written up in "Notes for the main repo" rather than quietly cleaned up |
+
+---
+
+# Convergence addendum — 2026-08-24
+
+The page stopped being a dark research essay and became a warm technical notebook
+with one interactive mission graph at its centre. Everything below was measured on
+the final commit, not carried over.
+
+| | from | to |
+|---|---|---|
+| Site repo | `d482f174` | see "Deployment" below |
+| Graphene truth source | `b7b174a0` | **`fa302a130afd58340d4f0c3d95565f60db2f531a`** |
+| Visible words | 2038 | **966** (why 89 · loop 159 · fits 226 · terminal 146 · proof 217 · demo 54) |
+| Palette | graphite on near-black | warm paper, graphite ink, burnt-orange accent |
+
+## The living mission graph, and what each stage may claim
+
+One replay — Plan, Edit, Approve, Run, Retry, Verify — on the plan captured in
+`evidence/north_star/2026-08-23-mission1/plan_show.json`, with a docs task added
+and assembly rewired. It is labelled on the page as **an interactive explanation
+assembled from separately verified behaviours, not one recorded mission**, because
+that is what it is.
+
+| What it shows | Label | Source |
+|---|---|---|
+| Node added, assembly rewired, revision 2 approved and **executed instead of the proposal**, and nothing dispatchable without its own approval | `verified_local`, credential-free | `tests/integration/test_plan_edit_path.py` — asserts `{item.plan_revision for item in run.snapshot.attempts} == {2}`, `"work-c" in run.completion_order`, and `LeaseConflict("not dispatchable")` |
+| The two digests in the readout | real, reproducible | `scripts/plan_digest.py` recomputes `8376…da48` and matches the digest Graphene recorded, then hashes the edited plan to `4657…59f2` |
+| Diagnostic retry at a strictly higher fence, sibling stays accepted | `verified_live` 2026-08-23 | `contracts/product_proof.json` `failure_aware_retry` |
+| One continuous live take of the whole sequence | **not captured** | the repo says so itself: `docs/DEMO_SCRIPT.md` marks the edit beat `NOT YET CAPTURED LIVE` |
+
+Four things the evidence forced the copy to soften, all now correct on the page:
+the integration test never touches the CLI, so the page does not claim the CLI
+loop is what it proves; `plan lint` is not in that test; the digest precondition
+is a store-API argument the `graphene plan approve` path does not pass, so the
+page says **the store** refuses a wrong digest; and refusing to edit after
+dispatch is proven in a different file, so the page does not claim it here.
+
+## Interaction, and the three degraded paths
+
+- **Stages** — click, or arrow-key the group. Autoplays once on entering view at
+  35% threshold, ends verified, stops. Verified by probe: 6 stages; Plan hides the
+  added node and reads revision 1; Approve reads digest `4657377b`; Retry reads
+  `↻ retrying`; Verify reads the added node `accepted`.
+- **Nodes** — pointer, touch and keyboard focus all light ancestors and
+  descendants and fill the contract inspector; Enter pins, Escape clears. Probe:
+  focusing the added node lights 4 of 7 and the inspector fills with its contract.
+  Hit areas are 48px circles; every control clears 44px.
+- **Hero pointer** — a 118px influence eases toward the cursor and raises the
+  local reveal weight of route segments only. It moves no node and chases nothing.
+  Off for coarse pointers and `prefers-reduced-motion`. Verified in two parts: an
+  instrumented probe shows `wantsPointer` true, strength going 0 → 1 on move and
+  back to 0 on leave; and `scripts/check_field_reveal.js` asserts the arithmetic
+  (only route points respond, smooth falloff, nothing outside 118px, and an
+  already-revealing cycle is never dimmed). **Not** verified from a rendered
+  frame: headless Chrome's virtual clock does not advance `requestAnimationFrame`,
+  so no headless screenshot can ever show this. Recorded rather than glossed.
+- **No JavaScript** — asserted on the static markup, not eyeballed: all 7 nodes
+  present, each carrying a state (`✓ accepted` / `✓ committed`), all 8 edges
+  including the accent one, zero `is-out`, readout at revision 2 with the v2
+  digest, and the stage bar and replay button hidden because the script that
+  drives them is absent.
+- **Reduced motion** — no autoplay; the graph rests in the verified state and the
+  stage controls still work. The field paints one static frame with the route
+  resolved.
+
+## Palette, measured
+
+| | on `--bg` `#f3eee4` | on `--bg-raised` `#fbf8f1` |
+|---|---|---|
+| `--ink` `#242622` | 13.20:1 | 14.40:1 |
+| `--ink-muted` `#66675f` | 4.95:1 | 5.39:1 |
+| `--accent` `#9a4f24` | 5.16:1 | 5.63:1 |
+
+The terminal inset is the page inverted — `--term-bg` *is* `--ink`, `--term-ink`
+*is* `--bg`, 13.20:1 — so captured output keeps a real terminal surface.
+`--term-muted` 6.43:1, `--term-accent` 6.39:1. Every pair clears AA.
+
+## Terminal blocks — source ranges and byte-match
+
+All three re-verified byte-identical **after** the final edit, at `fa302a1`:
+
+| Block | Source | Lines | Match |
+|---|---|---|---|
+| the plan surface | `evidence/contract/2026-08-24-plan-surface/plan-surface.txt` | 1–14 | ✓ |
+| the v1→v2 diff, `** SCOPE EXPANSION **` | same file | 89–95 | ✓ |
+| the `why` tail, with its `UNKNOWN` line | `evidence/north_star/2026-08-23-mission1/why_ledger_service_cli.py.txt` | 27–32 | ✓ |
+
+Both disclosures from that capture's own README are on the page: it is
+credential-free `--driver scripted-local`, so it is the plan **surface** and not a
+model's proposal; and temporary paths read `TARGET`, with nothing else altered.
+The retry/dashboard excerpt from the previous build was dropped — the mission
+graph now shows that beat interactively with its live label, so a static frame of
+it was the redundant one.
+
+## Comparison sources
+
+Every description fetched from the project's own documentation on
+**24 August 2026** and quoted no further than the page states:
+[Graft](https://github.com/NanoNets/Graft/blob/main/README.md) ·
+[Aider repo map](https://aider.chat/docs/repomap.html) ·
+[CoderMind](https://github.com/microsoft/RPG-ZeroRepo/blob/main/CoderMind/README.md) ·
+[LangGraph](https://docs.langchain.com/oss/python/langgraph/overview) ·
+[Studio](https://docs.langchain.com/langsmith/studio). No benchmark number, no
+star count, no "first" or "only", and nothing about what another tool cannot do.
+
+## Quality gates
+
+| | |
+|---|---|
+| Lighthouse desktop | **100 / 100 / 100 / 100** |
+| Lighthouse mobile | **99 / 100 / 100 / 100** |
+| Page weight | **198 KB** over **7 requests** |
+| External hosts | **none** |
+| Console | zero errors, zero warnings |
+| 380px | no page-level overflow; the mission graph is vertical and needs no horizontal scroll |
+| Missing first-party assets | none |
