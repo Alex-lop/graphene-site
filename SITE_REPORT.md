@@ -172,7 +172,7 @@ All taken on the final commit, against `python3 -m http.server` on localhost.
 |---|---|
 | Lighthouse desktop | **performance 100, accessibility 100, best practices 100, SEO 100** (Lighthouse 13.4.1) |
 | Lighthouse mobile | **performance 99, accessibility 100, best practices 100, SEO 100** — FCP 1.1s, LCP 2.0s, TBT 0ms, CLS 0 |
-| Page weight | **191 KB** total, **52 KB** excluding the video poster (`index.html` 34 KB, `poster.png` 142 KB, `field.js` 9 KB, `site.css` 8.7 KB, `design-tokens.css` 1.3 KB, `favicon.svg` 0.5 KB) |
+| Page weight | **192 KB** total, **53 KB** excluding the video poster (`index.html` 34 KB, `poster.png` 142 KB, `field.js` 9 KB, `site.css` 8.7 KB, `design-tokens.css` 1.3 KB, `favicon.svg` 0.5 KB) |
 | External requests | **none.** The six `data:` URIs in the network log are Chrome's own inline video-control icons, zero bytes, not a network fetch |
 | Console | zero errors, zero warnings from the page |
 | Frame rate | 100 fps measured over 2s in a real browser at 1440×900 (the display's rate, not a cap the field imposes) |
@@ -343,7 +343,7 @@ Needs Google Chrome and Pillow. Nothing else, and no network.
 - Pinned reference SHA: `b7b174a02a8eabaad6443348dce75cbed77a78ea`
 - `AUTHORITY_DIGEST`: `52f05703d1686fc1e3b3110d3eb3ed9065f899f41fea1ed027b0625a4180b00c`
 - Lighthouse: desktop 100/100/100/100, mobile 99/100/100/100
-- Page weight: 191 KB total, 52 KB without the video poster
+- Page weight: 192 KB total, 53 KB without the video poster
 - Model spend this session: **$0**
 
 ## Things worth knowing before you edit
@@ -367,3 +367,86 @@ The local preview server started for the screenshots was stopped. No background
 process, no watcher, no cron. The reference clone is a plain read-only checkout
 you can delete at any time; `scripts/refresh.py` takes a path to any checkout of
 `Alex-lop/Graphene` as its first argument.
+
+---
+
+# The claims audit
+
+Every factual claim on the page and in the two specs was extracted and handed to
+an independent checker, one per claim, each told to read the pinned clone and to
+default to *refuted* when uncertain. **97 claims checked: 60 true, 28 overstated,
+6 false, 3 uncheckable offline.** Twenty-two of the thirty-four problems were
+real and are fixed in commits `47caea8`, `bc6243f` and `751c437`; the rest are
+recorded below with the reason no change was made. Nothing was quietly dropped.
+
+The six outright false ones are worth naming, because they are the kind of thing
+that would have shipped:
+
+1. **`read_paths`: "glob characters are rejected by the plan validator".** They
+   are not. A read scope may be a glob when it exactly equals one of the policy's
+   `allowed_read_globs` and the policy declares no exclusions
+   (`orchestration/validation.py:41-51`). Globs are refused outright on
+   `write_paths` (`orchestration/models.py:396-399`), which is where the sentence
+   now lives.
+2. **"`scripts/plan_digest.py` in this repo".** Every other repo link on the page
+   points at `Alex-lop/Graphene`, where that file does not exist. It is the
+   script beside the page.
+3. **The seven-glyph table cited to `dashboard.py:30-38`.** Five glyphs are in
+   `_STATES` at `dashboard.py:28-39`; the em dash is used at four other lines in
+   that file; the tilde is in `render.py:27`. The spec is assembling one
+   vocabulary out of three conventions, and now says so.
+4. **"A non-`y` answer leaves the mission proposed without printing anything".**
+   It prints the generic `GRAPHENE status=proposed …` summary line
+   (`cli/mission.py:5109-5114`) — which is arguably worse, and is what the spec
+   now describes.
+5. **The plugin spec's three read-path invocations.** `--json` is a root-parser
+   flag that has to precede the subcommand; only `why` also accepts it trailing
+   (`cli/main.py:142`, `:195`). All three were written the wrong way round.
+6. **The truth table "rendered whole".** It is twenty-one curated rows, and a
+   multi-field entry is quoted from one field.
+
+## Findings deliberately not changed
+
+- **The retry sentence in figure (a)** was flagged for the universal reading. The
+  checker's own conclusion was to leave it: as written it is scoped to the
+  captured run and is supported byte-for-byte. A universal claim would have
+  needed four qualifications, and figure (a) is about one run.
+- **The `failure_aware_retry` row's wording** ("3/3 injected faults repaired on
+  the retry") was flagged as possibly generous, since the injected fault fires
+  once by construction. That row is a verbatim quote of
+  `contracts/product_proof.json`; paraphrasing it to be safer would break the
+  promise that the table quotes the file. It stays verbatim, and the repo is
+  itself explicit that `--inject-check-fault` "can only make a check fail, never
+  pass".
+- **The `TRUST:` line in the terminal block** is the product's own output, shown
+  as such. The page's caption claims nothing about it.
+- **The video slot.** The checker's fix was to replace the `<video>` with a plain
+  `<img>` so nothing offers to play a film that has not been shot. That would
+  cost the one-file swap the directive asks for, so the `<video>` stays, the
+  broken *"Download it instead"* link was removed, and the caption says plainly
+  that the demo arrives on 31 August. **This is a judgement call and Alex may
+  want the other answer** — swapping the two lines is a two-minute change.
+
+## Findings the audit could not settle offline
+
+The checkers had no network, so three claims came back `UNCHECKABLE`. Each was
+settled another way, and the method is recorded here rather than assumed:
+
+- **Whether `github.com/Alex-lop/Graphene` is public and resolves.** It is. It
+  was opened in a real browser during this session and returned
+  *"GitHub - Alex-lop/Graphene: AllThingsAgenticHackathon"*. That also means the
+  three GitHub links in the footer and hero resolve.
+- **The four prior-art links in "What Graphene is not".** The reference clone
+  never mentions Graft, Aider, CoderMind, Beads or Task Master — zero grep hits —
+  so it cannot confirm them. Each URL was verified by web search before being
+  written, and each description is kept to what the project says about itself:
+  `github.com/NanoNets/Graft`, `aider.chat/docs/repomap.html`,
+  `github.com/microsoft/RPG-ZeroRepo/tree/main/CoderMind`,
+  `github.com/steveyegge/beads`, `github.com/eyaltoledano/claude-task-master`.
+  No third-party numbers appear anywhere on the page.
+- **"Built for the All Things Agentic hackathon — Taskmaster".** The clone
+  documents the category *The Taskmaster* (`docs/TASKMASTER_PRODUCT_CONTRACT.md:9`,
+  `contracts/product_proof.json` `category`) but never names the event. The name
+  comes from Alex — it is the directive's own footer line, it is the GitHub
+  repository's description, and it is the name of the working directory. Recorded
+  because the page's own rule is that claims trace to a source.
