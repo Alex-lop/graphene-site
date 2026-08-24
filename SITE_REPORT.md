@@ -586,10 +586,10 @@ star count, no "first" or "only", and nothing about what another tool cannot do.
 
 Every claim on the page and in the replay's stage text was extracted and handed
 to one independent skeptic each, reading the clone at `fa302a1` and told to
-default to refuted. **70 claims: 48 true, 15 overstated, 4 false, 3 uncheckable
-offline.** All 17 actionable findings are fixed; the two remaining "false"
-verdicts were checked against a copy I had already corrected, and their own
-correction text confirms the shipped wording.
+default to refuted. **70 claims: 43 true, 19 overstated, 5 false, 3 uncheckable
+offline.** Every actionable finding is fixed. Three of the "false" verdicts were
+checked against copy I had already corrected, and their own correction text
+confirms the shipped wording.
 
 The four that mattered most:
 

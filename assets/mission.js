@@ -47,7 +47,7 @@
 
     { id: 'verify', label: 'Verify', rev: '2', digest: V2, hidden: [],
       approval: 'bound to revision 2',
-      note: 'Assembly consumes only accepted work, verification runs the one allowed check, and the result is an isolated commit — nothing is pushed. A file published against a task&apos;s declared write paths can then name the attempt, worker and fence behind it.',
+      note: 'Assembly consumes only accepted work, verification runs the check this plan allows, and the result is an isolated commit — nothing is pushed. A file published against a task&apos;s declared write paths can then name the attempt, worker and fence behind it.',
       state: { 'task-json-renderer': ['✓', 'accepted', 'attempt 2 · fence 2'],
                'task-markdown-renderer': ['✓', 'accepted', 'attempt 1 · fence 1'],
                'task-docs': ['✓', 'accepted', 'attempt 1 · fence 1'],
@@ -66,7 +66,7 @@
     'task-cli-integration': { role: 'worker', kind: 'work', writes: ['ledger_service/cli.py', 'tests/test_cli_reports.py'] },
     'assemble': { role: 'assembler', kind: 'assembly', writes: [] },
     'verify': { role: 'verifier', kind: 'verification', writes: [] },
-    'result': { role: '—', kind: 'result', writes: [] }
+    'result': { role: '—', kind: 'mission outcome, not a task', writes: [] }
   };
 
   function ready(fn) {
