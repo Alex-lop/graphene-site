@@ -24,7 +24,7 @@
                'task-cli-integration': Q, 'assemble': Q, 'verify': Q, 'result': Q } },
 
     { id: 'approve', label: 'Approve', rev: '2', digest: V2, hidden: [],
-      approval: 'records mission + base_sha + revision 2 + plan_sha256',
+      approval: 'event records revision 2, plan_sha256 and base_sha',
       note: 'The recorded approval names four things at once. Name a superseded revision, or the wrong digest, and the store refuses it — and nothing can be dispatched under a revision nobody approved.',
       state: { 'task-json-renderer': Q, 'task-markdown-renderer': Q, 'task-docs': Q,
                'task-cli-integration': Q, 'assemble': Q, 'verify': Q, 'result': Q } },
@@ -47,7 +47,7 @@
 
     { id: 'verify', label: 'Verify', rev: '2', digest: V2, hidden: [],
       approval: 'bound to revision 2',
-      note: 'Assembly consumes only accepted work, verification runs the one allowed check, and the result is an isolated commit — nothing is pushed. Every file the mission published can then name the attempt, worker and fence behind it.',
+      note: 'Assembly consumes only accepted work, verification runs the one allowed check, and the result is an isolated commit — nothing is pushed. A file published against a task&apos;s declared write paths can then name the attempt, worker and fence behind it.',
       state: { 'task-json-renderer': ['✓', 'accepted', 'attempt 2 · fence 2'],
                'task-markdown-renderer': ['✓', 'accepted', 'attempt 1 · fence 1'],
                'task-docs': ['✓', 'accepted', 'attempt 1 · fence 1'],
@@ -57,7 +57,8 @@
                'result': ['✓', 'committed', 'isolated — nothing pushed'] } }
   ];
 
-  /* the real contract of each task, from the captured plan */
+  /* Contracts as captured in evidence/north_star/2026-08-23-mission1/plan_show.json,
+     except task-docs, which is the edit scripts/plan_digest.py applies to that plan. */
   var CONTRACT = {
     'task-json-renderer': { role: 'worker', kind: 'work', writes: ['ledger_service/report_json.py', 'tests/test_report_json.py'] },
     'task-markdown-renderer': { role: 'worker', kind: 'work', writes: ['ledger_service/report_markdown.py', 'tests/test_report_markdown.py'] },
@@ -170,7 +171,7 @@
       ];
       inspector.innerHTML = '<dl class="mg-fields">' + rows.map(function (r) {
         return '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>';
-      }).join('') + '</dl>' + (c.added ? '<p class="mg-added-note">Your edit. It did not exist in revision 1.</p>' : '');
+      }).join('') + '</dl>' + (c.added ? '<p class="mg-added-note">Your edit &mdash; it is not in the captured plan; it is what scripts/plan_digest.py adds to it.</p>' : '');
     }
 
     /* ---- wiring ----------------------------------------------------- */

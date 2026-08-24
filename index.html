@@ -42,8 +42,8 @@
   <div class="wrap">
     <h1>Draw the route. Sign the map. Watch your agents keep to it.</h1>
     <p class="lede">A goal becomes a graph you can export, edit and approve. The approved
-      revision is what runs &mdash; every worker scoped, every retry fenced, every result
-      verified, and every published file able to answer <code>graphene why</code>.</p>
+      revision is what runs &mdash; every work task scoped, every retry fenced, every result
+      verified, and the files it publishes able to answer <code>graphene why</code>.</p>
     <p class="actions">
       <a class="btn btn-go" href="#loop">See a mission change</a>
       <a class="btn" href="https://github.com/Alex-lop/Graphene">View on GitHub</a>
@@ -68,8 +68,8 @@
   <div class="wrap">
     <p class="eyebrow">The loop</p>
     <h2>You change the route. The runtime follows your change.</h2>
-    <p>Graphene proposes a route and stops, because a proposal is not a decision. Step through
-      what happens next.</p>
+    <p>Graphene proposes a route and will not run it: no worker can be leased under a revision
+      nobody approved. Step through what happens next.</p>
 
     <div class="mission" data-mission>
       <div>
@@ -104,12 +104,13 @@
           <dl>
             <dt>revision</dt><dd data-rev>2</dd>
             <dt>plan_sha256</dt><dd data-digest class="is-v2">4657377bb718c385427be0ddda84a4f62f9b679a8ebb0b93b859b626086059f2</dd>
-            <dt>approval</dt><dd data-approval>records mission + base_sha + revision 2 + plan_sha256</dd>
+            <dt>approval</dt><dd data-approval>event records revision 2, plan_sha256 and base_sha</dd>
           </dl>
         </div>
         <p class="mg-note" data-note>Assembly consumes only accepted work, verification runs the
-          one allowed check, and the result is an isolated commit &mdash; nothing is pushed. Every
-          file the mission published can then name the attempt, worker and fence behind it.</p>
+          one allowed check, and the result is an isolated commit &mdash; nothing is pushed. A file
+          published against a task&rsquo;s declared write paths can then name the attempt, worker
+          and fence behind it.</p>
         <div data-inspector><p class="mg-hint">Hover, tap or focus a task to see its contract.</p></div>
         <button type="button" class="mg-replay" data-replay>Replay from the proposal</button>
       </div>
@@ -123,8 +124,10 @@
       <a href="https://github.com/Alex-lop/Graphene/blob/main/tests/integration/test_plan_edit_path.py">test_plan_edit_path.py</a>.
       <b>Diagnostic retry at a strictly higher fence:</b> verified live on 2026-08-23.
       <b>One continuous live take of the whole sequence:</b> not captured yet.
-      Both digests are real &mdash; <code>scripts/plan_digest.py</code> in this repository
-      recomputes them from a captured plan.</p>
+      The revision&nbsp;1 digest is the one Graphene recorded for that captured plan; the
+      revision&nbsp;2 digest is not from a recorded mission &mdash;
+      <code>scripts/plan_digest.py</code> beside this page applies the edit above to that plan
+      and reproduces both.</p>
   </div>
 </section>
 
