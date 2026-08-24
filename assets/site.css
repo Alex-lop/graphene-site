@@ -100,7 +100,6 @@ figcaption b { color: var(--ink); font-weight: 600; }
 .dag .lbl { fill: var(--ink); font: 400 13px/1 var(--font-mono); }
 .dag .sub { fill: var(--ink-muted); font: 400 11px/1 var(--font-sans); }
 .dag .glyph { fill: var(--ink); font: 400 12px/1 var(--font-mono); }
-.dag .glyph-accent { fill: var(--accent); }
 .dag .lane { stroke: var(--hairline); stroke-width: 1; }
 .dag .lane-lbl { fill: var(--ink-muted); font: 400 10px/1 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; }
 
@@ -149,7 +148,6 @@ pre {
   font: 400 12.5px/1.55 var(--font-mono); color: var(--ink);
   tab-size: 4;
 }
-pre b { font-weight: 400; color: var(--accent); }
 .term-cap { display: grid; gap: 4px; margin-top: 18px; }
 .term-cap div { display: grid; grid-template-columns: 13rem 1fr; gap: 14px; font-size: .88rem; }
 .term-cap code { color: var(--ink); }
