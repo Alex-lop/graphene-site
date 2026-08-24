@@ -11,35 +11,35 @@
   /* status per node, per stage: [glyph, word, detail] */
   var Q = ['○', 'queued', ''];
   var STAGES = [
-    { id: 'plan', label: 'Plan', rev: '1', digest: V1, hidden: ['task-docs'],
+    { id: 'plan', label: 'Plan', rev: '1', digest: V1, hidden: ['task-docs', 'result'],
       approval: 'none yet — a proposal is not a decision',
       note: 'Graphene proposes one route bound to an exact commit, and stops.',
       state: { 'task-json-renderer': Q, 'task-markdown-renderer': Q, 'task-cli-integration': Q,
                'assemble': Q, 'verify': Q, 'result': Q } },
 
-    { id: 'edit', label: 'Edit', rev: '2 (draft)', digest: null, hidden: [],
+    { id: 'edit', label: 'Edit', rev: '2 (draft)', digest: null, hidden: ['result'],
       approval: 'the revision 1 approval is void',
       note: 'You export the plan as canonical YAML, add a docs task, rewire it into assembly, and revise. Revision 2 is a new immutable revision — revision 1 is not edited, and its approval is void.',
       state: { 'task-json-renderer': Q, 'task-markdown-renderer': Q, 'task-docs': Q,
                'task-cli-integration': Q, 'assemble': Q, 'verify': Q, 'result': Q } },
 
-    { id: 'approve', label: 'Approve', rev: '2', digest: V2, hidden: [],
+    { id: 'approve', label: 'Approve', rev: '2', digest: V2, hidden: ['result'],
       approval: 'event records revision 2, plan_sha256 and base_sha',
-      note: 'The recorded approval names four things at once. Name a superseded revision, or the wrong digest, and the store refuses it — and nothing can be dispatched under a revision nobody approved.',
+      note: 'The recorded approval names four things at once. Name a superseded revision and the store refuses it; name a digest that is not the committed one and the CLI refuses before anything is recorded — and nothing can be dispatched under a revision nobody approved.',
       state: { 'task-json-renderer': Q, 'task-markdown-renderer': Q, 'task-docs': Q,
                'task-cli-integration': Q, 'assemble': Q, 'verify': Q, 'result': Q } },
 
-    { id: 'run', label: 'Run', rev: '2', digest: V2, hidden: [],
+    { id: 'run', label: 'Run', rev: '2', digest: V2, hidden: ['result'],
       approval: 'bound to revision 2',
-      note: 'Only tasks whose dependencies are satisfied become ready. The three roots run in parallel, each fenced to its own write scope.',
+      note: 'Satisfied dependencies are one of five gates on becoming ready. Ready tasks dispatch concurrently up to the plan&apos;s max_concurrency, each holding a lease over its own write paths — a task whose write scope overlaps a live lease is not leased at all.',
       state: { 'task-json-renderer': ['●', 'running', 'attempt 1 · fence 1'],
                'task-markdown-renderer': ['●', 'running', 'attempt 1 · fence 1'],
                'task-docs': ['●', 'running', 'attempt 1 · fence 1'],
                'task-cli-integration': Q, 'assemble': Q, 'verify': Q, 'result': Q } },
 
-    { id: 'retry', label: 'Retry', rev: '2', digest: V2, hidden: [],
+    { id: 'retry', label: 'Retry', rev: '2', digest: V2, hidden: ['result'],
       approval: 'bound to revision 2',
-      note: 'A trusted check fails. The retry is authorised at a strictly higher fence carrying the failure diagnostic — the accepted sibling stays accepted.',
+      note: 'A trusted check fails. The retry is authorised at a strictly higher fence, and on the local mission run it carries the failure diagnostic into the next attempt — the accepted sibling stays accepted.',
       state: { 'task-json-renderer': ['↻', 'retrying', 'check failed — attempt 2 · fence 2'],
                'task-markdown-renderer': ['✓', 'accepted', 'attempt 1 · fence 1'],
                'task-docs': ['✓', 'accepted', 'attempt 1 · fence 1'],

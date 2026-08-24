@@ -168,9 +168,10 @@
       </tbody>
     </table>
 
-    <p class="small muted" style="margin-top:18px">These layers compose. Graft can advise which
-      context enters a node; LangGraph can host an agent runtime. Graphene&rsquo;s boundary is the
-      approved coding mission &mdash; the revision, scopes, checks, retries, artifacts and lineage
+    <p class="small muted" style="margin-top:18px">These layers are complementary rather than
+      competing &mdash; a context provider could advise a planner, an agent framework could host a
+      runtime behind a node. Neither integration exists today.
+      Graphene&rsquo;s boundary is the approved coding mission &mdash; the revision, scopes, checks, retries, artifacts and lineage
       meet there. Descriptions taken from each project&rsquo;s own documentation, 24&nbsp;August&nbsp;2026.</p>
     <p><b>Use Graphene when &ldquo;the agent finished&rdquo; is not enough, and you need to know
       which plan ran.</b></p>
@@ -229,7 +230,7 @@ PLAN DIFF mission_start_b2e344868f963d9a3472ada4 v1 -&gt; v2
   note A committed final approval references the assembly candidate.
 UNKNOWN The model-proposed plan awaits operator review.
 TRUST: every line above is derived from hash-chained mission events and resolvable evidence references; unknowns are listed, never guessed.</code></pre>
-      <figcaption>Afterwards, from a live Gemini mission: the tail of a lineage answer. Note the <code>UNKNOWN</code> line &mdash; Graphene lists what it cannot derive instead of filling it in. <span class="muted">&mdash; <code>evidence/north_star/2026-08-23-mission1/why_ledger_service_cli.py.txt</code> lines&nbsp;27&ndash;32.</span></figcaption>
+      <figcaption>Afterwards, from a live Gemini mission: the tail of a lineage answer. Note the <code>UNKNOWN</code> line: the answer carries its own caveats on screen instead of quietly dropping them. <span class="muted">&mdash; <code>evidence/north_star/2026-08-23-mission1/why_ledger_service_cli.py.txt</code> lines&nbsp;27&ndash;32.</span></figcaption>
     </figure>
     <div class="term-cap">
 
@@ -243,7 +244,7 @@ TRUST: every line above is derived from hash-chained mission events and resolvab
     <p class="eyebrow">Proof</p>
     <h2>Proven today, and not yet.</h2>
     <p>Graphene keeps a machine-readable proof contract in its own repository, and the honest
-      rows stay in it. This is the material summary, including everything that is not proven.</p>
+      rows stay in it. This summarises what the page claims; the full contract carries more.</p>
 <!--PROOF-->
     <table class="proof">
       <thead><tr><th scope="col">Capability</th><th scope="col">Label, and what it is limited to</th></tr></thead>
@@ -258,7 +259,7 @@ TRUST: every line above is derived from hash-chained mission events and resolvab
         <tr><td>Product media, and a continuous live edited-DAG take</td><td><span class="label no">not_proven_capture_pending</span><br>nothing has been filmed</td></tr>
       </tbody>
     </table>
-    <p class="small muted">This is the material summary. The complete machine-readable contract at commit <code>fa302a130afd</code>, committed 2026-08-24, is <a href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">in the repository</a> and vendored beside this page at <a href="assets/product_proof.snapshot.json">product_proof.snapshot.json</a> (byte-identical). It carries 12 further deferred items. Labels here only flip once the machine evidence is in the repository.</p>
+    <p class="small muted">The complete machine-readable contract at commit <code>fa302a130afd</code>, committed 2026-08-24, is <a href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">in the repository</a> and vendored beside this page at <a href="assets/product_proof.snapshot.json">product_proof.snapshot.json</a> (byte-identical). It carries 12 further deferred items. Labels here only flip once the machine evidence is in the repository.</p>
 <!--/PROOF-->
   </div>
 </section>

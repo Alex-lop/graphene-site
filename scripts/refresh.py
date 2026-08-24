@@ -42,8 +42,8 @@ EXCERPTS = [
     ("evidence/north_star/2026-08-23-mission1/why_ledger_service_cli.py.txt", 27, 32,
      "graphene why ledger_service/cli.py --mission mission_start_5291caad50a8ee7a222a9221",
      "Afterwards, from a live Gemini mission: the tail of a lineage answer. Note the "
-     "<code>UNKNOWN</code> line &mdash; Graphene lists what it cannot derive instead of "
-     "filling it in."),
+     "<code>UNKNOWN</code> line: the answer carries its own caveats on screen instead of "
+     "quietly dropping them."),
 ]
 
 CAPTIONS = []
@@ -144,7 +144,7 @@ def build_proof(proof, sha, date):
     out.append('      </tbody>')
     out.append('    </table>')
     out.append(
-        f'    <p class="small muted">This is the material summary. The complete '
+        f'    <p class="small muted">The complete '
         f'machine-readable contract at commit <code>{sha[:12]}</code>, committed {date}, is '
         f'<a href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">'
         f'in the repository</a> and vendored beside this page at '
