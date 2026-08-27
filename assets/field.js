@@ -8,7 +8,7 @@
   var CONFIG = {
     dwellMs: 220, resolveMs: 320, waveMs: 1600, releaseHoldMs: 80,
     pointerTauMs: 85, strengthInMs: 140, strengthOutMs: 185,
-    releaseMs: 185, wakeMs: 500, radius: 168,
+    releaseMs: 185, releaseStopMs: 620, wakeMs: 500, radius: 168,
     idleDelayMs: 550, idleResolveMs: 400, idleWaveAtMs: 1450,
     idleReleaseAtMs: 3900, idleStopMs: 4450, desktopCap: 1600, narrowCap: 900
   };
@@ -34,6 +34,9 @@
   function progress(ms, start, duration) { return ease(clamp((ms - start) / duration, 0, 1)); }
   function expSmooth(value, target, dt, tau) { return target + (value - target) * Math.exp(-dt / tau); }
   function influence(distance, radius) { return distance >= radius ? 0 : 1 - fade(distance / radius); }
+  function releaseValue(elapsed, from) {
+    return from * Math.exp(-Math.max(0, elapsed - CONFIG.releaseHoldMs) / CONFIG.releaseMs);
+  }
   function stagger(value, group) { return ease(clamp((value - group * .16) / (1 - group * .16), 0, 1)); }
   function routeResolve(edge, value) { return stagger(value, edge < 3 ? 1 : edge < 7 ? 2 : 3); }
   function nodeResolve(node, value) { return stagger(value, node <= 3 ? 0 : node === 4 ? 1 : node === 5 ? 2 : 3); }
@@ -82,7 +85,7 @@
 
   var API = {
     CONFIG: CONFIG, TOPOLOGY: TOPOLOGY, clamp: clamp, fade: fade,
-    progress: progress, expSmooth: expSmooth, influence: influence,
+    progress: progress, expSmooth: expSmooth, influence: influence, releaseValue: releaseValue,
     stagger: stagger, routeResolve: routeResolve, nodeResolve: nodeResolve,
     mapPointer: mapPointer, stageForWave: stageForWave,
     debugFrame: debugFrame, idleFrame: idleFrame
@@ -290,7 +293,7 @@
           motion.releaseFrom = motion.mode === 'resolve' ? progress(now, motion.resolveAt, CONFIG.resolveMs) : 1;
           motion.candidateFrom = motion.candidate;
           motion.releaseAt = now; motion.mode = 'release';
-        } else if (ptr.inside) motion.mode = 'explore';
+        } else if (motion.mode !== 'release' && ptr.inside) motion.mode = 'explore';
       }
       if (!ptr.inside && motion.mode !== 'rest' && motion.mode !== 'release') {
         motion.releaseFrom = motion.mode === 'resolve' ? progress(now, motion.resolveAt, CONFIG.resolveMs) :
@@ -318,9 +321,9 @@
         frame.running = frame.candidate < 1;
       } else if (motion.mode === 'release') {
         var releaseMs = Math.max(0, now - motion.releaseAt - CONFIG.releaseHoldMs);
-        frame.resolve = motion.releaseFrom * Math.exp(-releaseMs / CONFIG.releaseMs);
-        frame.candidate = motion.candidateFrom * Math.exp(-releaseMs / CONFIG.releaseMs);
-        if (releaseMs >= 700) { motion.mode = ptr.inside ? 'explore' : 'rest'; ptr.movedAt = now; frame.resolve = 0; frame.candidate = 0; }
+        frame.resolve = releaseValue(now - motion.releaseAt, motion.releaseFrom);
+        frame.candidate = releaseValue(now - motion.releaseAt, motion.candidateFrom);
+        if (releaseMs >= CONFIG.releaseStopMs) { motion.mode = ptr.inside ? 'explore' : 'rest'; ptr.movedAt = now; frame.resolve = 0; frame.candidate = 0; }
       }
       motion.candidate = frame.candidate;
       return frame;

@@ -19,7 +19,10 @@ assert.equal(field.influence(0, CONFIG.radius), 1);
 assert.equal(field.influence(CONFIG.radius, CONFIG.radius), 0);
 assert(field.influence(80, CONFIG.radius) > field.influence(140, CONFIG.radius));
 assert(field.expSmooth(0, 1, 100, CONFIG.strengthInMs) > .5, 'input must visibly respond within 100ms');
-assert(Math.exp(-700 / CONFIG.releaseMs) < .03, 'release must visually settle within 700ms');
+assert.equal(field.releaseValue(40, 1), 1, 'release holds briefly');
+assert(field.releaseValue(300, 1) < field.releaseValue(150, 1), 'release decays smoothly');
+assert(CONFIG.releaseHoldMs + CONFIG.releaseStopMs <= 700, 'release must settle within 700ms');
+assert(field.releaseValue(CONFIG.releaseHoldMs + CONFIG.releaseStopMs, 1) < .04);
 
 const desktopLeft = field.mapPointer(0, 100, 1200, 700, false);
 const desktopRight = field.mapPointer(1200, 100, 1200, 700, false);
@@ -67,5 +70,6 @@ assert(source.includes("canvas.closest('.hero')"));
 assert(!source.includes("canvas.addEventListener('pointermove'"));
 assert(!source.includes('Math.random'));
 assert(source.includes("frozenName = 'verified'"));
+assert(source.includes("motion.mode !== 'release' && ptr.inside"), 'fresh pointer samples must not cancel a release');
 
 console.log('all pass: Governance Lens input, timing, topology, lifecycle, and static states');
