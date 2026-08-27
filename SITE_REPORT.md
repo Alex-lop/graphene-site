@@ -843,6 +843,7 @@ numbers. These are explicit evidence gaps, not inferred passes.
 | `c44337ffe8027b518ee9b6050f8ee854cfe192a3` | four-region current-product refocus, mission, Governance Lens, authentic TUI, social image, deterministic checks | field + mission scripts; syntax; diff check |
 | `065b076557021259e06c20d6e30fb01afe9117f5` | retire stale proof snapshot, missing-film poster, refresh/digest tooling, and obsolete display specs | field + mission scripts; diff check |
 | `63b44df356dacbad2b8bc8376c59847cf3416b16` | keep the hero release smooth and quiescent under renewed input | field + mission scripts; syntax; diff check |
+| `cae2e1c65b29a02992603f033420067b2d2c7de9` | record the convergence evidence, claim ledger, measurements, and browser limitation | full field/mission/syntax/diff gate before push |
 
 Push and live-deployment verification are recorded in the final deployment
 note below after GitHub Pages serves the exact content.
@@ -858,5 +859,34 @@ note below after GitHub Pages serves the exact content.
 - No framework, bundler, package manifest, remote font, animation dependency,
   web editor, install wizard, analytics, or speculative abstraction was added.
 - The local audit HTTP server was stopped after the 200 checks. The temporary
-  browser session never existed. `caffeinate` remains only until publishing and
-  will be stopped in the final deployment note. No product process was started.
+  browser session never existed. `caffeinate` was stopped after live deployment
+  verification. No product process was started.
+
+### Final deployment note
+
+GitHub Pages workflow
+[`33068019893`](https://github.com/Alex-lop/graphene-site/actions/runs/33068019893)
+completed successfully for
+`cae2e1c65b29a02992603f033420067b2d2c7de9`. The public URL is
+<https://alex-lop.github.io/graphene-site/>.
+
+Live verification after that successful build:
+
+- public HTML, design tokens, site CSS, both JavaScript files, terminal WebP,
+  OG image, both favicons, 404 page, and robots file each returned HTTP 200 and
+  matched the corresponding local file byte for byte;
+- the authentic TUI asset matched SHA-256 `c4155e1201f2…`, and the current
+  homepage matched SHA-256 `4ae36a89dde0…`;
+- deleted `assets/poster.png` and `assets/product_proof.snapshot.json` returned
+  404; a deep missing path returned the self-contained 404 page byte for byte;
+- all six distinct external GitHub destinations returned HTTP 200; local IDs,
+  fragment targets, and asset paths had already passed the structural audit;
+- remote `main` and the Pages workflow both named the pushed commit. No stale
+  production asset was observed under a cache-busting query.
+
+The deployment-record commit containing this note changes only
+`SITE_REPORT.md`; the byte-verified production tree remains the content at
+`63b44df356dacbad2b8bc8376c59847cf3416b16`. Final state: local server stopped,
+`caffeinate` stopped, no browser/watch process created, no temporary worktree,
+clean website tree after the final push, and the read-only Graphene reference
+still at `cc50a62a9a3f6b521d5a157b0942ca4e722fbe57`.
