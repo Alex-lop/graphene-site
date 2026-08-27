@@ -679,3 +679,184 @@ The general lesson, which cost four lanes time tonight: **re-pinning a truth
 source invalidates every conclusion drawn before the re-pin.** A finding is only
 as current as the tree it was run against, and nothing about the finding itself
 says so.
+
+---
+
+# 2026-08-27 — Ultra refocus convergence
+
+This dated section supersedes the earlier report's current-state and publishing
+notes. The older material remains above as history; it describes the previous
+site generation and must not be read as the present homepage.
+
+## Repository pins and authority
+
+| Repository | Starting remote/main | Final audited product/content SHA | Result |
+|---|---|---|---|
+| `Alex-lop/Graphene` (read only) | `cc50a62a9a3f6b521d5a157b0942ca4e722fbe57` | `cc50a62a9a3f6b521d5a157b0942ca4e722fbe57` | Remote and clean local reference agreed. Read only; no fetch, product execution, test, edit, commit, or push was performed there. |
+| `Alex-lop/graphene-site` (write repository) | `3fa23824eb6660adf0d3fbbb9c2252a6c4c0a03a` | production content `63b44df356dacbad2b8bc8376c59847cf3416b16`; deployment record follows below | Started from the exact remote head in a separate clean clone. |
+
+Remote heads were queried with `git ls-remote` before work began and again
+before publishing. The Graphene fixture file remained SHA-256
+`a04092b1839e1b63d7b51d810b86b5d26dae117c2f6e0057108926da2920b593`.
+No credential, cloud, model, or paid API was used.
+
+## Outcome and information architecture
+
+The homepage is now four major regions:
+
+1. a category-first hero with the canonical promise and two actions;
+2. one signed-mission scene for Plan → Sign → Run → Recover → Prove;
+3. one authentic terminal replay plus the MCP connection door;
+4. one compact proof/limits strip, final action, and footer.
+
+The previous seven-region research-report flow included a standalone problem
+essay, comparison table, three terminal transcripts, a proof wall, and a
+missing-film poster. Those surfaces are removed rather than moved below the
+fold.
+
+### Before / after measurements
+
+Words were counted from parsed HTML with `\b[\w’'-]+\b`. “Authored prose” is
+visible paragraph/heading/caption copy; statuses, navigation, controls, legends,
+and command labels are interface text. The alternative count is the closed
+mission text (89), four non-default stage notes (82), and screen-reader fixture
+identifiers (17). The image count is macOS Vision OCR tokenized with `wc -w`.
+
+| Measure | Before (`3fa2382`) | After (`63b44df`) | Change |
+|---|---:|---:|---:|
+| Major regions | 7 | 4 | −43% |
+| Authored prose | 927 | 286 | −69% |
+| Default-visible interface | 365 | 263 | −28% |
+| Default-visible total | 1,292 | 549 | −58% |
+| Expanded/collapsed alternative | 0 | 188 | complete mission account added outside the default budget |
+| Text embedded in images | 13 | 125 | authentic TUI replaces an empty poster |
+| Desktop scroll height | about 7,600 px / 8.12 × 936 px viewport | not browser-measured; see limitation below | no unsupported number claimed |
+| Raw first-load bytes | 202,258 B | 125,505 B / 122.6 KiB | −38% |
+| Same-origin first-load requests | 7 | 7 | unchanged |
+
+After breakdown: HTML 16,155 B; CSS 14,474 B; JavaScript 35,829 B;
+lossless terminal WebP 58,630 B; selected SVG favicon 417 B. The 1,475 B
+alternate PNG favicon may be selected instead. The 89,856 B social image is not
+a normal page request. There are zero runtime third-party assets, fonts,
+analytics, or telemetry requests.
+
+## Exact file changes
+
+| Change | Files |
+|---|---|
+| Rewritten current-product page and visual system | `index.html`, `assets/site.css`, `assets/design-tokens.css` |
+| Rebuilt interactions | `assets/field.js`, `assets/mission.js` |
+| Added real evidence and checks | `assets/ui-terminal.webp`, `scripts/check_mission.js`; rewrote `scripts/check_field_reveal.js` |
+| Refreshed social asset tooling | `assets/og.png`, `scripts/og.html`, `scripts/make_images.py` |
+| Deleted obsolete/stale surfaces | `assets/poster.png`, `assets/product_proof.snapshot.json`, `scripts/plan_digest.py`, `scripts/refresh.py`, `specs/PLUGIN_DISPLAY_SPEC.md`, `specs/TERMINAL_DISPLAY_SPEC.md` |
+
+`404.html`, `robots.txt`, and both favicons remain unchanged. The 404 stays
+self-contained so a deep missing path does not create more missing requests.
+
+## Final claim ledger
+
+Every row is pinned to Graphene
+`cc50a62a9a3f6b521d5a157b0942ca4e722fbe57`.
+
+| Visible claim | Source path / failing evidence | Truth label | What it does not prove |
+|---|---|---|---|
+| Graphene is a terminal-native workflow control plane and coordination/provenance layer for bounded coding work. | `contracts/product_proof.json` → `product_thesis`; `docs/PRODUCT.md` | product contract | It is not an agent, harness, generic repository map, or security sandbox. |
+| A goal becomes a policy-bounded task DAG; execution binds to the exact approved revision/digest. | `backend/graphene/integrations/mission_mcp.py`; `tests/unit/integrations/test_mission_mcp.py` forged-digest refusal | `VERIFIED_LOCAL` | “Sign” is a metaphor, not cryptographic identity or authenticated e-signature. |
+| The shown mission has six exact tasks, the displayed dependencies, and maximum concurrency 2. | `demo/taskmaster/scenario.json`; SHA-256 `a04092…b593` | captured fixture | It is not a product-wide task count or generic-repository promise. |
+| `render_markdown` failed attempt 1/fence 1 and completed on attempt 2/fence 2 without becoming a new plan node. | `evidence/integration/2026-08-26/transcript.jsonl`; `mission_summary` records two attempts | `VERIFIED_LOCAL`, captured fixture | It is not an infrastructure crash or proof of every retry mode. |
+| All six tasks are done; mission `mission_start_5541…` is `awaiting_result`; bundle `final_result_be3df9ce…` is `awaiting_decision`. | `evidence/integration/2026-08-26/transcript.jsonl`, beats `mission_status` and `mission_summary`; `summary.txt` | `VERIFIED_LOCAL`, captured fixture | No final result decision or commit occurred through the six MCP tools. |
+| `why status_report/cli.py` establishes target, producer, accepted inputs, assembly, and verification while approval is unknown. | `evidence/integration/2026-08-26/transcript.jsonl`, beat `why lineage` | `VERIFIED_LOCAL`, captured fixture | It is not a semantic diff and does not invent missing approval truth. |
+| `graphene ui` is a read-only signed-DAG viewer with task drill-in, summary, and `why`; scripted live following was captured. | `contracts/product_proof.json` → `terminal_ui`; `docs/PROOF.md`; `evidence/ui/2026-08-26/README.md`; `tests/unit/ui/` | `VERIFIED_LOCAL` | The live attach is scripted-local, not a live model mission or TUI write surface. |
+| `graphene-mcp` exposes the `goal` prompt and six named tools; the official MCP client drove the fixture and Claude Code discovery was captured. | `backend/graphene/integrations/mission_mcp.py`; `tests/process/test_mission_mcp_stdio.py`; `evidence/integration/2026-08-26/`; `claude-mcp-list.txt` | `VERIFIED_LOCAL` | The signer was a script; Codex/Gemini connections and a person signing in chat were not driven. MCP does not make the final result decision. |
+| The replay command is fixed, zero-credential, and runs no live agent. | `contracts/product_proof.json` → `taskmaster_replay` / `terminal_ui`; `docs/PROOF.md` | `VERIFIED_LOCAL` | It does not accept an arbitrary zero-key goal or prove Gemini/cloud execution. |
+| Two bounded Gemini workers and evidence-aware controlled-check retry were verified live on 2026-08-23. | `contracts/product_proof.json` → `live_gemini`, `failure_aware_retry`; `evidence/north_star/2026-08-23-north-star-live.md` | `VERIFIED_LIVE` (dated) | Approval was operator-delegated; the check fault was intentionally injected; no human-attested live take is claimed. |
+| Cloud Run/real Firestore are not deployed; Docker smoke/benchmark are not proven; arbitrary repos/editor/auto-push and a film are absent. | `contracts/product_proof.json`; `docs/PROOF.md`; `docs/KNOWN_LIMITATIONS.md` | `NOT DEPLOYED`, `NOT PROVEN`, or not supported, as displayed | Local emulator/packaging/rehearsals do not upgrade any of these labels. |
+
+An independent skeptic re-read the final visible copy against the fixture and
+current product sources and found no claim blocker. A separate implementation
+review found two real issues—the SVG lineage hiding and post-release RAF
+stopping—which were fixed and then re-reviewed clean.
+
+## Governance Lens state machine
+
+| State | Production behavior |
+|---|---|
+| Rest | Deterministic low-contrast graphite level-set current with a faint latent route. |
+| Explore | Fine-pointer samples from the entire hero—including copy and actions—map into the visual stage; existing strokes respond with capped velocity, 85 ms position smoothing, 140/185 ms strength in/out, 168 px influence, and a 500 ms wake. The canvas never accepts pointer events. |
+| Resolve | A 220 ms low-speed dwell starts a 320 ms staggered root → wiring → assembly → verification resolve: 540 ms pause-to-settle. Topology and anchors never chase the pointer. |
+| Progress | One 1,600 ms burnt-orange illustration runs at most two roots, then the third root, `wire_cli`, exact four-input assembly, and verification. Orange represents illustrative progress only. |
+| Verified | The route stays graphite and a separate graphite candidate marker appears after verification with no task edge. |
+| Release | Renewed motion or exit holds 80 ms, then exponentially dissolves and stops by 700 ms. Fresh samples cannot cancel the decay; the outside/rest frame schedules no continuing RAF. |
+| Idle / degraded | One sequence starts after 550 ms, resolves, traces, reveals the candidate, settles to a quiet latent route, and stops at 4,450 ms. Real input cancels it. Reduced motion paints one deterministic `verified` frame with no RAF; touch is ignored; offscreen/hidden work stops; forced colors and no-JS hide the decorative canvas. |
+
+`scripts/check_field_reveal.js` deterministically checks input mapping, sub-100
+ms response math, influence falloff, smoothing, dwell/resolve timing, stagger,
+release, exact topology, candidate separation, execution ordering, named frozen
+states (`rest`, `resolve`, `verified`, `release`), caps, and the 4.5 s stop.
+
+## Mission and terminal provenance
+
+- MCP scene: `demo/taskmaster/scenario.json`, mission
+  `mission_start_5541d5c504fa7f8409087233`, base
+  `e5995606e3cdcf37737dc613e2f391e229726358`, plan v1, canonical digest
+  `cddcda3f19194df275e7be75c9fe2ba9b087fa4ebfd69ed7893b97754040bf8c`.
+  The HTML exposes the full identifiers in screen-reader detail and rests at the
+  honest final gate.
+- `scripts/check_mission.js` pins the SHA, scenario, IDs, adjacency, concurrency,
+  stage vocabulary, same-node retry, all-done final state, known `why` unknown,
+  separate candidate, no autoplay, keyboard keys, SVG description, separate
+  replay label, and complete no-JS state.
+- Terminal image: lossless whitespace-only crop of
+  `docs/assets/ui-terminal.png` (source SHA-256 `685e5c…afb9`) into 1,800 ×
+  1,280 WebP, 58,630 B, SHA-256
+  `c4155e1201f2bed113111db85e043a0c5040cf84d64b7e9a6eecd43d57ac6ab2`.
+  It is explicitly a different fixed replay (`mission_status_reports`, checkpoint
+  4/11, digest `9b9f15f52186`), not the MCP mission or a live model capture.
+
+## Verification matrix
+
+| Gate | Result |
+|---|---|
+| Syntax / repository checks | `node --check` for both scripts, both deterministic check scripts, and `git diff --check`: pass. |
+| HTML/assets/fragments | Standard-library HTML parse: unique IDs, every local fragment, and every local asset pass. Local HTTP returned 200 for HTML, CSS, JS, terminal image, OG, favicons, 404, and robots. |
+| Word/region/command/image budgets | 4 regions; 286 authored and 549 default-visible words; one 3-line command; captions under 40 words; two actions maximum per region; 58,630 B terminal image; pass. |
+| Third-party runtime requests | Source audit: none. External URLs are navigation/proof links, not loaded assets. |
+| Contrast | Computed ratios: ink/paper 13.20:1; muted/paper 4.95:1; accent/paper 5.16:1; ink/raised 14.40:1; muted/raised 5.39:1; terminal-muted/terminal 6.43:1. AA pass. |
+| Keyboard | Ordinary stage buttons implement Arrow keys, Home, End; task buttons expose focus/selection and Escape clearing; 44 px minimum controls; source/test pass, browser execution unavailable. |
+| Touch/coarse pointer | Hero ignores touch and does not capture scrolling; task controls remain HTML buttons; source pass, physical-device execution unavailable. |
+| Reduced motion / forced colors | Deterministic verified still with no RAF; forced colors hide canvas; controls remain available; source/test pass, rendered execution unavailable. |
+| No JavaScript | Final six-task/done state, result gate, complete closed text equivalent, links, and proof remain in HTML; stage controls hide, task controls are non-interactive, hero reserve collapses; source/test pass, rendered execution unavailable. |
+| Mobile / zoom / DPR | Responsive layout covers 320–430 px, 390 × 844, stacked mission/terminal, lower hero field, DPR cap 2, overflow protections; source audit pass, rendered matrix unavailable. |
+| Field performance | ≤1,600 desktop / ≤900 narrow marks, precomputed geometry, opacity buckets, no inner-loop DOM reads, offscreen/hidden pause, one idle run, quiescent release; source/test pass. Frame p95, long-task and retained-heap probes unavailable. |
+| Chrome / Safari / Firefox, console, visual overflow, scroll height | **Not run.** The required in-app Browser reported that no browser instance was available (`getDefault()` failed; browser list was empty). Per the browser-control rules, no alternate Playwright/browser library was substituted. |
+| Lighthouse desktop/mobile | **Not run for the new tree** for the same browser-environment reason. Historical 100/99 performance and 100 accessibility/best-practices/SEO numbers above belong only to the old site and are not carried forward. |
+
+The browser outage also prevented the requested two-or-three rendered motion
+studies, real-pointer judgment, visual browser/device matrix, current scroll
+height, console capture, CLS/frame/heap measurements, and current Lighthouse
+numbers. These are explicit evidence gaps, not inferred passes.
+
+## Commits and deployment
+
+| Commit | Meaning | Gate before commit |
+|---|---|---|
+| `c44337ffe8027b518ee9b6050f8ee854cfe192a3` | four-region current-product refocus, mission, Governance Lens, authentic TUI, social image, deterministic checks | field + mission scripts; syntax; diff check |
+| `065b076557021259e06c20d6e30fb01afe9117f5` | retire stale proof snapshot, missing-film poster, refresh/digest tooling, and obsolete display specs | field + mission scripts; diff check |
+| `63b44df356dacbad2b8bc8376c59847cf3416b16` | keep the hero release smooth and quiescent under renewed input | field + mission scripts; syntax; diff check |
+
+Push and live-deployment verification are recorded in the final deployment
+note below after GitHub Pages serves the exact content.
+
+## Deliberate omissions and quiescence
+
+- No poster was regenerated: the film is still not proven, so a poster would
+  reintroduce the implication this pass removed. The social OG image was
+  regenerated from the deterministic verified field instead.
+- No proof snapshot remains: the page links directly to exact-SHA product
+  sources. No refresh script remains because there is no legitimate generated
+  payload to refresh, and retaining it could revive the stale wall.
+- No framework, bundler, package manifest, remote font, animation dependency,
+  web editor, install wizard, analytics, or speculative abstraction was added.
+- The local audit HTTP server was stopped after the 200 checks. The temporary
+  browser session never existed. `caffeinate` remains only until publishing and
+  will be stopped in the final deployment note. No product process was started.
