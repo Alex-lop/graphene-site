@@ -1,5 +1,5 @@
 /* Graphene design tokens.
-   One language for the site, the terminal spec, and the plugin spec.
+   One language for the site and its product explanation.
    Warm paper, graphite ink, hairline structure, one burnt-orange accent.
    The terminal inset is this page inverted: ink becomes the surface. */
 
@@ -16,7 +16,7 @@
   --hairline: rgba(36, 38, 34, 0.14);
   --hairline-strong: rgba(36, 38, 34, 0.28);
 
-  /* The one loud colour: approval and digests, the user's edit, link hover. */
+  /* The one loud colour: execution progress, focus, and link hover. */
   --accent: #9a4f24;
   --accent-wash: rgba(154, 79, 36, 0.10);
 

@@ -1,7 +1,6 @@
 <!doctype html><meta charset="utf-8">
 <title>Graphene OG frame</title>
-<!-- Renders assets/og.png (1200x630) and assets/poster.png (1600x900).
-     See scripts/make-images.sh. Not part of the site. -->
+<!-- Renders assets/og.png (1200x630). Not part of the site. -->
 <link rel="stylesheet" href="../assets/design-tokens.css">
 <style>
   html,body{margin:0;height:100%;background:var(--bg);overflow:hidden}
@@ -15,10 +14,10 @@
   .sub{position:absolute;left:5.4%;bottom:11.5%;margin:0;
        font:400 2.1vh/1.3 var(--font-sans);color:var(--ink-muted)}
 </style>
-<div class="frame">
-  <canvas data-field data-frozen="0.92"></canvas>
+<div class="frame hero">
+  <canvas data-field data-frozen="verified"></canvas>
   <div class="scrim"></div>
   <p class="mark">Graphene</p>
-  <p class="sub">Draw the route. Sign the map. Watch your agents keep to it.</p>
+  <p class="sub">Workflow control for coding agents.</p>
 </div>
 <script src="../assets/field.js"></script>

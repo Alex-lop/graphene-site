@@ -1,39 +1,71 @@
 #!/usr/bin/env node
-/* Checks the hero field's pointer-reveal arithmetic without a browser.
-   Headless Chrome's virtual clock does not advance requestAnimationFrame, so the
-   reveal can never be caught in a headless screenshot; this asserts the maths the
-   draw loop runs instead. usage: node scripts/check_field_reveal.js */
-const fs = require('fs');
-const path = require('path');
+/* Deterministic checks for the production Governance Lens primitives. */
+'use strict';
 
-const src = fs.readFileSync(path.join(__dirname, '..', 'assets', 'field.js'), 'utf8');
-const fade = eval('(' + src.match(/function fade\(t\)[^}]+}/)[0].replace('function fade', 'function') + ')');
-const PR = Number(src.match(/PR = (\d+)/)[1]);
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const fieldPath = path.join(__dirname, '..', 'assets', 'field.js');
+const field = require(fieldPath);
 
-/* the reveal branch, transcribed from the draw loop */
-function reveal(cycle, onRoute, pointerStrength, dist) {
-  let g = cycle;
-  if (pointerStrength > 0.002 && onRoute > 0 && dist * dist < PR * PR) {
-    const local = (1 - fade(dist / PR)) * pointerStrength;
-    if (local > g) g = local;
-  }
-  return g;
-}
+const { CONFIG, TOPOLOGY } = field;
+assert.equal(CONFIG.dwellMs + CONFIG.resolveMs, 540, 'pause-to-settle must be 540ms');
+assert.equal(CONFIG.radius, 168);
+assert.equal(CONFIG.desktopCap, 1600);
+assert.equal(CONFIG.narrowCap, 900);
+assert(CONFIG.idleStopMs <= 4500, 'onboarding must stop within 4.5s');
 
-const cases = [
-  ['no pointer, mid-drift',                    reveal(0, 1, 0, 10),  0],
-  ['pointer on a route point',                 reveal(0, 1, 1, 0),   1],
-  ['pointer 60px from a route point',          reveal(0, 1, 1, 60),  null],
-  ['pointer just outside the radius',          reveal(0, 1, 1, 130), 0],
-  ['point not on any route edge',              reveal(0, 0, 1, 0),   0],
-  ['cycle already revealing beats the pointer', reveal(1, 1, 1, 60), 1],
+assert.equal(field.influence(0, CONFIG.radius), 1);
+assert.equal(field.influence(CONFIG.radius, CONFIG.radius), 0);
+assert(field.influence(80, CONFIG.radius) > field.influence(140, CONFIG.radius));
+assert(field.expSmooth(0, 1, 100, CONFIG.strengthInMs) > .5, 'input must visibly respond within 100ms');
+assert(Math.exp(-700 / CONFIG.releaseMs) < .03, 'release must visually settle within 700ms');
+
+const desktopLeft = field.mapPointer(0, 100, 1200, 700, false);
+const desktopRight = field.mapPointer(1200, 100, 1200, 700, false);
+assert(desktopLeft.x >= 1200 * .43 && desktopRight.x > desktopLeft.x, 'all hero input maps into the visual stage');
+const mobile = field.mapPointer(10, 10, 390, 760, true);
+assert(mobile.y >= 760 * .64, 'touch-size composition lives below the copy');
+
+const expectedEdges = [
+  [1, 4], [2, 4], [3, 4],
+  [1, 5], [2, 5], [3, 5], [4, 5],
+  [5, 6],
 ];
+assert.deepEqual(TOPOLOGY.edges, expectedEdges);
+assert.equal(TOPOLOGY.nodes[0].kind, 'boundary');
+assert.equal(TOPOLOGY.nodes[7].kind, 'candidate');
+assert.equal(TOPOLOGY.edges.some(([from, to]) => from === 7 || to === 7), false, 'candidate must stay outside the DAG');
 
-let bad = 0;
-for (const [name, got, want] of cases) {
-  const ok = want === null ? (got > 0.05 && got < 0.95) : Math.abs(got - want) < 1e-9;
-  if (!ok) bad++;
-  console.log(`${ok ? 'ok  ' : 'FAIL'} ${name} -> ${got.toFixed(3)}`);
-}
-console.log(bad ? `FAILED (${bad})` : `all pass, reveal radius ${PR}px`);
-process.exit(bad ? 1 : 0);
+assert.equal(field.stageForWave(.1), 0);  // at most roots 1 + 2
+assert.equal(field.stageForWave(.3), 1);  // root 3 alone
+assert.equal(field.stageForWave(.5), 2);  // wire
+assert.equal(field.stageForWave(.7), 3);  // assembly
+assert.equal(field.stageForWave(.9), 4);  // verification
+assert.equal(field.stageForWave(1), -1);  // progress stops
+assert(field.nodeResolve(1, .3) > field.nodeResolve(4, .3), 'roots resolve before wiring');
+assert(field.routeResolve(0, .5) > field.routeResolve(7, .5), 'upstream routes resolve first');
+
+assert.deepEqual(field.debugFrame('rest'), { resolve: 0, wave: -1, candidate: 0 });
+assert.equal(field.debugFrame('resolve').candidate, 0);
+assert.deepEqual(field.debugFrame('verified'), { resolve: 1, wave: -1, candidate: 1 });
+assert(field.debugFrame('release').resolve < 1);
+assert.equal(field.debugFrame('missing'), null);
+
+assert.equal(field.idleFrame(0).resolve, 0);
+assert(field.idleFrame(800).resolve > 0 && field.idleFrame(800).resolve < 1);
+assert(field.idleFrame(CONFIG.idleWaveAtMs + 20).wave >= 0);
+assert.equal(field.idleFrame(CONFIG.idleWaveAtMs + CONFIG.waveMs - 1).candidate, 0,
+  'candidate appears only after verification');
+assert(field.idleFrame(CONFIG.idleWaveAtMs + CONFIG.waveMs + 200).candidate > 0);
+assert.equal(field.idleFrame(CONFIG.idleStopMs).running, false, 'onboarding must stop inside 4.5s');
+assert(field.idleFrame(CONFIG.idleStopMs).resolve < .5, 'onboarding settles to a quiet latent route');
+
+const source = fs.readFileSync(fieldPath, 'utf8');
+assert(source.includes("hero.addEventListener('pointermove'"));
+assert(source.includes("canvas.closest('.hero')"));
+assert(!source.includes("canvas.addEventListener('pointermove'"));
+assert(!source.includes('Math.random'));
+assert(source.includes("frozenName = 'verified'"));
+
+console.log('all pass: Governance Lens input, timing, topology, lifecycle, and static states');

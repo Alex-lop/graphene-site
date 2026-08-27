@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate assets/og.png and assets/poster.png from the hero field.
+"""Regenerate assets/og.png from the hero field.
 
 Renders scripts/og.html in headless Chrome, then quantises the result -- the
 field is nearly monochrome, so a 48-colour palette is visually identical and
@@ -20,7 +20,7 @@ CHROME = os.environ.get(
 PAGE = f"file://{ROOT / 'scripts' / 'og.html'}"
 
 # name, render size, final width
-TARGETS = [("og.png", (1200, 630), 1200), ("poster.png", (1600, 900), 1280)]
+TARGETS = [("og.png", (1200, 630), 1200)]
 
 
 def main():

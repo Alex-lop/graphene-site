@@ -3,300 +3,232 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Graphene — draw the route, sign the map</title>
-<meta name="description" content="Graphene turns one coding request into a route you can export, edit and approve. The approved revision is what runs.">
+<title>Graphene — workflow control for coding agents</title>
+<meta name="description" content="Approve one exact task graph, follow the signed coding mission read-only in your terminal, and inspect the summary and file lineage behind its candidate.">
 <meta name="theme-color" content="#f3eee4">
 <link rel="canonical" href="https://alex-lop.github.io/graphene-site/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://alex-lop.github.io/graphene-site/">
-<meta property="og:title" content="Graphene — draw the route, sign the map">
-<meta property="og:description" content="Graphene turns one coding request into a route you can export, edit and approve. The approved revision is what runs.">
+<meta property="og:title" content="Graphene — workflow control for coding agents">
+<meta property="og:description" content="Approve one exact task graph, follow the signed coding mission read-only in your terminal, and inspect the summary and file lineage behind its candidate.">
 <meta property="og:image" content="https://alex-lop.github.io/graphene-site/assets/og.png">
+<meta property="og:image:alt" content="Graphene’s governed task route resolving from a field of possible work.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Graphene — draw the route, sign the map">
-<meta name="twitter:description" content="Graphene turns one coding request into a route you can export, edit and approve. The approved revision is what runs.">
+<meta name="twitter:title" content="Graphene — workflow control for coding agents">
+<meta name="twitter:description" content="Approve one exact task graph, follow the signed coding mission read-only in your terminal, and inspect the summary and file lineage behind its candidate.">
 <meta name="twitter:image" content="https://alex-lop.github.io/graphene-site/assets/og.png">
+<meta name="twitter:image:alt" content="Graphene’s governed task route resolving from a field of possible work.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="assets/favicon.png" sizes="32x32">
 <link rel="stylesheet" href="assets/site.css">
-<script>document.documentElement.className = "js";</script>
+<script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<nav class="nav">
+<nav class="nav" aria-label="Primary navigation">
   <div class="wrap">
-  <b>Graphene</b>
-  <ul>
-    <li><a href="#fits">Where it fits</a></li>
-    <li><a href="#proof">Proof</a></li>
-    <li><a href="https://github.com/Alex-lop/Graphene">GitHub</a></li>
-  </ul>
+    <a class="wordmark" href="#top" aria-label="Graphene, home">Graphene</a>
+    <ul>
+      <li><a href="#mission">Mission</a></li>
+      <li><a href="#terminal">Terminal</a></li>
+      <li><a href="#proof">Proof</a></li>
+      <li><a href="https://github.com/Alex-lop/Graphene">GitHub</a></li>
+    </ul>
   </div>
 </nav>
 
 <main id="main">
+  <header class="hero" id="top">
+    <canvas data-field aria-hidden="true"></canvas>
+    <div class="wrap hero-copy">
+      <p class="eyebrow">Terminal-native workflow control plane</p>
+      <h1>Draw the route. Sign the map. Watch your agents keep to it.</h1>
+      <p class="lede">Graphene turns a coding goal into a policy-bounded task graph. Inspect or revise the route, approve its exact digest, and follow the signed mission task by task before deciding what happens to its exact candidate.</p>
+      <p class="actions">
+        <a class="btn btn-go" href="#mission">See the signed mission</a>
+        <a class="btn" href="#terminal">Replay the fixed mission</a>
+      </p>
+    </div>
+  </header>
 
-<header class="hero">
-  <canvas data-field aria-hidden="true"></canvas>
-  <div class="wrap">
-    <h1>Draw the route. Sign the map. Watch your agents keep to it.</h1>
-    <p class="lede">A goal becomes a graph you can export, edit and approve. The approved
-      revision is what runs &mdash; every work task scoped, every retry fenced, every result
-      verified, and the files it publishes able to answer <code>graphene why</code>.</p>
-    <p class="actions">
-      <a class="btn btn-go" href="#loop">See a mission change</a>
-      <a class="btn" href="https://github.com/Alex-lop/Graphene">View on GitHub</a>
-    </p>
-  </div>
-</header>
-
-<section id="why">
-  <div class="wrap">
-    <p class="eyebrow">The problem</p>
-    <h2>Five agents on one repository, and you are the scheduler.</h2>
-    <p>Two of them answer the same open question differently, one quietly overwrites the
-      other&rsquo;s file, and a failed step retries with the same instructions that just failed.
-      The usual fix is more coordination <em>prompt</em> &mdash; which asks the probabilistic part
-      of the system to be the reliable part.</p>
-    <p>Graphene uses a contract instead: one approved plan revision per mission, a write scope
-      per worker, checks as the only definition of done, and lineage that outlives the run.</p>
-  </div>
-</section>
-
-<section id="loop">
-  <div class="wrap">
-    <p class="eyebrow">The loop</p>
-    <h2>You change the route. The runtime follows your change.</h2>
-    <p>Graphene proposes a route and will not run it: no worker can be leased under a revision
-      nobody approved. Step through what happens next.</p>
-
-    <div class="mission" data-mission>
-      <div>
-        <div class="mg-stages" data-stages role="group" aria-label="Mission stages, use left and right arrow keys"></div>
-        <div class="mg-frame">
-<svg class="mgraph" viewBox="0 0 430 578" role="img" aria-labelledby="mg-t mg-d">
-<title id="mg-t">A mission plan as a directed graph, at revision 2</title>
-<desc id="mg-d">Three parallel work tasks &#8212; a JSON renderer, a Markdown renderer, and a documentation task the user added &#8212; feed a CLI integration task and an assembly task. Assembly feeds verification, which feeds the isolated result commit. Each node shows its status; the documentation task and its edge into assembly are the user&#8217;s edit, which produced revision 2.</desc>
-<g class="mg-edges">
-<path class="mg-edge" data-from="task-json-renderer" data-to="task-cli-integration" style="--len:78" d="M 79.1 109.5 L 88.5 175.3 M 84.3 169.8 L 88.5 175.3 L 90.9 168.8"/>
-<path class="mg-edge" data-from="task-markdown-renderer" data-to="task-cli-integration" style="--len:123" d="M 181.2 97.7 L 108.4 181.2 M 109.9 174.5 L 108.4 181.2 L 114.9 178.8"/>
-<path class="mg-edge" data-from="task-json-renderer" data-to="assemble" style="--len:242" d="M 95.3 104.3 L 202.4 307.9 M 196.6 304.1 L 202.4 307.9 L 202.5 301.0"/>
-<path class="mg-edge" data-from="task-markdown-renderer" data-to="assemble" style="--len:207" d="M 214.0 110.0 L 214.0 305.0 M 210.7 299.0 L 214.0 305.0 L 217.3 299.0"/>
-<path class="mg-edge" data-from="task-cli-integration" data-to="assemble" style="--len:115" d="M 126.2 236.5 L 196.9 311.8 M 190.4 309.7 L 196.9 311.8 L 195.2 305.1"/>
-<path class="mg-edge mg-added" data-from="task-docs" data-to="assemble" style="--len:240" d="M 329.2 104.5 L 225.4 307.7 M 225.2 300.9 L 225.4 307.7 L 231.0 303.9"/>
-<path class="mg-edge" data-from="assemble" data-to="verify" style="--len:37" d="M 214.0 380.0 L 214.0 405.0 M 210.7 399.0 L 214.0 405.0 L 217.3 399.0"/>
-<path class="mg-edge" data-from="verify" data-to="result" style="--len:27" d="M 214.0 480.0 L 214.0 495.0 M 210.7 489.0 L 214.0 495.0 L 217.3 489.0"/>
-</g>
-<g class="mg-nodes">
-<g class="mg-node mg-work" data-node="task-json-renderer" data-state="accepted" tabindex="0" role="button" aria-label="task-json-renderer, accepted" data-x="72" data-y="60"><title>task-json-renderer, accepted</title><g class="mg-hit"><circle cx="72" cy="60" r="24" fill="transparent"/></g><g class="mg-mark"><circle cx="72.0" cy="60.0" r="9"/></g><text class="mg-lbl" x="72" y="90" text-anchor="middle">json</text><text class="mg-state" x="72" y="104" text-anchor="middle">✓ accepted</text></g>
-<g class="mg-node mg-work" data-node="task-markdown-renderer" data-state="accepted" tabindex="0" role="button" aria-label="task-markdown-renderer, accepted" data-x="214" data-y="60"><title>task-markdown-renderer, accepted</title><g class="mg-hit"><circle cx="214" cy="60" r="24" fill="transparent"/></g><g class="mg-mark"><circle cx="214.0" cy="60.0" r="9"/></g><text class="mg-lbl" x="214" y="90" text-anchor="middle">markdown</text><text class="mg-state" x="214" y="104" text-anchor="middle">✓ accepted</text></g>
-<g class="mg-node mg-work mg-added" data-node="task-docs" data-state="accepted" tabindex="0" role="button" aria-label="task-docs, accepted" data-x="352" data-y="60"><title>task-docs, accepted</title><g class="mg-hit"><circle cx="352" cy="60" r="24" fill="transparent"/></g><g class="mg-mark"><circle cx="352.0" cy="60.0" r="9"/></g><text class="mg-lbl" x="352" y="90" text-anchor="middle">docs</text><text class="mg-state" x="352" y="104" text-anchor="middle">✓ accepted</text></g>
-<g class="mg-node mg-work" data-node="task-cli-integration" data-state="accepted" tabindex="0" role="button" aria-label="task-cli-integration, accepted" data-x="92" data-y="200"><title>task-cli-integration, accepted</title><g class="mg-hit"><circle cx="92" cy="200" r="24" fill="transparent"/></g><g class="mg-mark"><circle cx="92.0" cy="200.0" r="9"/></g><text class="mg-lbl" x="92" y="230" text-anchor="middle">cli</text><text class="mg-state" x="92" y="244" text-anchor="middle">✓ accepted</text></g>
-<g class="mg-node mg-assembly" data-node="assemble" data-state="accepted" tabindex="0" role="button" aria-label="assemble, accepted" data-x="214" data-y="330"><title>assemble, accepted</title><g class="mg-hit"><circle cx="214" cy="330" r="24" fill="transparent"/></g><g class="mg-mark"><rect x="206.8" y="322.8" width="14.4" height="14.4" rx="2"/></g><text class="mg-lbl" x="214" y="360" text-anchor="middle">assemble</text><text class="mg-state" x="214" y="374" text-anchor="middle">✓ accepted</text></g>
-<g class="mg-node mg-verification" data-node="verify" data-state="accepted" tabindex="0" role="button" aria-label="verify, accepted" data-x="214" data-y="430"><title>verify, accepted</title><g class="mg-hit"><circle cx="214" cy="430" r="24" fill="transparent"/></g><g class="mg-mark"><path d="M 214.0 417.1 L 226.9 430.0 L 214.0 442.9 L 201.1 430.0 Z"/></g><text class="mg-lbl" x="214" y="460" text-anchor="middle">verify</text><text class="mg-state" x="214" y="474" text-anchor="middle">✓ accepted</text></g>
-<g class="mg-node mg-result" data-node="result" data-state="committed" tabindex="0" role="button" aria-label="result, committed" data-x="214" data-y="520"><title>result, committed</title><g class="mg-hit"><circle cx="214" cy="520" r="24" fill="transparent"/></g><g class="mg-mark"><circle cx="214.0" cy="520.0" r="9"/></g><text class="mg-lbl" x="214" y="550" text-anchor="middle">result</text><text class="mg-state" x="214" y="564" text-anchor="middle">✓ committed</text></g>
-</g></svg>
-        </div>
+  <section id="mission" class="mission-section">
+    <div class="wrap">
+      <div class="section-intro">
+        <p class="eyebrow">One signed mission</p>
+        <h2>The map is the contract.</h2>
+        <p>Follow one verified local Taskmaster fixture through Plan, Sign, Run, Recover and Prove. State changes, retries and evidence never rewrite its approved six-task topology.</p>
       </div>
-      <div class="mg-side">
-        <div class="mg-read" data-readout>
-          <dl>
-            <dt>revision</dt><dd data-rev>2</dd>
-            <dt>plan_sha256</dt><dd data-digest class="is-v2">4657377bb718c385427be0ddda84a4f62f9b679a8ebb0b93b859b626086059f2</dd>
-            <dt>approval</dt><dd data-approval>event records revision 2, plan_sha256 and base_sha</dd>
+
+      <div class="mission" data-mission>
+        <div class="stage-controls" data-stages role="group" aria-label="Mission explanation stages">
+          <button type="button" data-stage="plan" aria-pressed="false">Plan</button>
+          <button type="button" data-stage="sign" aria-pressed="false">Sign</button>
+          <button type="button" data-stage="run" aria-pressed="false">Run</button>
+          <button type="button" data-stage="recover" aria-pressed="false">Recover</button>
+          <button type="button" data-stage="prove" aria-pressed="true" class="is-on">Prove</button>
+        </div>
+        <p class="stage-note" data-stage-note>Every task is done. Summary and <code>why</code> expose outcomes, receipts, files and known unknowns. The exact registered candidate waits outside the DAG for a separate approve/reject decision.</p>
+        <p class="sr-only" data-stage-live aria-live="polite"></p>
+
+        <div class="mission-shell">
+          <div class="mission-banner">
+            <p><b>PLAN v1</b> · digest <code data-digest>cddcda3f1919</code></p>
+            <p><strong data-signed>SIGNED — exact revision approved</strong></p>
+            <p class="read-only">LIVE FOLLOW · READ ONLY</p>
+          </div>
+          <dl class="sr-only fixture-identifiers">
+            <dt>Graphene truth source</dt><dd>cc50a62a9a3f6b521d5a157b0942ca4e722fbe57</dd>
+            <dt>Captured mission</dt><dd>mission_start_5541d5c504fa7f8409087233</dd>
+            <dt>Base SHA</dt><dd>e5995606e3cdcf37737dc613e2f391e229726358</dd>
+            <dt>Plan revision</dt><dd>1</dd>
+            <dt>Canonical plan digest</dt><dd>cddcda3f19194df275e7be75c9fe2ba9b087fa4ebfd69ed7893b97754040bf8c</dd>
           </dl>
+
+          <div class="mission-grid">
+            <div class="mission-map">
+              <p class="goal-boundary"><span aria-hidden="true">◎</span> Goal + policy boundary</p>
+              <div class="dag" data-dag>
+                <svg viewBox="0 0 720 455" preserveAspectRatio="none" role="img" aria-labelledby="mission-map-title mission-map-desc" focusable="false">
+                  <title id="mission-map-title" data-map-title>Prove: all six approved tasks are done</title>
+                  <desc id="mission-map-desc" data-map-desc>The fixed task graph ends at verification. An exact result candidate waits outside the graph for a separate decision.</desc>
+                  <defs>
+                    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z"/></marker>
+                  </defs>
+                  <g class="plan-edges">
+                    <path data-from="redact_notes" data-to="wire_cli" d="M120 82 C120 126 282 122 342 178"/>
+                    <path data-from="render_json" data-to="wire_cli" d="M360 82 L360 178"/>
+                    <path data-from="render_markdown" data-to="wire_cli" d="M600 82 C600 126 438 122 378 178"/>
+                    <path data-from="redact_notes" data-to="assemble_candidate" d="M120 82 C120 226 270 228 338 292"/>
+                    <path data-from="render_json" data-to="assemble_candidate" d="M360 82 L348 292"/>
+                    <path data-from="render_markdown" data-to="assemble_candidate" d="M600 82 C600 226 450 228 382 292"/>
+                    <path data-from="wire_cli" data-to="assemble_candidate" d="M360 218 L360 292"/>
+                    <path data-from="assemble_candidate" data-to="verify_candidate" d="M360 332 L360 397"/>
+                  </g>
+                  <g class="lineage-edges" data-lineage aria-hidden="true">
+                    <path d="M360 82 L360 178 L360 292 L360 397"/>
+                  </g>
+                </svg>
+
+                <button class="task-node work" style="--x:16.67%;--y:13.2%" type="button" data-node="redact_notes" aria-controls="task-inspector" aria-expanded="false" disabled>
+                  <span class="task-name">redact_notes</span><span class="task-state" data-state>✓ done</span>
+                </button>
+                <button class="task-node work" style="--x:50%;--y:13.2%" type="button" data-node="render_json" aria-controls="task-inspector" aria-expanded="false" disabled>
+                  <span class="task-name">render_json</span><span class="task-state" data-state>✓ done</span>
+                </button>
+                <button class="task-node work" style="--x:83.33%;--y:13.2%" type="button" data-node="render_markdown" aria-controls="task-inspector" aria-expanded="false" disabled>
+                  <span class="task-name">render_markdown</span><span class="task-state" data-state>✓ done</span>
+                </button>
+                <button class="task-node work" style="--x:50%;--y:43.5%" type="button" data-node="wire_cli" aria-controls="task-inspector" aria-expanded="true" disabled>
+                  <span class="task-name">wire_cli</span><span class="task-state" data-state>✓ done</span>
+                </button>
+                <button class="task-node assembly" style="--x:50%;--y:68.1%" type="button" data-node="assemble_candidate" aria-controls="task-inspector" aria-expanded="false" disabled>
+                  <span class="task-name">assemble_candidate</span><span class="task-state" data-state>✓ done</span>
+                </button>
+                <button class="task-node verification" style="--x:50%;--y:86%" type="button" data-node="verify_candidate" aria-controls="task-inspector" aria-expanded="false" disabled>
+                  <span class="task-name">verify_candidate</span><span class="task-state" data-state>✓ done</span>
+                </button>
+              </div>
+
+              <div class="candidate" data-candidate>
+                <span class="candidate-mark" aria-hidden="true"></span>
+                <div><b>MISSION AWAITING_RESULT</b><br><code>RESULT awaiting_decision · final_result_be3df9ce…</code><br>Exact candidate · separate approve/reject decision</div>
+              </div>
+              <p class="decision-note">approve → may create an isolated local result · reject → no commit · nothing is pushed</p>
+              <p class="legend"><span class="edge-key"></span> approved plan dependencies <span class="lineage-key"></span> derived lineage · files, attempts and workers are never plan nodes</p>
+            </div>
+
+            <aside class="task-inspector" id="task-inspector" data-inspector aria-live="polite">
+              <p class="inspector-title">WHY <code>status_report/cli.py</code></p>
+              <dl>
+                <dt>target</dt><dd>established</dd>
+                <dt>producer attempt</dt><dd>wire_cli · attempt 1 · fence 1</dd>
+                <dt>accepted inputs</dt><dd>established</dd>
+                <dt>assembly candidate</dt><dd>established</dd>
+                <dt>verification</dt><dd>established</dd>
+                <dt>approval</dt><dd>unknown · awaiting exact result decision</dd>
+              </dl>
+            </aside>
+          </div>
         </div>
-        <p class="mg-note" data-note>Assembly consumes only accepted work, verification runs the
-          check this plan allows, and the result is an isolated commit &mdash; nothing is pushed. A file
-          published against a task&rsquo;s declared write paths can then name the attempt, worker
-          and fence behind it.</p>
-        <div data-inspector><p class="mg-hint">Hover, tap or focus a task to see its contract.</p></div>
-        <button type="button" class="mg-replay" data-replay>Replay from the proposal</button>
+
+        <p class="fixture-note">Captured MCP fixture: max concurrency 2; the signer was a script and approval truth was <code>server_derived</code>, not human-attested. The final decision is a separate CLI path.</p>
+
+        <details class="mission-text">
+          <summary>Read this mission as text</summary>
+          <p>At the recorded final state all six tasks are done. <code>redact_notes</code>, <code>render_json</code> and <code>render_markdown</code> are roots. <code>wire_cli</code> depends on all three. <code>assemble_candidate</code> depends on all three roots plus <code>wire_cli</code>; <code>verify_candidate</code> depends on assembly. Markdown attempt 1 at fence 1 failed its acceptance check; the same task returned through retrying and ready, then passed as attempt 2 at fence 2. The mission is <code>awaiting_result</code>; bundle <code>final_result_be3df9ce374fa025d93f452e088d5803</code> is <code>awaiting_decision</code> outside the task graph. The recorded <code>why status_report/cli.py</code> query establishes target, producer, accepted inputs, assembly and verification; approval remains unknown.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="terminal" class="terminal-section">
+    <div class="wrap">
+      <div class="section-intro">
+        <p class="eyebrow">Terminal + MCP</p>
+        <h2>Mission control, in your terminal.</h2>
+      </div>
+
+      <div class="terminal-grid">
+        <figure class="terminal-figure">
+          <img src="assets/ui-terminal.webp" width="1800" height="1280" alt="Graphene replay at checkpoint 4 of 11, with render_markdown retrying and its first failed attempt, checks, receipts, unknowns and lineage limit visible.">
+          <figcaption>Real <code>graphene ui --replay taskmaster</code> capture at Graphene <code>cc50a62</code>. This is the fixed verified replay, a different fixture from the MCP mission above.</figcaption>
+        </figure>
+
+        <div class="terminal-copy">
+          <p><code>graphene ui</code> renders the signed DAG read-only. Its banner identifies the mission, plan revision, digest and signed state. Select a node for attempts, checks, receipts and lineage, or open summary and <code>why</code>. A separate scripted-fixture capture proves live following from the same store. Neither path is a live model mission.</p>
+          <h3>MCP connection</h3>
+          <p><code>graphene-mcp</code> exposes the <code>goal</code> prompt and six tools for plan, digest approval, execution, status, summary and <code>why</code>. Claude Code discovery was captured; the official MCP client drove the fixture, with a script—not a person—signing. Codex and Gemini CLI are documented, not driven. MCP does not make the final result decision.</p>
+          <p class="command-label">Fixed replay · zero credentials · no live agent · no new work</p>
+          <pre><code>git clone https://github.com/Alex-lop/Graphene.git &amp;&amp; cd Graphene
+uv sync --frozen
+uv run --frozen graphene ui --replay taskmaster</code></pre>
+          <p class="actions"><a class="btn" href="https://github.com/Alex-lop/Graphene/blob/cc50a62a9a3f6b521d5a157b0942ca4e722fbe57/docs/COMMANDS.md">Read the command map</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="proof" class="closing">
+    <div class="wrap">
+      <div class="section-intro">
+        <p class="eyebrow">Proof</p>
+        <h2>Proven paths. Explicit limits.</h2>
+        <p>Graphene publishes the contract behind every public claim. These labels describe the current release—not a roadmap, deployment or benchmark.</p>
+      </div>
+
+      <dl class="proof-strip">
+        <div><dt>Verified locally</dt><dd>Fixed replay · terminal UI · MCP goal loop</dd></div>
+        <div><dt>Verified live · 2026-08-23</dt><dd>Two bounded Gemini workers · evidence-aware retry; operator-delegated approval and an intentionally injected check failure</dd></div>
+        <div><dt>Not supported in this release</dt><dd>Arbitrary repositories · visual workflow editing · autonomous push or deploy</dd></div>
+        <div><dt>Not deployed</dt><dd>Cloud Run · real Firestore</dd></div>
+        <div><dt>Not proven</dt><dd>Live Docker smoke · comparative benchmark</dd></div>
+        <div><dt>Not captured / not proven</dt><dd>Person-signed MCP take · submission film</dd></div>
+      </dl>
+
+      <p class="proof-links">Read the pinned <a href="https://github.com/Alex-lop/Graphene/blob/cc50a62a9a3f6b521d5a157b0942ca4e722fbe57/contracts/product_proof.json">proof contract</a>, <a href="https://github.com/Alex-lop/Graphene/blob/cc50a62a9a3f6b521d5a157b0942ca4e722fbe57/docs/PROOF.md">proof notes</a>, and <a href="https://github.com/Alex-lop/Graphene/blob/cc50a62a9a3f6b521d5a157b0942ca4e722fbe57/docs/KNOWN_LIMITATIONS.md">known limitations</a>.</p>
+
+      <div class="final-cta">
+        <h2>Inspect the map before you trust the result.</h2>
+        <p class="actions">
+          <a class="btn btn-go" href="#terminal">Replay the fixed mission</a>
+          <a class="btn" href="https://github.com/Alex-lop/Graphene">View Graphene on GitHub</a>
+        </p>
       </div>
     </div>
 
-    <p class="small muted" style="margin-top:22px;max-width:64ch">
-      An interactive explanation assembled from separately verified behaviours &mdash; not one
-      recorded mission. <b>Node added, assembly rewired, revision&nbsp;2 approved and executed
-      instead of the proposal, and nothing dispatchable without its own approval:</b>
-      verified locally, credential-free, by
-      <a href="https://github.com/Alex-lop/Graphene/blob/main/tests/integration/test_plan_edit_path.py">test_plan_edit_path.py</a>.
-      <b>Diagnostic retry at a strictly higher fence:</b> verified live on 2026-08-23.
-      <b>One continuous live take of the whole sequence:</b> not captured yet.
-      The revision&nbsp;1 digest is the one Graphene recorded for that captured plan; the
-      revision&nbsp;2 digest is not from a recorded mission &mdash;
-      <code>scripts/plan_digest.py</code> beside this page applies the edit above to that plan
-      and reproduces both.</p>
-  </div>
-</section>
-
-<section id="fits">
-  <div class="wrap">
-    <p class="eyebrow">Where Graphene fits</p>
-    <h2>Different graphs answer different questions.</h2>
-    <p>A repository map tells an agent where to look. An agent framework tells developers how an
-      agent application should run. A planning graph keeps requirements and work aligned.
-      Graphene turns one coding request into a route you can reshape, approve by digest, and then
-      hold the runtime to.</p>
-
-    <table class="compare">
-      <thead><tr><th scope="col">Tool or category</th><th scope="col">Its graph represents</th><th scope="col">Choose it when you need</th></tr></thead>
-      <tbody>
-        <tr>
-          <td><a href="https://github.com/NanoNets/Graft/blob/main/README.md">Graft</a> /
-              <a href="https://aider.chat/docs/repomap.html">repository maps</a></td>
-          <td data-th="Its graph represents">Existing code, written back into the repo as linked plain-English nodes</td>
-          <td data-th="Choose it when you need">Standing context, so an agent starts oriented instead of grepping cold</td>
-        </tr>
-        <tr>
-          <td><a href="https://github.com/microsoft/RPG-ZeroRepo/blob/main/CoderMind/README.md">CoderMind</a> / planning graphs</td>
-          <td data-th="Its graph represents">Requirements, features, architecture, files, code entities and dependencies</td>
-          <td data-th="Choose it when you need">To make an agent plan before it edits, across a long horizon</td>
-        </tr>
-        <tr>
-          <td><a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph</a> /
-              <a href="https://docs.langchain.com/langsmith/studio">Studio</a></td>
-          <td data-th="Its graph represents">A developer-defined stateful agent workflow and its execution state</td>
-          <td data-th="Choose it when you need">A framework to build, run, inspect and debug your own agent system</td>
-        </tr>
-        <tr class="is-us">
-          <td>Graphene</td>
-          <td data-th="Its graph represents">One commit-bound coding mission: tasks, scopes, checks, artifacts and lineage</td>
-          <td data-th="Choose it when you need">To reshape a proposed route, approve one exact revision, and execute only what that approval covers</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <p class="small muted" style="margin-top:18px">These layers are complementary rather than
-      competing &mdash; a context provider could advise a planner, an agent framework could host a
-      runtime behind a node. Neither integration exists today.
-      Graphene&rsquo;s boundary is the approved coding mission &mdash; the revision, scopes, checks, retries, artifacts and lineage
-      meet there. Descriptions taken from each project&rsquo;s own documentation, 24&nbsp;August&nbsp;2026.</p>
-    <p><b>Use Graphene when &ldquo;the agent finished&rdquo; is not enough, and you need to know
-      which plan ran.</b></p>
-  </div>
-</section>
-
-<section id="terminal">
-  <div class="wrap">
-    <p class="eyebrow">In the terminal</p>
-    <h2>Captured output, not a mockup.</h2>
-    <p class="small muted">The first two blocks were produced credential-free with
-      <code>--driver scripted-local</code>: they are the plan surface, not a model&rsquo;s
-      proposal. Temporary paths read <code>TARGET</code>; nothing else is altered, re-wrapped
-      or re-ordered.</p>
-<!--TERMINAL-->
-    <figure>
-      <!-- graphene plan &quot;&lt;goal&gt;&quot; --repo TARGET --driver scripted-local
-           captured in Alex-lop/Graphene at fa302a130afd58340d4f0c3d95565f60db2f531a
-           evidence/contract/2026-08-24-plan-surface/plan-surface.txt lines 1-14, verbatim -->
-      <pre><code>$ graphene plan &quot;Add redacted JSON and Markdown status reports to the fixture CLI.&quot; --repo TARGET --driver scripted-local
-Mission: mission_start_b2e344868f963d9a3472ada4      Base: e5995606e3cd      Plan: v1 / sha256:cfc96860bf0c…
-
-ID                  STATE   DEPS                                               ROLE           READ/WRITE  CHECKS
-assemble_candidate  queued  redact_notes,render_json,render_markdown,wire_cli  assembler      12 / 8      1
-redact_notes        queued  -                                                  report-worker  2 / 2       1
-render_json         queued  -                                                  report-worker  2 / 2       1
-render_markdown     queued  -                                                  report-worker  2 / 2       1
-verify_candidate    queued  assemble_candidate                                 verifier       12 / 0      1
-wire_cli            queued  redact_notes,render_json,render_markdown           integrator     12 / 2      1
-
-Critical path: render_markdown → wire_cli → assemble_candidate → verify_candidate
-Frontier on approval: redact_notes, render_json, render_markdown          Needs approval: plan v1
-Inspect one node: graphene plan show mission_start_b2e344868f963d9a3472ada4 --detail</code></pre>
-      <figcaption>What you are asked to approve: the mission, the base commit, the plan digest, every task with its dependencies, role, read/write scope counts and check &mdash; then the critical path, what becomes ready on approval, and the fact that nothing has been approved yet. <span class="muted">&mdash; <code>evidence/contract/2026-08-24-plan-surface/plan-surface.txt</code> lines&nbsp;1&ndash;14.</span></figcaption>
-    </figure>
-    <figure>
-      <!-- graphene plan diff MISSION_ID 1 2
-           captured in Alex-lop/Graphene at fa302a130afd58340d4f0c3d95565f60db2f531a
-           evidence/contract/2026-08-24-plan-surface/plan-surface.txt lines 89-95, verbatim -->
-      <pre><code>$ graphene plan diff mission_start_b2e344868f963d9a3472ada4 1 2
-PLAN DIFF mission_start_b2e344868f963d9a3472ada4 v1 -&gt; v2
-  from sha256:cfc96860bf0c… to sha256:0170be81c70a…
-  ~ NODE redact_notes changed
-    field contract: &#x27;Replace secret-bearing notes with a stable redacted marker.&#x27; -&gt; &quot;Replace secret-bearing notes with a stable redacted marker. Match the shape of render_json&#x27;s output.&quot;
-    field read_paths: +status_report/render_json.py, +tests/test_render_json.py  ** SCOPE EXPANSION **
-  approve this revision: graphene plan approve mission_start_b2e344868f963d9a3472ada4 --revision 2</code></pre>
-      <figcaption>You widened one worker&rsquo;s read scope. The digest changed, the diff names the field that moved, and it is flagged <code>** SCOPE EXPANSION **</code> &mdash; revision 2 now needs an approval of its own. <span class="muted">&mdash; <code>evidence/contract/2026-08-24-plan-surface/plan-surface.txt</code> lines&nbsp;89&ndash;95.</span></figcaption>
-    </figure>
-    <figure>
-      <!-- graphene why ledger_service/cli.py --mission mission_start_5291caad50a8ee7a222a9221
-           captured in Alex-lop/Graphene at fa302a130afd58340d4f0c3d95565f60db2f531a
-           evidence/north_star/2026-08-23-mission1/why_ledger_service_cli.py.txt lines 27-32, verbatim -->
-      <pre><code>STAGE approval established
-  node event mission_event_c5034ff29d43388cb6f45981c8b49919 kind=none task=none attempt=none worker=none attempt_number=none fence=none sha256=none
-  events mission_event_c5034ff29d43388cb6f45981c8b49919
-  note A committed final approval references the assembly candidate.
-UNKNOWN The model-proposed plan awaits operator review.
-TRUST: every line above is derived from hash-chained mission events and resolvable evidence references; unknowns are listed, never guessed.</code></pre>
-      <figcaption>Afterwards, from a live Gemini mission: the tail of a lineage answer. Note the <code>UNKNOWN</code> line: the answer carries its own caveats on screen instead of quietly dropping them. <span class="muted">&mdash; <code>evidence/north_star/2026-08-23-mission1/why_ledger_service_cli.py.txt</code> lines&nbsp;27&ndash;32.</span></figcaption>
-    </figure>
-    <div class="term-cap">
-
-    </div>
-<!--/TERMINAL-->
-  </div>
-</section>
-
-<section id="proof">
-  <div class="wrap">
-    <p class="eyebrow">Proof</p>
-    <h2>Proven today, and not yet.</h2>
-    <p>Graphene keeps a machine-readable proof contract in its own repository, and the honest
-      rows stay in it. This summarises what the page claims; the full contract carries more.</p>
-<!--PROOF-->
-    <table class="proof">
-      <thead><tr><th scope="col">Capability</th><th scope="col">Label, and what it is limited to</th></tr></thead>
-      <tbody>
-        <tr><td>Live Gemini planning and two bounded workers</td><td><span class="label yes">verified_live</span><br>on 2026-08-23, with evidence-bound provider receipts</td></tr>
-        <tr><td>Diagnostic-aware retry at a strictly higher fence</td><td><span class="label yes">verified_live</span><br>observed live in both directions on 2026-08-23</td></tr>
-        <tr><td>Credential-free core test matrix</td><td><span class="label yes">verified_local</span><br>808 Python tests, four explicit opt-in skips</td></tr>
-        <tr><td>Terminal plan revision path — export, revise, diff, approve, execute</td><td><span class="label yes">verified_local</span><br>proven by the credential-free integration test tests/integration/test_plan_edit_path.py; no live run of the sequence yet, and this row is not in the proof contract</td></tr>
-        <tr><td>Cloud Run and real Firestore deployment</td><td><span class="label no">not_deployed</span><br>packaging, unit tests and the official emulator are not deployment proof</td></tr>
-        <tr><td>Docker isolated executor</td><td><span class="label no">not_proven</span><br>needs a responsive daemon and a built immutable image</td></tr>
-        <tr><td>Comparative graph benchmark</td><td><span class="label no">not_proven</span><br>no run, no token, cost or latency result, no median, no P95 is claimed</td></tr>
-        <tr><td>Product media, and a continuous live edited-DAG take</td><td><span class="label no">not_proven_capture_pending</span><br>nothing has been filmed</td></tr>
-      </tbody>
-    </table>
-    <p class="small muted">The complete machine-readable contract at commit <code>fa302a130afd</code>, committed 2026-08-24, is <a href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">in the repository</a> and vendored beside this page at <a href="assets/product_proof.snapshot.json">product_proof.snapshot.json</a> (byte-identical). It carries 12 further deferred items. Labels here only flip once the machine evidence is in the repository.</p>
-<!--/PROOF-->
-  </div>
-</section>
-
-<section id="demo">
-  <div class="wrap">
-    <p class="eyebrow">The demo</p>
-    <h2>One terminal, one continuous run.</h2>
-<!--DEMOSLOT-->
-    <div class="slot">
-      <img src="assets/poster.png" width="1280" height="720"
-           alt="A still of the hero field, resolved into a six-node mission graph.">
-    </div>
-    <p class="small muted" style="margin-top:14px">There is no demo film yet, so this is a
-      still rather than a play button that would not play. The submission video is labelled
-      <code>not_proven_capture_pending</code> in the proof contract above, and stays that way
-      until something is filmed.</p>
-<!--/DEMOSLOT-->
-    <p class="actions" style="margin-top:30px">
-      <a class="btn btn-go" href="https://github.com/Alex-lop/Graphene">Read the source</a>
-      <a class="btn" href="https://github.com/Alex-lop/Graphene/blob/main/contracts/product_proof.json">Read the proof contract</a>
-    </p>
-  </div>
-</section>
-
+    <footer>
+      <div class="wrap">
+        <p>Graphene · All Things Agentic Hackathon · The Taskmaster</p>
+        <ul>
+          <li><a href="https://github.com/Alex-lop/Graphene">Source</a></li>
+          <li><a href="https://github.com/Alex-lop/Graphene/blob/main/LICENSE">Apache 2.0</a></li>
+          <li><a href="#top">Back to top</a></li>
+        </ul>
+      </div>
+    </footer>
+  </section>
 </main>
-
-<footer>
-  <div class="wrap">
-    <p>Built for the All Things Agentic hackathon &mdash; Taskmaster.</p>
-    <ul>
-      <li><a href="https://github.com/Alex-lop/Graphene">Source</a></li>
-      <li><a href="https://github.com/Alex-lop/Graphene/blob/main/LICENSE">Apache&nbsp;2.0</a></li>
-      <li><a href="https://github.com/Alex-lop/Graphene/blob/main/docs/KNOWN_LIMITATIONS.md">Known limitations</a></li>
-    </ul>
-  </div>
-</footer>
 
 <script src="assets/field.js" defer></script>
 <script src="assets/mission.js" defer></script>
