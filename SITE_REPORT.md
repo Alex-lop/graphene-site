@@ -890,3 +890,90 @@ The deployment-record commit containing this note changes only
 `caffeinate` stopped, no browser/watch process created, no temporary worktree,
 clean website tree after the final push, and the read-only Graphene reference
 still at `cc50a62a9a3f6b521d5a157b0942ca4e722fbe57`.
+
+---
+
+## 2026-08-27 — dark fluid cursor calibration
+
+This entry supersedes only the palette and Governance Lens behavior described
+above. The four-region information architecture, copy, responsive geometry,
+mission UI and exact six-task topology, TUI evidence, proof labels, footer,
+keyboard behavior, and pinned Graphene source remain unchanged.
+
+| Item | Result |
+|---|---|
+| Starting site SHA | `e123f81e9748ffa1e84e81b6ae352f779758f85e` |
+| Production-content SHA | `3c928db689af6edcaee1969e9446ac4b397cec6b` |
+| Changed production files | `assets/design-tokens.css`, `assets/field.js`, `assets/site.css`, `index.html`; `scripts/check_field_reveal.js` is the rewritten check |
+| Public URL | <https://alex-lop.github.io/graphene-site/> |
+| Pages evidence | workflow [`33130951256`](https://github.com/Alex-lop/graphene-site/actions/runs/33130951256) succeeded; Pages build `1179434057` reported the exact production-content SHA |
+
+### Field and palette
+
+- One fixed, pointer-inert, `aria-hidden` Canvas now sits at root z-index 0;
+  navigation, main content, and footer remain above it. Open space from the nav
+  through the footer exposes the field while mission/evidence surfaces stay
+  opaque. Scroll updates hero anchors without clearing fixed-canvas contact.
+- Production mapping is the canvas-rectangle CSS-pixel ratio. Contact X/Y is
+  assigned directly from the newest window-level fine-pointer/coalesced sample;
+  DPR is used only for backing dimensions and one `setTransform`, capped at 2.
+- A preallocated 64-sample tail retains approximately 10 CSS-pixel gaps, has a
+  230 ms half-life, begins its final fade at 600 ms, and reaches zero at 760 ms.
+  The newest contact never follows that tail. One guarded RAF scheduler stops
+  when reveal/wake energy reaches rest.
+- First paint uses nonzero route/node opacity (`0.16`/`0.20`). Real input starts
+  the prompt ease-out reveal immediately; normalized visibility is 83.8% at
+  100 ms, passes 90% at about 118 ms, and is fully settled by 220 ms
+  (`0.78` route / `0.86` node). Continued movement cannot restart it. No-input
+  fallback runs from 225–445 ms. Candidate opacity remains fixed and never
+  represents pointer-driven execution progress.
+- Reduced motion and coarse/touch input paint one resolved deterministic frame
+  without a continuing loop or pointer listener. No-JS and forced colors hide
+  the decorative canvas; Canvas acquisition failure leaves the complete dark
+  semantic page intact.
+- `?fieldDebug=1` exposes no UI. It reports the production raw/mapped/contact
+  sample, consumed/painted sequence, draw timestamps, contact-only response
+  peak, canvas/backing/DPR data, RAF count, route/node opacity, and immutable
+  node anchors/route endpoints. The flag is absent during normal production.
+
+Final tokens: background `#202020`, raised surface `#292929`, deep surface
+`#181818`, primary ink `#f1efe9`, muted ink `#b0aea7`, subtle ink `#9a9993`,
+hairlines `#3d3d3d` / `#5b5b5b`, control border `#7a7a7a`, route `#dedede`, and
+accent `#df873b`. Ambient field is `rgba(154,154,154,.25)`. Active field was
+tuned down from the visual starting point to `rgba(218,218,218,.10)`: the
+worst ambient-plus-active crossing retains 4.516:1 against muted copy. Primary,
+muted, subtle, and accent against the background are respectively 14.17:1,
+7.34:1, 5.70:1, and 5.95:1. Terminal tokens and the authentic terminal image
+(`c4155e1201f2…`) are byte-unchanged. Official Cursor
+[product](https://cursor.com/) and [agent documentation](https://cursor.com/docs/agent/overview)
+were consulted for restrained graphite mood only; no copy or asset was taken.
+
+### Measurements and checks
+
+The prior audited production projection sent a 1,348 px-canvas local X of 260
+to about 728 (about 468 px rightward error), then added an 85 ms spatial spring.
+The replacement coordinate grid covers desktop/narrow viewports, center/corners,
+25/50/75% interiors, fractional rectangles, pre/post scroll and visual-viewport
+changes, and DPR 0.8/1/1.25/1.5/2/3. Pure mapping error stayed below `1e-7`
+CSS px; the mounted production-handler smoke at `(321.25, 456.5)` recorded
+exactly zero contact error and a visible contact peak within one mark spacing.
+These are deterministic/mock results, not a real-pointer browser measurement.
+
+Passing gates: field check (including long diagonal/reversal paths, 60/120 Hz
+schedules, mounted mapping/draw diagnostics, anchor invariance, and teardown),
+mission/fixture check, JavaScript syntax, `git diff --check`, unique HTML IDs,
+fragment targets, local assets, and local HTTP 200 for the page and ten assets.
+Independent code, directive/truth, and palette/contrast reviews found no source
+blocker. The implementation Pages deployment returned HTTP 200 and matched
+local SHA-256 byte-for-byte for the homepage, both CSS files, both JavaScript
+files, terminal WebP, OG image, both favicons, 404 page, and robots file. Remote
+`main`, the successful workflow, and the Pages API all named `3c928db…`.
+
+Rendered-browser evidence remains unavailable: the required in-app Browser
+reported no available browser and its browser list was empty. Per its rules, no
+alternate Playwright/browser automation was substituted. Therefore real
+100-sample p95 input-to-paint and paint cost, rendered pixel-centering, captured
+first/input/100/250 ms frames, responsive visual matrix, console/network panel,
+physical touch, browser reduced-motion, and live dynamic-pointer sweeps are
+**not measured and not claimed**. The debug instrumentation is ready for that
+follow-up. No task-owned local server or product process remains running.
