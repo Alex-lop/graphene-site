@@ -1,24 +1,34 @@
 /* Graphene design tokens.
    One language for the site and its product explanation.
-   Warm paper, graphite ink, hairline structure, one burnt-orange accent.
-   The terminal inset is this page inverted: ink becomes the surface. */
+   Matte graphite, restrained light ink, hairline structure, one amber accent. */
 
 :root {
-  /* Paper */
-  --bg: #f3eee4;          /* warm paper */
-  --bg-raised: #fbf8f1;   /* cards and surfaces, opaque */
+  color-scheme: dark;
+
+  /* Graphite ground and opaque evidence surfaces. */
+  --bg: #202020;
+  --bg-raised: #292929;
+  --surface-deep: #181818;
 
   /* Ink */
-  --ink: #242622;         /* graphite: primary text, field strokes, node strokes */
-  --ink-muted: #66675f;   /* secondary text, captions, dimmer strokes */
+  --ink: #f1efe9;
+  --ink-muted: #b0aea7;
+  --ink-subtle: #9a9993;
 
   /* Structure. 1px hairlines are the page's main structural device. */
-  --hairline: rgba(36, 38, 34, 0.14);
-  --hairline-strong: rgba(36, 38, 34, 0.28);
+  --hairline: #3d3d3d;
+  --hairline-strong: #5b5b5b;
+  --control-border: #7a7a7a;
 
   /* The one loud colour: execution progress, focus, and link hover. */
-  --accent: #9a4f24;
-  --accent-wash: rgba(154, 79, 36, 0.10);
+  --accent: #df873b;
+  --accent-wash: rgba(223, 135, 59, 0.10);
+
+  /* Decorative field values stay independent from text contrast. */
+  --field-idle: rgba(154, 154, 154, 0.25);
+  /* Active overlays remain AA-safe where they cross muted copy. */
+  --field-active: rgba(218, 218, 218, 0.10);
+  --field-route: #dedede;
 
   /* The terminal inset. Real product output deserves the real surface. */
   --term-bg: #242622;

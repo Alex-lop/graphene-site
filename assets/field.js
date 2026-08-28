@@ -1,19 +1,21 @@
 /* Graphene Governance Lens.
-   A deterministic level-set-tangent current resolves into the approved
-   Taskmaster route, illustrates bounded progress once, and stops. */
+   A deterministic graphite current reveals the approved Taskmaster route.
+   Pointer contact is exact; only its short sampled wake trails. */
 (function () {
   'use strict';
 
   var TAU = Math.PI * 2;
   var CONFIG = {
-    dwellMs: 220, resolveMs: 320, waveMs: 1600, releaseHoldMs: 80,
-    pointerTauMs: 85, strengthInMs: 140, strengthOutMs: 185,
-    releaseMs: 185, releaseStopMs: 620, wakeMs: 500, radius: 168,
-    idleDelayMs: 550, idleResolveMs: 400, idleWaveAtMs: 1450,
-    idleReleaseAtMs: 3900, idleStopMs: 4450, desktopCap: 1600, narrowCap: 900
+    resolveMs: 220, idleDelayMs: 225,
+    contactHoldMs: 34, contactReleaseMs: 95,
+    wakeHalfLifeMs: 230, wakeFadeAtMs: 600, wakeStopMs: 760,
+    wakeSpacing: 10, wakeRadius: 126, wakeSamples: 64, radius: 168,
+    latentRoute: .16, settledRoute: .78,
+    latentNode: .2, settledNode: .86, candidateOpacity: .28,
+    desktopCap: 1600, narrowCap: 900, dprCap: 2
   };
 
-  /* goal/candidate are boundary markers, not task nodes. Orange is progress only. */
+  /* goal/candidate are boundary markers, not task nodes. */
   var TOPOLOGY = {
     nodes: [
       { id: 'goal', kind: 'boundary' },
@@ -30,65 +32,167 @@
 
   function clamp(value, lo, hi) { return Math.max(lo, Math.min(hi, value)); }
   function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-  function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
-  function progress(ms, start, duration) { return ease(clamp((ms - start) / duration, 0, 1)); }
-  function expSmooth(value, target, dt, tau) { return target + (value - target) * Math.exp(-dt / tau); }
+  function easeOut(t) { t = clamp(t, 0, 1); return 1 - Math.pow(1 - t, 3); }
   function influence(distance, radius) { return distance >= radius ? 0 : 1 - fade(distance / radius); }
-  function releaseValue(elapsed, from) {
-    return from * Math.exp(-Math.max(0, elapsed - CONFIG.releaseHoldMs) / CONFIG.releaseMs);
-  }
-  function stagger(value, group) { return ease(clamp((value - group * .16) / (1 - group * .16), 0, 1)); }
-  function routeResolve(edge, value) { return stagger(value, edge < 3 ? 1 : edge < 7 ? 2 : 3); }
-  function nodeResolve(node, value) { return stagger(value, node <= 3 ? 0 : node === 4 ? 1 : node === 5 ? 2 : 3); }
 
-  /* Map every hero coordinate into the visual stage; copy stays quiet, input never does. */
-  function mapPointer(x, y, width, height, narrow) {
-    if (narrow) {
-      return { x: width * .05 + clamp(x / width, 0, 1) * width * .9,
-        y: height * .64 + clamp(y / height, 0, 1) * height * .31 };
-    }
-    var left = width * .43;
-    return { x: left + clamp(x / width, 0, 1) * (width - left), y: clamp(y, height * .12, height * .9) };
-  }
-
-  /* Progress never activates more than two roots at once. */
-  function stageForWave(unit) {
-    if (unit < 0 || unit >= 1) return -1;
-    if (unit < .25) return 0;  /* redact_notes + render_json */
-    if (unit < .43) return 1;  /* render_markdown */
-    if (unit < .62) return 2;  /* wire_cli */
-    if (unit < .82) return 3;  /* exact four-input assembly */
-    return 4;                  /* verification, then stop */
-  }
-
-  function debugFrame(name) {
+  /* Production input mapping: client CSS pixels -> canvas CSS pixels. */
+  function mapPointer(clientX, clientY, rect, cssWidth, cssHeight) {
     return {
-      rest: { resolve: 0, wave: -1, candidate: 0 },
-      resolve: { resolve: .72, wave: -1, candidate: 0 },
-      verified: { resolve: 1, wave: -1, candidate: 1 },
-      release: { resolve: .28, wave: -1, candidate: .12 }
-    }[name] || null;
-  }
-
-  function idleFrame(ms) {
-    var resolve = progress(ms, CONFIG.idleDelayMs, CONFIG.idleResolveMs);
-    var wave = clamp((ms - CONFIG.idleWaveAtMs) / CONFIG.waveMs, 0, 1);
-    var settle = progress(ms, CONFIG.idleReleaseAtMs, CONFIG.idleStopMs - CONFIG.idleReleaseAtMs);
-    return {
-      resolve: resolve + (.42 - resolve) * settle,
-      wave: ms >= CONFIG.idleWaveAtMs && wave < 1 ? stageForWave(wave) : -1,
-      waveUnit: wave,
-      candidate: progress(ms, CONFIG.idleWaveAtMs + CONFIG.waveMs, 360) * (1 - .66 * settle),
-      running: ms < CONFIG.idleStopMs
+      x: (clientX - rect.left) * (cssWidth / rect.width),
+      y: (clientY - rect.top) * (cssHeight / rect.height)
     };
   }
 
+  function canvasSize(cssWidth, cssHeight, devicePixelRatio) {
+    var requested = Number(devicePixelRatio);
+    var dpr = requested > 0 ? Math.min(requested, CONFIG.dprCap) : 1;
+    return { width: Math.round(cssWidth * dpr), height: Math.round(cssHeight * dpr), dpr: dpr };
+  }
+
+  function topologyLayout(width, height, heroRect, narrow) {
+    var left = heroRect.left || 0, heroWidth = heroRect.width || width;
+    var heroTop = heroRect.top || 0, heroHeight = heroRect.height || height;
+    var x0 = narrow ? left : left + heroWidth * .43;
+    var stageWidth = narrow ? heroWidth : heroWidth * .57;
+    var centerY = heroTop + heroHeight * (narrow ? .82 : .52);
+    var spread = heroHeight * (narrow ? .11 : .22);
+    return [
+      [x0 + stageWidth * .03, centerY],
+      [x0 + stageWidth * .2, centerY - spread],
+      [x0 + stageWidth * .2, centerY],
+      [x0 + stageWidth * .2, centerY + spread],
+      [x0 + stageWidth * .46, centerY],
+      [x0 + stageWidth * .68, centerY],
+      [x0 + stageWidth * .83, centerY],
+      [x0 + stageWidth * .975, centerY]
+    ];
+  }
+
+  function createState(mountedAt) {
+    var wake = [];
+    for (var i = 0; i < CONFIG.wakeSamples; i++) wake.push({ x: 0, y: 0, time: -Infinity, vx: 0, vy: 0 });
+    return {
+      mountedAt: mountedAt || 0, revealAt: null, real: false,
+      seeded: false, x: 0, y: 0, vx: 0, vy: 0,
+      sampleAt: 0, lastSampleAt: -Infinity, receivedAt: 0, eventTimestamp: 0,
+      clientX: 0, clientY: 0, sequence: 0,
+      wake: wake, wakeHead: 0, wakeCount: 0
+    };
+  }
+
+  function pushWake(state, x, y, time, vx, vy) {
+    var item = state.wake[state.wakeHead];
+    item.x = x; item.y = y; item.time = time; item.vx = vx; item.vy = vy;
+    state.wakeHead = (state.wakeHead + 1) % state.wake.length;
+    state.wakeCount = Math.min(state.wakeCount + 1, state.wake.length);
+  }
+
+  function recordSample(state, sample) {
+    var previousX = state.x, previousY = state.y, previousAt = state.sampleAt;
+    var dx = sample.x - previousX, dy = sample.y - previousY;
+    var dt = state.seeded ? Math.max(1, sample.time - previousAt) : 1;
+    var vx = state.seeded ? clamp(dx / dt, -3, 3) : 0;
+    var vy = state.seeded ? clamp(dy / dt, -3, 3) : 0;
+
+    if (!state.real) {
+      state.real = true;
+      state.revealAt = Math.min(sample.time, state.mountedAt + CONFIG.idleDelayMs);
+    }
+
+    if (state.seeded) {
+      var distance = Math.sqrt(dx * dx + dy * dy);
+      var steps = Math.max(1, Math.ceil(distance / CONFIG.wakeSpacing));
+      var firstStep = Math.max(1, steps - state.wake.length + 1);
+      for (var step = firstStep; step <= steps; step++) {
+        var unit = step / steps;
+        pushWake(state, previousX + dx * unit, previousY + dy * unit,
+          previousAt + (sample.time - previousAt) * unit, vx, vy);
+      }
+    } else pushWake(state, sample.x, sample.y, sample.time, 0, 0);
+
+    state.x = sample.x; state.y = sample.y; state.vx = vx; state.vy = vy;
+    state.sampleAt = sample.time; state.lastSampleAt = sample.time;
+    state.receivedAt = sample.receivedAt == null ? sample.time : sample.receivedAt;
+    state.eventTimestamp = sample.eventTimestamp == null ? sample.time : sample.eventTimestamp;
+    state.clientX = sample.clientX == null ? sample.x : sample.clientX;
+    state.clientY = sample.clientY == null ? sample.y : sample.clientY;
+    state.seeded = true; state.sequence++;
+    return state;
+  }
+
+  function resetContact(state) {
+    state.seeded = false; state.vx = 0; state.vy = 0;
+  }
+
+  function clearWake(state) {
+    resetContact(state);
+    state.wakeHead = 0; state.wakeCount = 0; state.lastSampleAt = -Infinity;
+  }
+
+  function wakeDecay(age) {
+    if (age < 0 || age >= CONFIG.wakeStopMs) return 0;
+    var energy = Math.pow(.5, age / CONFIG.wakeHalfLifeMs);
+    if (age > CONFIG.wakeFadeAtMs) {
+      energy *= (CONFIG.wakeStopMs - age) / (CONFIG.wakeStopMs - CONFIG.wakeFadeAtMs);
+    }
+    return energy;
+  }
+
+  function wakeEnergy(state, now) {
+    var energy = 0;
+    for (var i = 0; i < state.wakeCount; i++) {
+      energy = Math.max(energy, wakeDecay(now - state.wake[i].time));
+    }
+    return energy;
+  }
+
+  function createFrame() {
+    return {
+      reveal: 0, pressure: 0, wakeEnergy: 0, running: false,
+      routeOpacity: CONFIG.latentRoute, nodeOpacity: CONFIG.latentNode,
+      candidateOpacity: CONFIG.candidateOpacity,
+      routeOpacities: new Array(TOPOLOGY.edges.length),
+      nodeOpacities: new Array(TOPOLOGY.nodes.length)
+    };
+  }
+
+  function fillFrame(frame, reveal, pressure, wake, running) {
+    frame.reveal = reveal; frame.pressure = pressure; frame.wakeEnergy = wake; frame.running = running;
+    frame.routeOpacity = CONFIG.latentRoute + (CONFIG.settledRoute - CONFIG.latentRoute) * reveal;
+    frame.nodeOpacity = CONFIG.latentNode + (CONFIG.settledNode - CONFIG.latentNode) * reveal;
+    frame.candidateOpacity = CONFIG.candidateOpacity;
+    var i;
+    for (i = 0; i < frame.routeOpacities.length; i++) frame.routeOpacities[i] = frame.routeOpacity;
+    for (i = 0; i < frame.nodeOpacities.length - 1; i++) frame.nodeOpacities[i] = frame.nodeOpacity;
+    frame.nodeOpacities[frame.nodeOpacities.length - 1] = frame.candidateOpacity;
+    return frame;
+  }
+
+  function frameState(state, now, resolved, frame) {
+    frame = frame || createFrame();
+    if (resolved) return fillFrame(frame, 1, 0, 0, false);
+    var revealStart = state.revealAt == null ? state.mountedAt + CONFIG.idleDelayMs : state.revealAt;
+    var reveal = easeOut((now - revealStart) / CONFIG.resolveMs);
+    var age = now - state.lastSampleAt;
+    var pressure = state.seeded
+      ? (age <= CONFIG.contactHoldMs ? 1 : Math.exp(-(age - CONFIG.contactHoldMs) / CONFIG.contactReleaseMs))
+      : 0;
+    var wake = wakeEnergy(state, now);
+    return fillFrame(frame, reveal, pressure, wake, reveal < 1 || wake > 0);
+  }
+
+  function debugFrame(name, frame) {
+    var reveal = { rest: 0, resolve: .72, verified: 1, release: .28 }[name];
+    return reveal == null ? null : fillFrame(frame || createFrame(), reveal, 0, 0, false);
+  }
+
   var API = {
-    CONFIG: CONFIG, TOPOLOGY: TOPOLOGY, clamp: clamp, fade: fade,
-    progress: progress, expSmooth: expSmooth, influence: influence, releaseValue: releaseValue,
-    stagger: stagger, routeResolve: routeResolve, nodeResolve: nodeResolve,
-    mapPointer: mapPointer, stageForWave: stageForWave,
-    debugFrame: debugFrame, idleFrame: idleFrame
+    CONFIG: CONFIG, TOPOLOGY: TOPOLOGY,
+    clamp: clamp, fade: fade, easeOut: easeOut, influence: influence,
+    mapPointer: mapPointer, canvasSize: canvasSize, topologyLayout: topologyLayout,
+    createState: createState, recordSample: recordSample, resetContact: resetContact,
+    wakeDecay: wakeDecay, wakeEnergy: wakeEnergy,
+    createFrame: createFrame, frameState: frameState, debugFrame: debugFrame
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   if (typeof document === 'undefined') return;
@@ -114,7 +218,11 @@
   }
 
   var EPS = .02, COS_R = Math.cos(.55), SIN_R = Math.sin(.55);
-  function flow(x, y, z) { return noise3(x, y, z) * .78 + noise3(x * 1.9, y * 1.9, z * 1.5) * .22; }
+  function flow(x, y) { return noise3(x, y, .41) * .78 + noise3(x * 1.9, y * 1.9, .73) * .22; }
+  function axisTurn(from, to) {
+    var delta = (to - from) * 2;
+    return Math.atan2(Math.sin(delta), Math.cos(delta)) / 2;
+  }
 
   function closestOnSegment(px, py, ax, ay, bx, by) {
     var dx = bx - ax, dy = by - ay, length2 = dx * dx + dy * dy;
@@ -131,59 +239,65 @@
 
   function mount(canvas) {
     var ctx = canvas.getContext('2d', { alpha: false });
-    if (!ctx) return;
-    var hero = canvas.closest('.hero');
-    if (!hero) return;
+    var hero = document.querySelector('.hero');
+    if (!ctx || !hero) return;
+
     var css = getComputedStyle(document.documentElement);
-    var ink = (css.getPropertyValue('--ink') || '#242622').trim();
-    var accent = (css.getPropertyValue('--accent') || '#9a4f24').trim();
-    var bg = (css.getPropertyValue('--bg') || '#f3eee4').trim();
+    var bg = (css.getPropertyValue('--bg') || '#202020').trim();
+    var idleInk = (css.getPropertyValue('--field-idle') || 'rgba(154,154,154,.25)').trim();
+    var activeInk = (css.getPropertyValue('--field-active') || 'rgba(218,218,218,.1)').trim();
+    var routeInk = (css.getPropertyValue('--field-route') || '#dedede').trim();
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
     var fine = window.matchMedia('(hover: hover) and (pointer: fine)');
     var frozenName = canvas.dataset.frozen || '';
     if (frozenName && !debugFrame(frozenName)) frozenName = parseFloat(frozenName) > .5 ? 'verified' : 'rest';
-    if (reduce.matches && !frozenName) frozenName = 'verified';
 
-    var W = 0, H = 0, bounds = null, narrow = false, nodes = [], routes = [], points = [];
-    var BUCKETS = 22, buckets = [], accentLines = [];
-    for (var bi = 0; bi < BUCKETS; bi++) buckets.push([]);
-    var raf = 0, onscreen = true, lastFrame = 0, activeMs = 0, scrollRaf = 0, resizeTimer = 0;
-    var autonomousDone = false;
-    var ptr = {
-      x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0, rawVx: 0, rawVy: 0,
-      strength: 0, wake: 0, inside: false, real: false,
-      movedAt: 0, sampleAt: 0, sampleX: 0, sampleY: 0, sequence: 0
-    };
-    var motion = {
-      mode: 'rest', seenSequence: 0, resolveAt: 0, waveAt: 0, verifiedAt: 0,
-      releaseAt: 0, releaseFrom: 0, candidateFrom: 0, candidate: 0
-    };
-
-    function topologyLayout() {
-      var x0 = narrow ? 0 : W * .43, sw = narrow ? W : W - x0;
-      var centerY = narrow ? H * .82 : H * .52;
-      var spread = narrow ? H * .11 : H * .22;
-      nodes = [
-        [x0 + sw * .03, centerY],
-        [x0 + sw * .2, centerY - spread], [x0 + sw * .2, centerY], [x0 + sw * .2, centerY + spread],
-        [x0 + sw * .46, centerY], [x0 + sw * .68, centerY], [x0 + sw * .83, centerY],
-        [x0 + sw * .975, centerY]
-      ];
+    var state = createState(performance.now()), frame = createFrame();
+    var W = 0, H = 0, dpr = 1, canvasRect = null, nodes = [], routes = [], points = [];
+    var layoutDirty = true, raf = 0, drawing = false, pointerBound = false;
+    var BUCKETS = 18, ambientBuckets = [], activeBuckets = [], routeBuckets = [];
+    for (var bi = 0; bi < BUCKETS; bi++) {
+      ambientBuckets.push([]); activeBuckets.push([]); routeBuckets.push([]);
     }
 
-    function routeControls(edgeIndex, a, d) {
+    var debugEnabled = false, diagnostics = null;
+    try {
+      var params = new URLSearchParams(window.location.search);
+      debugEnabled = params.has('fieldDebug') || params.has('field-debug');
+    } catch (ignore) {}
+    if (debugEnabled) {
+      diagnostics = {
+        raw: null, canvasPoint: null, injection: null, contact: null,
+        consumedSequence: 0, paintedSequence: 0, drawStart: 0, drawEnd: 0,
+        responsePeak: null, rect: null, cssWidth: 0, cssHeight: 0,
+        backingWidth: 0, backingHeight: 0, dpr: 1, reveal: 0,
+        routeOpacities: new Array(TOPOLOGY.edges.length),
+        nodeOpacities: new Array(TOPOLOGY.nodes.length),
+        nodeAnchors: [], routeEndpoints: [], samples: []
+      };
+      window.GrapheneFieldDiagnostics = {
+        read: function () {
+          var snapshot = JSON.parse(JSON.stringify(diagnostics));
+          snapshot.activeRafCount = raf || drawing ? 1 : 0;
+          return snapshot;
+        }
+      };
+    }
+
+    function routeControls(edgeIndex, a, d, heroHeight, narrow) {
       var dx = d[0] - a[0];
       if (edgeIndex >= 3 && edgeIndex <= 5) {
-        var bend = edgeIndex === 4 ? (narrow ? -H * .08 : -H * .14) : 0;
+        var bend = edgeIndex === 4 ? -heroHeight * (narrow ? .08 : .14) : 0;
         return [[a[0] + dx * .34, a[1] + bend], [a[0] + dx * .72, d[1] + bend]];
       }
       return [[a[0] + dx * .42, a[1]], [a[0] + dx * .68, d[1]]];
     }
 
-    function buildRoutes() {
+    function buildRoutes(heroHeight, narrow) {
       routes = [];
       TOPOLOGY.edges.forEach(function (edge, edgeIndex) {
-        var a = nodes[edge[0]], d = nodes[edge[1]], controls = routeControls(edgeIndex, a, d);
+        var a = nodes[edge[0]], d = nodes[edge[1]];
+        var controls = routeControls(edgeIndex, a, d, heroHeight, narrow);
         var samples = [], steps = 18;
         for (var s = 0; s <= steps; s++) samples.push(cubic(a, controls[0], controls[1], d, s / steps));
         routes.push({ from: edge[0], to: edge[1], samples: samples });
@@ -192,13 +306,14 @@
 
     function nearestRoute(x, y) {
       var best = { distance: Infinity, angle: 0, edge: -1, t: 0 };
-      for (var e = 0; e < routes.length; e++) {
-        var samples = routes[e].samples;
-        for (var s = 1; s < samples.length; s++) {
-          var hit = closestOnSegment(x, y, samples[s - 1][0], samples[s - 1][1], samples[s][0], samples[s][1]);
+      for (var edge = 0; edge < routes.length; edge++) {
+        var samples = routes[edge].samples;
+        for (var sample = 1; sample < samples.length; sample++) {
+          var hit = closestOnSegment(x, y, samples[sample - 1][0], samples[sample - 1][1],
+            samples[sample][0], samples[sample][1]);
           if (hit.distance < best.distance) {
-            best.distance = hit.distance; best.angle = hit.angle; best.edge = e;
-            best.t = (s - 1 + hit.t) / (samples.length - 1);
+            best.distance = hit.distance; best.angle = hit.angle; best.edge = edge;
+            best.t = (sample - 1 + hit.t) / (samples.length - 1);
           }
         }
       }
@@ -206,13 +321,27 @@
     }
 
     function layout() {
-      var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      bounds = hero.getBoundingClientRect();
-      W = canvas.clientWidth; H = canvas.clientHeight; narrow = W < 720;
-      if (!W || !H) return;
-      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      layoutDirty = false;
+      W = canvas.clientWidth; H = canvas.clientHeight;
+      canvasRect = canvas.getBoundingClientRect();
+      if (!W || !H || !canvasRect.width || !canvasRect.height) return;
+      var size = canvasSize(W, H, window.devicePixelRatio);
+      dpr = size.dpr;
+      if (canvas.width !== size.width) canvas.width = size.width;
+      if (canvas.height !== size.height) canvas.height = size.height;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      topologyLayout(); buildRoutes();
+
+      var rawHero = hero.getBoundingClientRect();
+      var scaleX = W / canvasRect.width, scaleY = H / canvasRect.height;
+      var heroRect = {
+        left: (rawHero.left - canvasRect.left) * scaleX,
+        top: (rawHero.top - canvasRect.top) * scaleY,
+        width: rawHero.width * scaleX,
+        height: rawHero.height * scaleY
+      };
+      var narrow = W < 720;
+      nodes = topologyLayout(W, H, heroRect, narrow);
+      buildRoutes(heroRect.height, narrow);
 
       var step = narrow ? 29 : 25, cap = narrow ? CONFIG.narrowCap : CONFIG.desktopCap;
       var estimate = Math.ceil(W / step) * Math.ceil(H / step);
@@ -223,34 +352,44 @@
         for (var x = ox; x < W; x += step) {
           var route = nearestRoute(x, y);
           var weight = route.distance >= 31 ? 0 : 1 - fade(route.distance / 31);
-          var stageMask = narrow
-            ? .1 + .9 * fade(clamp((y / H - .5) / .42, 0, 1))
-            : .06 + .94 * fade(clamp((x / W - .28) / .36, 0, 1));
-          points.push({ x: x, y: y, w: weight, a: route.angle, edge: route.edge, edgeT: route.t, q: stageMask });
+          points.push({ x: x, y: y, w: weight, a: route.angle, edge: route.edge });
         }
+      }
+
+      if (diagnostics) {
+        diagnostics.rect = { left: canvasRect.left, top: canvasRect.top,
+          width: canvasRect.width, height: canvasRect.height };
+        diagnostics.cssWidth = W; diagnostics.cssHeight = H;
+        diagnostics.backingWidth = canvas.width; diagnostics.backingHeight = canvas.height;
+        diagnostics.dpr = dpr; diagnostics.markSpacing = step;
+        diagnostics.nodeAnchors = nodes.map(function (node) { return { x: node[0], y: node[1] }; });
+        diagnostics.routeEndpoints = routes.map(function (route) {
+          var first = route.samples[0], last = route.samples[route.samples.length - 1];
+          return { from: { x: first[0], y: first[1] }, to: { x: last[0], y: last[1] } };
+        });
       }
     }
 
-    function activeForNode(nodeIndex, waveStage) {
-      return (waveStage === 0 && (nodeIndex === 1 || nodeIndex === 2)) ||
-        (waveStage === 1 && nodeIndex === 3) || (waveStage === 2 && nodeIndex === 4) ||
-        (waveStage === 3 && nodeIndex === 5) || (waveStage === 4 && nodeIndex === 6);
+    function drawBuckets(buckets, color, lineWidth) {
+      ctx.strokeStyle = color; ctx.lineWidth = lineWidth;
+      for (var bucketIndex = 0; bucketIndex < buckets.length; bucketIndex++) {
+        var lines = buckets[bucketIndex];
+        if (!lines.length) continue;
+        ctx.globalAlpha = (bucketIndex + .5) / buckets.length;
+        ctx.beginPath();
+        for (var line = 0; line < lines.length; line += 4) {
+          ctx.moveTo(lines[line], lines[line + 1]);
+          ctx.lineTo(lines[line + 2], lines[line + 3]);
+        }
+        ctx.stroke();
+      }
     }
 
-    function activeForEdge(edgeIndex, waveStage) {
-      return (waveStage === 2 && edgeIndex < 3) ||
-        (waveStage === 3 && edgeIndex >= 3 && edgeIndex <= 6) ||
-        (waveStage === 4 && edgeIndex === 7);
-    }
-
-    function drawNode(nodeIndex, resolve, candidateAlpha, waveStage) {
-      if (nodeIndex === 7 && candidateAlpha <= .01) return;
-      var n = nodes[nodeIndex], alpha = nodeIndex === 7 ? candidateAlpha : resolve;
+    function drawNode(nodeIndex, alpha) {
       if (alpha <= .01) return;
-      ctx.save(); ctx.globalAlpha = alpha;
-      ctx.strokeStyle = activeForNode(nodeIndex, waveStage) ? accent : ink;
-      ctx.fillStyle = activeForNode(nodeIndex, waveStage) ? accent : ink;
-      ctx.lineWidth = 1.4;
+      var n = nodes[nodeIndex];
+      if (!n || n[0] < -20 || n[0] > W + 20 || n[1] < -20 || n[1] > H + 20) return;
+      ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = routeInk; ctx.fillStyle = routeInk; ctx.lineWidth = 1.4;
       if (nodeIndex === 0) {
         ctx.beginPath(); ctx.arc(n[0], n[1], 6, .35, TAU - .35); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(n[0] + 9, n[1]); ctx.lineTo(n[0] + 13, n[1]); ctx.stroke();
@@ -267,213 +406,228 @@
         var r = nodeIndex === 7 ? 7 : 8;
         ctx.beginPath(); ctx.moveTo(n[0], n[1] - r); ctx.lineTo(n[0] + r, n[1]);
         ctx.lineTo(n[0], n[1] + r); ctx.lineTo(n[0] - r, n[1]); ctx.closePath();
-        if (nodeIndex === 7) { ctx.stroke(); ctx.globalAlpha *= .5; ctx.strokeRect(n[0] - 2, n[1] - 2, 4, 4); }
-        else ctx.fill();
+        if (nodeIndex === 7) {
+          ctx.stroke(); ctx.globalAlpha *= .5; ctx.strokeRect(n[0] - 2, n[1] - 2, 4, 4);
+        } else ctx.fill();
       }
       ctx.restore();
     }
 
-    function drawArrowlets(resolve) {
-      if (resolve < .55) return;
-      ctx.save(); ctx.strokeStyle = ink; ctx.lineWidth = 1;
-      for (var i = 0; i < routes.length; i++) {
-        ctx.globalAlpha = routeResolve(i, resolve) * .58;
-        var samples = routes[i].samples, at = Math.floor(samples.length * .78);
-        var a = samples[at - 1], b = samples[at], angle = Math.atan2(b[1] - a[1], b[0] - a[0]);
+    function drawArrowlets(currentFrame) {
+      ctx.save(); ctx.strokeStyle = routeInk; ctx.lineWidth = 1;
+      for (var edge = 0; edge < routes.length; edge++) {
+        var samples = routes[edge].samples, at = Math.floor(samples.length * .78);
+        var a = samples[at - 1], b = samples[at];
+        if (b[0] < -10 || b[0] > W + 10 || b[1] < -10 || b[1] > H + 10) continue;
+        var angle = Math.atan2(b[1] - a[1], b[0] - a[0]);
+        ctx.globalAlpha = currentFrame.routeOpacities[edge] * .58;
         ctx.save(); ctx.translate(b[0], b[1]); ctx.rotate(angle); ctx.beginPath();
         ctx.moveTo(-4, -2.5); ctx.lineTo(0, 0); ctx.lineTo(-4, 2.5); ctx.stroke(); ctx.restore();
       }
       ctx.restore();
     }
 
-    function interactionFrame(now) {
-      if (motion.seenSequence !== ptr.sequence) {
-        motion.seenSequence = ptr.sequence;
-        if (motion.mode === 'resolve' || motion.mode === 'wave' || motion.mode === 'verified') {
-          motion.releaseFrom = motion.mode === 'resolve' ? progress(now, motion.resolveAt, CONFIG.resolveMs) : 1;
-          motion.candidateFrom = motion.candidate;
-          motion.releaseAt = now; motion.mode = 'release';
-        } else if (motion.mode !== 'release' && ptr.inside) motion.mode = 'explore';
+    var lastDrawNow = 0;
+    function paint(currentFrame) {
+      ctx.fillStyle = bg; ctx.globalAlpha = 1; ctx.fillRect(0, 0, W, H); ctx.lineCap = 'round';
+      for (var bucket = 0; bucket < BUCKETS; bucket++) {
+        ambientBuckets[bucket].length = 0; activeBuckets[bucket].length = 0; routeBuckets[bucket].length = 0;
       }
-      if (!ptr.inside && motion.mode !== 'rest' && motion.mode !== 'release') {
-        motion.releaseFrom = motion.mode === 'resolve' ? progress(now, motion.resolveAt, CONFIG.resolveMs) :
-          (motion.mode === 'explore' ? 0 : 1);
-        motion.candidateFrom = motion.candidate;
-        motion.releaseAt = now; motion.mode = 'release';
-      }
-      if ((motion.mode === 'rest' || motion.mode === 'explore') && ptr.inside && now - ptr.movedAt >= CONFIG.dwellMs) {
-        motion.mode = 'resolve'; motion.resolveAt = now;
-      }
+      var scale = .00165, contactPeak = 0, peakX = null, peakY = null;
+      var speed = Math.sqrt(state.vx * state.vx + state.vy * state.vy);
 
-      var frame = { resolve: 0, wave: -1, waveUnit: 0, candidate: 0,
-        running: ptr.inside || motion.mode !== 'rest' };
-      if (motion.mode === 'resolve') {
-        frame.resolve = progress(now, motion.resolveAt, CONFIG.resolveMs);
-        if (frame.resolve >= 1) { motion.mode = 'wave'; motion.waveAt = now; }
-      } else if (motion.mode === 'wave') {
-        frame.resolve = 1; frame.waveUnit = clamp((now - motion.waveAt) / CONFIG.waveMs, 0, 1);
-        frame.wave = stageForWave(frame.waveUnit);
-        if (frame.waveUnit >= 1) {
-          motion.mode = 'verified'; motion.verifiedAt = now; frame.wave = -1; frame.candidate = 0;
-        }
-      } else if (motion.mode === 'verified') {
-        frame.resolve = 1; frame.candidate = progress(now, motion.verifiedAt, 280);
-        frame.running = frame.candidate < 1;
-      } else if (motion.mode === 'release') {
-        var releaseMs = Math.max(0, now - motion.releaseAt - CONFIG.releaseHoldMs);
-        frame.resolve = releaseValue(now - motion.releaseAt, motion.releaseFrom);
-        frame.candidate = releaseValue(now - motion.releaseAt, motion.candidateFrom);
-        if (releaseMs >= CONFIG.releaseStopMs) { motion.mode = ptr.inside ? 'explore' : 'rest'; ptr.movedAt = now; frame.resolve = 0; frame.candidate = 0; }
-      }
-      motion.candidate = frame.candidate;
-      return frame;
-    }
-
-    function paint(frame, z) {
-      var dt = lastFrame ? Math.min(34, z.dt) : 16;
-      var targetStrength = ptr.real && ptr.inside ? 1 : 0;
-      ptr.strength = expSmooth(ptr.strength, targetStrength, dt,
-        targetStrength > ptr.strength ? CONFIG.strengthInMs : CONFIG.strengthOutMs);
-      ptr.x = expSmooth(ptr.x, ptr.tx, dt, CONFIG.pointerTauMs);
-      ptr.y = expSmooth(ptr.y, ptr.ty, dt, CONFIG.pointerTauMs);
-      ptr.vx = expSmooth(ptr.vx, ptr.rawVx, dt, 110);
-      ptr.vy = expSmooth(ptr.vy, ptr.rawVy, dt, 110);
-      ptr.rawVx = expSmooth(ptr.rawVx, 0, dt, CONFIG.wakeMs);
-      ptr.rawVy = expSmooth(ptr.rawVy, 0, dt, CONFIG.wakeMs);
-      ptr.wake = expSmooth(ptr.wake, 0, dt, CONFIG.wakeMs);
-
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); ctx.lineCap = 'round';
-      for (var b = 0; b < BUCKETS; b++) buckets[b].length = 0;
-      accentLines.length = 0;
-      var scale = .00165, time = z.time * .000075;
-      var velocityAngle = Math.atan2(ptr.vy, ptr.vx), speed = Math.sqrt(ptr.vx * ptr.vx + ptr.vy * ptr.vy);
-
-      for (var i = 0; i < points.length; i++) {
-        var p = points[i], rx = p.x * COS_R - p.y * SIN_R, ry = p.x * SIN_R + p.y * COS_R;
-        var nx = rx * scale, ny = ry * scale, n0 = flow(nx, ny, time);
-        var gx = flow(nx + EPS, ny, time) - n0, gy = flow(nx, ny + EPS, time) - n0;
+      for (var index = 0; index < points.length; index++) {
+        var p = points[index], rx = p.x * COS_R - p.y * SIN_R, ry = p.x * SIN_R + p.y * COS_R;
+        var nx = rx * scale, ny = ry * scale, n0 = flow(nx, ny);
+        var gx = flow(nx + EPS, ny) - n0, gy = flow(nx, ny + EPS) - n0;
         var angle = Math.atan2(gx, -gy), mag = clamp(Math.sqrt(gx * gx + gy * gy) / EPS, 0, 1);
-        var alpha = (.075 + mag * .22) * p.q, length = 9.5 + mag * 3;
-        var dx = p.x - ptr.x, dy = p.y - ptr.y, near = influence(Math.sqrt(dx * dx + dy * dy), CONFIG.radius) * ptr.strength;
-        if (near > 0) {
-          var attentionAngle = speed > .02 ? velocityAngle : Math.atan2(dy, dx) + Math.PI / 2;
-          var turn = ((attentionAngle - angle + Math.PI * 1.5) % Math.PI) - Math.PI / 2;
-          angle += turn * near * (.3 + ptr.wake * .22);
-          alpha += near * .18; length += near * (3 + ptr.wake * 2);
+        var ambientAlpha = .22 + mag * .36, length = 9.5 + mag * 3;
+        var best = 0, desiredAngle = angle, contactResponse = 0;
+
+        if (currentFrame.pressure > 0) {
+          var contactDx = p.x - state.x, contactDy = p.y - state.y;
+          contactResponse = influence(Math.sqrt(contactDx * contactDx + contactDy * contactDy), CONFIG.radius) * currentFrame.pressure;
+          if (contactResponse > contactPeak) { contactPeak = contactResponse; peakX = p.x; peakY = p.y; }
+          if (contactResponse > best) {
+            best = contactResponse;
+            desiredAngle = speed > .02 ? Math.atan2(state.vy, state.vx) : Math.atan2(contactDy, contactDx) + Math.PI / 2;
+          }
         }
 
-        var latent = p.w * .11, pull = p.w * routeResolve(p.edge, frame.resolve);
-        alpha *= 1 - .54 * frame.resolve * (1 - p.w);
-        if (latent + pull > 0) {
-          var routePull = clamp(latent + pull, 0, 1);
-          var routeTurn = ((p.a - angle + Math.PI * 1.5) % Math.PI) - Math.PI / 2;
-          angle += routeTurn * routePull;
-          alpha += (.69 - alpha) * pull;
-          length += (16 - length) * pull;
+        for (var wakeIndex = 0; wakeIndex < state.wakeCount; wakeIndex++) {
+          var wake = state.wake[wakeIndex], energy = wakeDecay(lastDrawNow - wake.time);
+          if (!energy) continue;
+          var wakeDx = p.x - wake.x, wakeDy = p.y - wake.y;
+          var wakeResponse = influence(Math.sqrt(wakeDx * wakeDx + wakeDy * wakeDy), CONFIG.wakeRadius) * energy;
+          if (wakeResponse > best) {
+            best = wakeResponse;
+            desiredAngle = Math.abs(wake.vx) + Math.abs(wake.vy) > .02
+              ? Math.atan2(wake.vy, wake.vx) : Math.atan2(wakeDy, wakeDx) + Math.PI / 2;
+          }
         }
+
+        if (best > 0) {
+          angle += axisTurn(angle, desiredAngle) * best * .72;
+          length += best * 5;
+        }
+
+        var routePull = p.w && p.edge >= 0 ? p.w * currentFrame.routeOpacities[p.edge] : 0;
+        if (routePull > 0) {
+          angle += axisTurn(angle, p.a) * routePull;
+          length += (16 - length) * routePull;
+        }
+
         var cx = Math.cos(angle) * length / 2, sy = Math.sin(angle) * length / 2;
-        var bucket = buckets[Math.min(BUCKETS - 1, Math.max(0, (alpha * BUCKETS) | 0))];
-        bucket.push(p.x - cx, p.y - sy, p.x + cx, p.y + sy);
-        if (pull > .45 && activeForEdge(p.edge, frame.wave)) {
-          accentLines.push(p.x - cx, p.y - sy, p.x + cx, p.y + sy);
+        var ambientBucket = ambientBuckets[Math.min(BUCKETS - 1, (ambientAlpha * BUCKETS) | 0)];
+        ambientBucket.push(p.x - cx, p.y - sy, p.x + cx, p.y + sy);
+        if (best > .01) {
+          var activeBucket = activeBuckets[Math.min(BUCKETS - 1, (best * BUCKETS) | 0)];
+          activeBucket.push(p.x - cx, p.y - sy, p.x + cx, p.y + sy);
+        }
+        if (routePull > .01) {
+          var routeBucket = routeBuckets[Math.min(BUCKETS - 1, (routePull * BUCKETS) | 0)];
+          routeBucket.push(p.x - cx, p.y - sy, p.x + cx, p.y + sy);
         }
       }
 
-      ctx.strokeStyle = ink; ctx.lineWidth = 1.1;
-      for (var bucketIndex = 0; bucketIndex < BUCKETS; bucketIndex++) {
-        var lines = buckets[bucketIndex];
-        if (!lines.length) continue;
-        ctx.globalAlpha = (bucketIndex + .5) / BUCKETS; ctx.beginPath();
-        for (var k = 0; k < lines.length; k += 4) { ctx.moveTo(lines[k], lines[k + 1]); ctx.lineTo(lines[k + 2], lines[k + 3]); }
-        ctx.stroke();
-      }
-      if (accentLines.length) {
-        ctx.strokeStyle = accent; ctx.globalAlpha = .9; ctx.lineWidth = 1.35; ctx.beginPath();
-        for (var a = 0; a < accentLines.length; a += 4) {
-          ctx.moveTo(accentLines[a], accentLines[a + 1]); ctx.lineTo(accentLines[a + 2], accentLines[a + 3]);
-        }
-        ctx.stroke();
-      }
+      drawBuckets(ambientBuckets, idleInk, 1.05);
+      drawBuckets(activeBuckets, activeInk, 1.15);
+      drawBuckets(routeBuckets, routeInk, 1.15);
       ctx.globalAlpha = 1;
-      drawArrowlets(frame.resolve);
+      drawArrowlets(currentFrame);
       for (var nodeIndex = 0; nodeIndex < nodes.length; nodeIndex++) {
-        drawNode(nodeIndex, nodeResolve(nodeIndex, frame.resolve), frame.candidate, frame.wave);
+        drawNode(nodeIndex, currentFrame.nodeOpacities[nodeIndex]);
       }
+      if (diagnostics) diagnostics.responsePeak = { x: peakX, y: peakY, strength: contactPeak };
     }
+
+    function isStatic() { return !!frozenName || reduce.matches || !fine.matches; }
 
     function draw(now) {
-      raf = 0;
-      if (!onscreen || document.hidden || !W || !H) return;
-      var dt = lastFrame ? Math.min(34, now - lastFrame) : 16;
-      lastFrame = now; activeMs += dt;
-      var frame;
-      if (frozenName) frame = debugFrame(frozenName);
-      else if (!ptr.real && !autonomousDone) {
-        frame = idleFrame(activeMs);
-        if (!frame.running) autonomousDone = true;
-      } else frame = interactionFrame(now);
-      paint(frame, { dt: dt, time: frozenName ? 2400 : activeMs });
-      if (!frozenName && !autonomousDone && !ptr.real) start();
-      else if (!frozenName && frame.running) start();
+      raf = 0; drawing = true; lastDrawNow = now;
+      if (document.hidden) { drawing = false; return; }
+      var drawStart = performance.now();
+      if (layoutDirty) layout();
+      if (!W || !H) { drawing = false; return; }
+
+      var staticFrame = isStatic();
+      var currentFrame = frozenName ? debugFrame(frozenName, frame) : frameState(state, now, staticFrame, frame);
+      var consumedSequence = state.sequence;
+      paint(currentFrame);
+      var drawEnd = performance.now();
+
+      if (diagnostics) {
+        diagnostics.drawStart = drawStart; diagnostics.drawEnd = drawEnd;
+        diagnostics.consumedSequence = consumedSequence; diagnostics.paintedSequence = consumedSequence;
+        diagnostics.contact = { x: state.x, y: state.y };
+        diagnostics.reveal = currentFrame.reveal;
+        for (var edge = 0; edge < currentFrame.routeOpacities.length; edge++) {
+          diagnostics.routeOpacities[edge] = currentFrame.routeOpacities[edge];
+        }
+        for (var node = 0; node < currentFrame.nodeOpacities.length; node++) {
+          diagnostics.nodeOpacities[node] = currentFrame.nodeOpacities[node];
+        }
+        if (consumedSequence && (!diagnostics.samples.length ||
+          diagnostics.samples[diagnostics.samples.length - 1].sequence !== consumedSequence)) {
+          diagnostics.samples.push({ sequence: consumedSequence, receivedAt: state.receivedAt,
+            paintedAt: drawEnd, latency: drawEnd - state.receivedAt });
+          if (diagnostics.samples.length > 240) diagnostics.samples.shift();
+        }
+      }
+
+      drawing = false;
+      if (!staticFrame && currentFrame.running) start();
     }
 
     function start() {
-      if (!raf && onscreen && !document.hidden && !frozenName) raf = requestAnimationFrame(draw);
+      if (!raf && !document.hidden) raf = requestAnimationFrame(draw);
     }
-    function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; }
-    function paintOnce() { lastFrame = 0; if (frozenName) draw(performance.now()); else { start(); } }
 
-    function recordPointer(event) {
-      if (!fine.matches || reduce.matches || event.pointerType === 'touch' || !bounds) return;
-      var now = performance.now(), x = clamp(event.clientX - bounds.left, 0, W), y = clamp(event.clientY - bounds.top, 0, H);
-      var mapped = mapPointer(x, y, W, H, narrow), sampleDt = Math.max(8, now - ptr.sampleAt);
-      ptr.rawVx = clamp((mapped.x - ptr.sampleX) / sampleDt, -1.8, 1.8);
-      ptr.rawVy = clamp((mapped.y - ptr.sampleY) / sampleDt, -1.8, 1.8);
-      ptr.wake = clamp(Math.sqrt(ptr.rawVx * ptr.rawVx + ptr.rawVy * ptr.rawVy) / .8, 0, 1);
-      ptr.tx = mapped.x; ptr.ty = mapped.y; ptr.sampleX = mapped.x; ptr.sampleY = mapped.y; ptr.sampleAt = now;
-      ptr.movedAt = now; ptr.inside = true; ptr.real = true; ptr.sequence++;
-      autonomousDone = true;
-      if (!ptr.strength) { ptr.x = mapped.x; ptr.y = mapped.y; }
+    function stop() {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    }
+
+    function normalEventTime(event, receivedAt) {
+      return event.timeStamp > 0 && Math.abs(event.timeStamp - receivedAt) < 60000
+        ? event.timeStamp : receivedAt;
+    }
+
+    function onPointerMove(event) {
+      if (isStatic() || event.pointerType === 'touch') return;
+      var receivedAt = performance.now();
+      if (layoutDirty) layout();
+      if (!canvasRect || !canvasRect.width || !canvasRect.height) return;
+      var samples = event.getCoalescedEvents ? event.getCoalescedEvents() : null;
+      if (!samples || !samples.length) samples = [event];
+      var mapped = null, latest = event;
+      for (var index = 0; index < samples.length; index++) {
+        latest = samples[index];
+        mapped = mapPointer(latest.clientX, latest.clientY, canvasRect, W, H);
+        recordSample(state, { x: mapped.x, y: mapped.y,
+          time: normalEventTime(latest, receivedAt), receivedAt: receivedAt,
+          eventTimestamp: latest.timeStamp, clientX: latest.clientX, clientY: latest.clientY });
+      }
+      if (diagnostics) {
+        diagnostics.raw = { clientX: latest.clientX, clientY: latest.clientY,
+          eventTimestamp: latest.timeStamp, sequence: state.sequence };
+        diagnostics.canvasPoint = { x: mapped.x, y: mapped.y };
+        diagnostics.injection = { x: state.x, y: state.y };
+      }
       start();
     }
 
-    function clearPointer() {
-      ptr.inside = false; ptr.sequence++; ptr.rawVx = 0; ptr.rawVy = 0; start();
+    function onPointerReset() { resetContact(state); start(); }
+    function onPointerOut(event) { if (!event.relatedTarget) onPointerReset(); }
+
+    var passive = { passive: true };
+    function bindPointer() {
+      if (pointerBound || isStatic()) return;
+      window.addEventListener('pointermove', onPointerMove, passive);
+      window.addEventListener('pointercancel', onPointerReset, passive);
+      window.addEventListener('pointerout', onPointerOut, passive);
+      window.addEventListener('blur', onPointerReset);
+      pointerBound = true;
     }
 
-    hero.addEventListener('pointerenter', recordPointer, { passive: true });
-    hero.addEventListener('pointermove', recordPointer, { passive: true });
-    hero.addEventListener('pointerleave', clearPointer, { passive: true });
-    hero.addEventListener('pointercancel', clearPointer, { passive: true });
-    window.addEventListener('blur', clearPointer);
-    window.addEventListener('pagehide', function () { clearPointer(); stop(); });
-    window.addEventListener('pageshow', function () { lastFrame = 0; layout(); paintOnce(); });
-    window.addEventListener('scroll', function () {
-      clearPointer();
-      if (!scrollRaf) scrollRaf = requestAnimationFrame(function () { scrollRaf = 0; bounds = hero.getBoundingClientRect(); });
-    }, { passive: true });
-    window.addEventListener('resize', function () {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function () { layout(); lastFrame = 0; paintOnce(); }, 100);
-    });
-    document.addEventListener('visibilitychange', function () {
-      if (document.hidden) { clearPointer(); stop(); }
-      else { lastFrame = 0; paintOnce(); }
-    });
-    if (reduce.addEventListener) reduce.addEventListener('change', function () {
-      frozenName = reduce.matches ? 'verified' : '';
-      stop(); layout(); lastFrame = 0;
-      if (frozenName) draw(performance.now()); else start();
-    });
-    if (window.IntersectionObserver) {
-      new IntersectionObserver(function (entries) {
-        onscreen = entries[0].isIntersecting;
-        if (onscreen) { lastFrame = 0; paintOnce(); } else stop();
-      }, { threshold: 0 }).observe(hero);
+    function unbindPointer() {
+      if (!pointerBound) return;
+      window.removeEventListener('pointermove', onPointerMove, passive);
+      window.removeEventListener('pointercancel', onPointerReset, passive);
+      window.removeEventListener('pointerout', onPointerOut, passive);
+      window.removeEventListener('blur', onPointerReset);
+      pointerBound = false;
     }
 
-    layout();
-    if (frozenName) draw(performance.now()); else start();
+    function invalidateLayout() { layoutDirty = true; start(); }
+    function onPageHide() { unbindPointer(); clearWake(state); stop(); }
+    function onPageShow() { bindPointer(); invalidateLayout(); }
+    function onVisibilityChange() {
+      if (document.hidden) { resetContact(state); stop(); }
+      else { bindPointer(); invalidateLayout(); }
+    }
+    function onModeChange() {
+      stop(); resetContact(state);
+      if (isStatic()) { unbindPointer(); clearWake(state); }
+      else bindPointer();
+      invalidateLayout();
+    }
+
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('pageshow', onPageShow);
+    window.addEventListener('scroll', invalidateLayout, passive);
+    window.addEventListener('resize', invalidateLayout, passive);
+    window.addEventListener('orientationchange', invalidateLayout, passive);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', invalidateLayout, passive);
+      window.visualViewport.addEventListener('scroll', invalidateLayout, passive);
+    }
+    if (reduce.addEventListener) reduce.addEventListener('change', onModeChange);
+    if (fine.addEventListener) fine.addEventListener('change', onModeChange);
+
+    bindPointer();
+    start();
   }
 
   function mountAll() {
