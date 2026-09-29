@@ -2,235 +2,786 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Graphene — workflow control for coding agents</title>
-<meta name="description" content="Approve one exact task graph, follow the signed coding mission read-only in your terminal, and inspect the summary and file lineage behind its candidate.">
-<meta name="theme-color" content="#202020">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Graphene — many agents, one plan</title>
+<meta name="description" content="Graphene shows you what your coding agents understood, as a tree you can prune, before they write a line of code.">
 <link rel="canonical" href="https://alex-lop.github.io/graphene-site/">
+<meta name="theme-color" content="#FAF9F6">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://alex-lop.github.io/graphene-site/">
-<meta property="og:title" content="Graphene — workflow control for coding agents">
-<meta property="og:description" content="Approve one exact task graph, follow the signed coding mission read-only in your terminal, and inspect the summary and file lineage behind its candidate.">
-<meta property="og:image" content="https://alex-lop.github.io/graphene-site/assets/og.png">
-<meta property="og:image:alt" content="Graphene’s governed task route resolving from a field of possible work.">
+<meta property="og:title" content="Graphene — many agents, one plan">
+<meta property="og:description" content="Graphene shows you what your coding agents understood, as a tree you can prune, before they write a line of code.">
+<meta property="og:image" content="https://alex-lop.github.io/graphene-site/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A murmuration of starlings on an ivory sky, beside the words: Many agents. One plan.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Graphene — workflow control for coding agents">
-<meta name="twitter:description" content="Approve one exact task graph, follow the signed coding mission read-only in your terminal, and inspect the summary and file lineage behind its candidate.">
-<meta name="twitter:image" content="https://alex-lop.github.io/graphene-site/assets/og.png">
-<meta name="twitter:image:alt" content="Graphene’s governed task route resolving from a field of possible work.">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="alternate icon" href="assets/favicon.png" sizes="32x32">
-<link rel="stylesheet" href="assets/site.css">
-<script>document.documentElement.classList.add('js');</script>
+<meta name="twitter:title" content="Graphene — many agents, one plan">
+<meta name="twitter:description" content="Graphene shows you what your coding agents understood, as a tree you can prune, before they write a line of code.">
+<meta name="twitter:image" content="https://alex-lop.github.io/graphene-site/og.png">
+<meta name="twitter:image:alt" content="A murmuration of starlings on an ivory sky, beside the words: Many agents. One plan.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23141413' d='M28 4 17.7 25.7 14.8 17.2 6.3 14.3Z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Instrument+Sans:wght@400..600&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+:root {
+  --sky: #F0EEE6; --strip: #FAF9F6; --ink: #141413; --ink2: #3A3935; --muted: #6B6A65;
+  --hair: rgba(20, 20, 19, .13);
+  --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --strip-h: 64px;
+  --gut: clamp(20px, 5.6vw, 96px);
+}
+* { box-sizing: border-box }
+html { background: var(--sky); -webkit-text-size-adjust: 100% }
+body {
+  margin: 0; background: var(--sky); color: var(--ink);
+  font: 400 17px/1.55 var(--sans);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+::selection { background: var(--ink); color: var(--strip) }
+a { color: inherit }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 6px }
+code, pre { font-family: var(--mono) }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0 }
+
+#sky { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0 }
+.labels { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden }
+
+/* The strip: the reference's readout bar, with the wordmark on its left. */
+.strip {
+  position: fixed; z-index: 3; inset: 0 0 auto 0; height: var(--strip-h);
+  display: flex; align-items: center; gap: 28px; padding: 0 var(--gut);
+  background: var(--strip);
+}
+.mark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font: 600 17px/1 var(--sans); letter-spacing: -.012em }
+.mark svg { width: 17px; height: 17px; flex: none }
+.readout { margin: 0 0 0 auto; display: flex; gap: 26px; font: 400 15px/1 var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap }
+.readout .k { color: var(--muted); margin-right: .32em }
+.gh { font: 500 14px/1 var(--sans); text-decoration: none; padding: 10px 16px; border: 1px solid var(--hair); border-radius: 999px; transition: background .2s, border-color .2s }
+.gh:hover { background: var(--sky); border-color: rgba(20, 20, 19, .28) }
+
+main { position: relative; z-index: 2 }
+.scene {
+  min-height: 100vh; min-height: 100svh;
+  display: grid; grid-template-columns: minmax(0, 1fr); align-content: center;
+  padding: calc(var(--strip-h) + 48px) var(--gut) 72px;
+}
+.copy { max-width: 27rem; position: relative }
+.hero .copy { max-width: 44rem }
+h1 { font: 400 clamp(3.4rem, 6.9vw, 6.9rem)/.92 var(--serif); letter-spacing: -.02em; margin: 0 0 24px; text-wrap: balance }
+h2 { font: 400 clamp(2.5rem, 4.4vw, 4.1rem)/.98 var(--serif); letter-spacing: -.015em; margin: 0 0 22px; text-wrap: balance }
+.lede { font-size: clamp(1.1rem, 1.45vw, 1.32rem); line-height: 1.45; color: var(--ink2); max-width: 31ch; margin: 0 0 36px }
+.copy p { color: var(--ink2); margin: 0 0 22px; max-width: 34ch }
+.kicker { display: flex; gap: 14px; font: 400 12.5px/1 var(--mono); color: var(--muted); margin: 0 0 24px }
+.kicker b { font-weight: 500; color: var(--ink) }
+.para { font: italic 400 clamp(1.4rem, 1.9vw, 1.72rem)/1.22 var(--serif); color: var(--ink); margin: 0 0 22px; padding: 0 }
+
+.install, .block {
+  display: flex; align-items: center; gap: 12px; width: max-content; max-width: 100%;
+  background: var(--strip); border: 1px solid var(--hair); border-radius: 14px; padding: 6px 6px 6px 18px;
+}
+.install code { font: 400 13.5px/1.35 var(--mono); white-space: nowrap; min-width: 0 }
+.install code::before, .block code .ln::before { content: "$ "; color: var(--muted) }
+.block { align-items: flex-start; padding: 14px 8px 14px 18px }
+.block pre { margin: 0; font: 400 13.5px/1.75 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere }
+.block code .ln { display: block }
+.btn {
+  flex: none; height: 38px; padding: 0 16px; border: 0; border-radius: 10px; cursor: pointer;
+  font: 500 13.5px/1 var(--sans); color: var(--strip); background: var(--ink); transition: background .2s;
+}
+.btn:hover { background: #33322e }
+.hint { font: 400 13px/1.4 var(--sans); color: var(--muted); margin: 22px 0 0 !important }
+.coarse { display: none }
+@media (pointer: coarse) { .fine { display: none } .coarse { display: inline } }
+
+.cut {
+  display: inline-flex; align-items: center; gap: 10px; height: 42px; padding: 0 18px 0 14px; cursor: pointer;
+  border: 1px solid var(--ink); border-radius: 999px; background: var(--strip); color: var(--ink);
+  font: 500 14px/1 var(--sans); transition: background .2s, color .2s;
+}
+.cut code { font-size: 13px }
+.cut:hover, .cut[aria-pressed="true"] { background: var(--ink); color: var(--strip) }
+.cut svg { width: 14px; height: 14px }
+.small { font-size: 14.5px; max-width: 46ch !important }
+.small code { font-size: 13px; color: var(--ink) }
+.links { display: flex; gap: 22px; font-weight: 500; margin-top: 28px !important }
+.links a { text-decoration: none; border-bottom: 1px solid var(--hair); padding-bottom: 2px }
+.links a:hover { border-color: var(--ink) }
+.end h2 { max-width: 12em }
+.end .copy { max-width: 36rem }
+
+.hero { position: relative; align-content: end; padding-bottom: max(10vh, 72px) }
+
+.foot {
+  position: relative; z-index: 2; display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between;
+  padding: 26px var(--gut) calc(26px + env(safe-area-inset-bottom)); background: var(--strip);
+  font: 400 13px/1.4 var(--sans); color: var(--muted);
+}
+.foot nav { display: flex; gap: 20px }
+.foot a { text-decoration: none }
+.foot a:hover { color: var(--ink) }
+
+/* Labels of the plan the birds draw. */
+.lbl { position: absolute; left: 0; top: 0; white-space: nowrap; font: 500 12px/1.25 var(--mono); color: var(--ink); opacity: 0; transition: opacity .6s ease, color .4s ease }
+.lbl.on { opacity: 1 }
+.lbl .k { color: var(--muted); font-weight: 400 }
+.lbl.goal { font-size: 12.5px }
+.lbl.guess { color: var(--muted) }
+.lbl.hover { color: var(--ink) }
+.lbl.hover::before { content: "✕ " }
+.lbl.gone { opacity: 0; text-decoration: line-through; transition-duration: 1.4s }
+.lbl.done::before { content: "✓ " }
+.lbl.card { font: 400 11.5px/1.65 var(--mono); color: var(--muted); border-left: 1px solid var(--hair); padding: 1px 0 1px 10px }
+.lbl.card b { font-weight: 400; color: var(--ink) }
+
+@media (max-width: 899px) {
+  .scene { align-content: end; padding-bottom: calc(56px + env(safe-area-inset-bottom)) }
+  .copy { max-width: 34rem }
+}
+@media (max-width: 560px) {
+  :root { --strip-h: 56px }
+  body { font-size: 16px }
+  .strip { gap: 16px }
+  .gh { display: none }
+  .readout { font-size: 13px; gap: 14px }
+  .mark { font-size: 16px }
+  .install { width: auto; align-items: flex-end; padding: 12px 6px 6px 14px }
+  .install code { white-space: normal; overflow-wrap: anywhere; font-size: 12.5px; padding-bottom: 8px }
+  .block pre { font-size: 12.5px }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto }
+  .hint { display: none }
+  .lbl { transition: none }
+}
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth } }
+</style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
-<canvas class="field-plane" data-field aria-hidden="true"></canvas>
+<header class="strip">
+  <a class="mark" href="#top" aria-label="Graphene, back to the top">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M28 4 17.7 25.7 14.8 17.2 6.3 14.3Z"/></svg>
+    <span>Graphene</span>
+  </a>
+  <p class="readout" aria-hidden="true"><span><span class="k" id="k1">Agents</span><span id="v1">400</span></span><span><span class="k" id="k2">Flying</span><span id="v2">0.0 s</span></span></p>
+  <a class="gh" href="https://github.com/Alex-lop/Graphene">GitHub</a>
+</header>
 
-<nav class="nav" aria-label="Primary navigation">
-  <div class="wrap">
-    <a class="wordmark" href="#top" aria-label="Graphene, home">Graphene</a>
-    <ul>
-      <li><a href="#mission">Mission</a></li>
-      <li><a href="#terminal">Terminal</a></li>
-      <li><a href="#proof">Proof</a></li>
-      <li><a href="https://github.com/Alex-lop/Graphene">GitHub</a></li>
-    </ul>
-  </div>
-</nav>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="labels" id="labels" aria-hidden="true"></div>
 
-<main id="main">
-  <header class="hero" id="top">
-    <div class="wrap hero-copy">
-      <p class="eyebrow">Terminal-native workflow control plane</p>
-      <h1>Draw the route. Sign the map. Watch your agents keep to it.</h1>
-      <p class="lede">Graphene turns a coding goal into a policy-bounded task graph. Inspect or revise the route, approve its exact digest, and follow the signed mission task by task before deciding what happens to its exact candidate.</p>
-      <p class="actions">
-        <a class="btn btn-go" href="#mission">See the signed mission</a>
-        <a class="btn" href="#terminal">Replay the fixed mission</a>
-      </p>
-    </div>
-  </header>
-
-  <section id="mission" class="mission-section">
-    <div class="wrap">
-      <div class="section-intro">
-        <p class="eyebrow">One signed mission</p>
-        <h2>The map is the contract.</h2>
-        <p>Follow one verified local Taskmaster fixture through Plan, Sign, Run, Recover and Prove. State changes, retries and evidence never rewrite its approved six-task topology.</p>
+<main id="top">
+  <section class="scene hero" data-scene="fly">
+    <div class="copy">
+      <h1>Many agents.<br>One plan.</h1>
+      <p class="lede">Graphene shows you what your coding agents understood, as a tree you can prune, before they write a line.</p>
+      <div class="install">
+        <code id="cmd">uv tool install git+https://github.com/Alex-lop/Graphene</code>
+        <button class="btn" type="button" data-copy="cmd">Copy</button>
       </div>
-
-      <div class="mission" data-mission>
-        <div class="stage-controls" data-stages role="group" aria-label="Mission explanation stages">
-          <button type="button" data-stage="plan" aria-pressed="false">Plan</button>
-          <button type="button" data-stage="sign" aria-pressed="false">Sign</button>
-          <button type="button" data-stage="run" aria-pressed="false">Run</button>
-          <button type="button" data-stage="recover" aria-pressed="false">Recover</button>
-          <button type="button" data-stage="prove" aria-pressed="true" class="is-on">Prove</button>
-        </div>
-        <p class="stage-note" data-stage-note>Every task is done. Summary and <code>why</code> expose outcomes, receipts, files and known unknowns. The exact registered candidate waits outside the DAG for a separate approve/reject decision.</p>
-        <p class="sr-only" data-stage-live aria-live="polite"></p>
-
-        <div class="mission-shell">
-          <div class="mission-banner">
-            <p><b>PLAN v1</b> · digest <code data-digest>cddcda3f1919</code></p>
-            <p><strong data-signed>SIGNED — exact revision approved</strong></p>
-            <p class="read-only">LIVE FOLLOW · READ ONLY</p>
-          </div>
-          <dl class="sr-only fixture-identifiers">
-            <dt>Graphene truth source</dt><dd>cc50a62a9a3f6b521d5a157b0942ca4e722fbe57</dd>
-            <dt>Captured mission</dt><dd>mission_start_5541d5c504fa7f8409087233</dd>
-            <dt>Base SHA</dt><dd>e5995606e3cdcf37737dc613e2f391e229726358</dd>
-            <dt>Plan revision</dt><dd>1</dd>
-            <dt>Canonical plan digest</dt><dd>cddcda3f19194df275e7be75c9fe2ba9b087fa4ebfd69ed7893b97754040bf8c</dd>
-          </dl>
-
-          <div class="mission-grid">
-            <div class="mission-map">
-              <p class="goal-boundary"><span aria-hidden="true">◎</span> Goal + policy boundary</p>
-              <div class="dag" data-dag>
-                <svg viewBox="0 0 720 455" preserveAspectRatio="none" role="img" aria-labelledby="mission-map-title mission-map-desc" focusable="false">
-                  <title id="mission-map-title" data-map-title>Prove: all six approved tasks are done</title>
-                  <desc id="mission-map-desc" data-map-desc>The fixed task graph ends at verification. An exact result candidate waits outside the graph for a separate decision.</desc>
-                  <defs>
-                    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z"/></marker>
-                  </defs>
-                  <g class="plan-edges">
-                    <path data-from="redact_notes" data-to="wire_cli" d="M120 82 C120 126 282 122 342 178"/>
-                    <path data-from="render_json" data-to="wire_cli" d="M360 82 L360 178"/>
-                    <path data-from="render_markdown" data-to="wire_cli" d="M600 82 C600 126 438 122 378 178"/>
-                    <path data-from="redact_notes" data-to="assemble_candidate" d="M120 82 C120 226 270 228 338 292"/>
-                    <path data-from="render_json" data-to="assemble_candidate" d="M360 82 L348 292"/>
-                    <path data-from="render_markdown" data-to="assemble_candidate" d="M600 82 C600 226 450 228 382 292"/>
-                    <path data-from="wire_cli" data-to="assemble_candidate" d="M360 218 L360 292"/>
-                    <path data-from="assemble_candidate" data-to="verify_candidate" d="M360 332 L360 397"/>
-                  </g>
-                  <g class="lineage-edges" data-lineage aria-hidden="true">
-                    <path d="M360 82 L360 178 L360 292 L360 397"/>
-                  </g>
-                </svg>
-
-                <button class="task-node work" style="--x:16.67%;--y:13.2%" type="button" data-node="redact_notes" aria-controls="task-inspector" aria-expanded="false" disabled>
-                  <span class="task-name">redact_notes</span><span class="task-state" data-state>✓ done</span>
-                </button>
-                <button class="task-node work" style="--x:50%;--y:13.2%" type="button" data-node="render_json" aria-controls="task-inspector" aria-expanded="false" disabled>
-                  <span class="task-name">render_json</span><span class="task-state" data-state>✓ done</span>
-                </button>
-                <button class="task-node work" style="--x:83.33%;--y:13.2%" type="button" data-node="render_markdown" aria-controls="task-inspector" aria-expanded="false" disabled>
-                  <span class="task-name">render_markdown</span><span class="task-state" data-state>✓ done</span>
-                </button>
-                <button class="task-node work" style="--x:50%;--y:43.5%" type="button" data-node="wire_cli" aria-controls="task-inspector" aria-expanded="true" disabled>
-                  <span class="task-name">wire_cli</span><span class="task-state" data-state>✓ done</span>
-                </button>
-                <button class="task-node assembly" style="--x:50%;--y:68.1%" type="button" data-node="assemble_candidate" aria-controls="task-inspector" aria-expanded="false" disabled>
-                  <span class="task-name">assemble_candidate</span><span class="task-state" data-state>✓ done</span>
-                </button>
-                <button class="task-node verification" style="--x:50%;--y:86%" type="button" data-node="verify_candidate" aria-controls="task-inspector" aria-expanded="false" disabled>
-                  <span class="task-name">verify_candidate</span><span class="task-state" data-state>✓ done</span>
-                </button>
-              </div>
-
-              <div class="candidate" data-candidate>
-                <span class="candidate-mark" aria-hidden="true"></span>
-                <div><b>MISSION AWAITING_RESULT</b><br><code>RESULT awaiting_decision · final_result_be3df9ce…</code><br>Exact candidate · separate approve/reject decision</div>
-              </div>
-              <p class="decision-note">approve → may create an isolated local result · reject → no commit · nothing is pushed</p>
-              <p class="legend"><span class="edge-key"></span> approved plan dependencies <span class="lineage-key"></span> derived lineage · files, attempts and workers are never plan nodes</p>
-            </div>
-
-            <aside class="task-inspector" id="task-inspector" data-inspector aria-live="polite">
-              <p class="inspector-title">WHY <code>status_report/cli.py</code></p>
-              <dl>
-                <dt>target</dt><dd>established</dd>
-                <dt>producer attempt</dt><dd>wire_cli · attempt 1 · fence 1</dd>
-                <dt>accepted inputs</dt><dd>established</dd>
-                <dt>assembly candidate</dt><dd>established</dd>
-                <dt>verification</dt><dd>established</dd>
-                <dt>approval</dt><dd>unknown · awaiting exact result decision</dd>
-              </dl>
-            </aside>
-          </div>
-        </div>
-
-        <p class="fixture-note">Captured MCP fixture: max concurrency 2; the signer was a script and approval truth was <code>server_derived</code>, not human-attested. The final decision is a separate CLI path.</p>
-
-        <details class="mission-text">
-          <summary>Read this mission as text</summary>
-          <p>At the recorded final state all six tasks are done. <code>redact_notes</code>, <code>render_json</code> and <code>render_markdown</code> are roots. <code>wire_cli</code> depends on all three. <code>assemble_candidate</code> depends on all three roots plus <code>wire_cli</code>; <code>verify_candidate</code> depends on assembly. Markdown attempt 1 at fence 1 failed its acceptance check; the same task returned through retrying and ready, then passed as attempt 2 at fence 2. The mission is <code>awaiting_result</code>; bundle <code>final_result_be3df9ce374fa025d93f452e088d5803</code> is <code>awaiting_decision</code> outside the task graph. The recorded <code>why status_report/cli.py</code> query establishes target, producer, accepted inputs, assembly and verification; approval remains unknown.</p>
-        </details>
-      </div>
+      <p class="hint"><span class="fine">Move through the flock. Hold to gather.</span><span class="coarse">Touch the flock.</span></p>
     </div>
   </section>
 
-  <section id="terminal" class="terminal-section">
-    <div class="wrap">
-      <div class="section-intro">
-        <p class="eyebrow">Terminal + MCP</p>
-        <h2>Mission control, in your terminal.</h2>
-      </div>
-
-      <div class="terminal-grid">
-        <figure class="terminal-figure">
-          <img src="assets/ui-terminal.webp" width="1800" height="1280" alt="Graphene replay at checkpoint 4 of 11, with render_markdown retrying and its first failed attempt, checks, receipts, unknowns and lineage limit visible.">
-          <figcaption>Real <code>graphene ui --replay taskmaster</code> capture at Graphene <code>cc50a62</code>. This is the fixed verified replay, a different fixture from the MCP mission above.</figcaption>
-        </figure>
-
-        <div class="terminal-copy">
-          <p><code>graphene ui</code> renders the signed DAG read-only. Its banner identifies the mission, plan revision, digest and signed state. Select a node for attempts, checks, receipts and lineage, or open summary and <code>why</code>. A separate scripted-fixture capture proves live following from the same store. Neither path is a live model mission.</p>
-          <h3>MCP connection</h3>
-          <p><code>graphene-mcp</code> exposes the <code>goal</code> prompt and six tools for plan, digest approval, execution, status, summary and <code>why</code>. Claude Code discovery was captured; the official MCP client drove the fixture, with a script—not a person—signing. Codex and Gemini CLI are documented, not driven. MCP does not make the final result decision.</p>
-          <p class="command-label">Fixed replay · zero credentials · no live agent · no new work</p>
-          <pre><code>git clone https://github.com/Alex-lop/Graphene.git &amp;&amp; cd Graphene
-uv sync --frozen
-uv run --frozen graphene ui --replay taskmaster</code></pre>
-          <p class="actions"><a class="btn" href="https://github.com/Alex-lop/Graphene/blob/cc50a62a9a3f6b521d5a157b0942ca4e722fbe57/docs/COMMANDS.md">Read the command map</a></p>
-        </div>
-      </div>
+  <section class="scene" id="plan" data-scene="tree" aria-labelledby="h-plan">
+    <div class="copy">
+      <p class="kicker"><span>01</span><b>graphene ask "…"</b></p>
+      <h2 id="h-plan">Paragraph in, tree out.</h2>
+      <blockquote class="para">“Add a dark mode, with a switch in settings that remembers the choice.”</blockquote>
+      <p>Before a line is written: the goal, and every leaf with the files it may touch and the check that proves it done.</p>
+      <p class="sr-only">In the picture, the birds settle into that plan: the goal, dark mode that remembers; its branches theme, switch and docs; and the leaves palettes and tokens under theme, toggle and prefs under switch, shots under docs.</p>
     </div>
   </section>
 
-  <section id="proof" class="closing">
-    <div class="wrap">
-      <div class="section-intro">
-        <p class="eyebrow">Proof</p>
-        <h2>Proven paths. Explicit limits.</h2>
-        <p>Graphene publishes the contract behind every public claim. These labels describe the current release—not a roadmap, deployment or benchmark.</p>
-      </div>
-
-      <dl class="proof-strip">
-        <div><dt>Verified locally</dt><dd>Fixed replay · terminal UI · MCP goal loop</dd></div>
-        <div><dt>Verified live · 2026-08-23</dt><dd>Two bounded Gemini workers · evidence-aware retry; operator-delegated approval and an intentionally injected check failure</dd></div>
-        <div><dt>Not supported in this release</dt><dd>Arbitrary repositories · visual workflow editing · autonomous push or deploy</dd></div>
-        <div><dt>Not deployed</dt><dd>Cloud Run · real Firestore</dd></div>
-        <div><dt>Not proven</dt><dd>Live Docker smoke · comparative benchmark</dd></div>
-        <div><dt>Not captured / not proven</dt><dd>Person-signed MCP take · submission film</dd></div>
-      </dl>
-
-      <p class="proof-links">Read the pinned <a href="https://github.com/Alex-lop/Graphene/blob/cc50a62a9a3f6b521d5a157b0942ca4e722fbe57/contracts/product_proof.json">proof contract</a>, <a href="https://github.com/Alex-lop/Graphene/blob/cc50a62a9a3f6b521d5a157b0942ca4e722fbe57/docs/PROOF.md">proof notes</a>, and <a href="https://github.com/Alex-lop/Graphene/blob/cc50a62a9a3f6b521d5a157b0942ca4e722fbe57/docs/KNOWN_LIMITATIONS.md">known limitations</a>.</p>
-
-      <div class="final-cta">
-        <h2>Inspect the map before you trust the result.</h2>
-        <p class="actions">
-          <a class="btn btn-go" href="#terminal">Replay the fixed mission</a>
-          <a class="btn" href="https://github.com/Alex-lop/Graphene">View Graphene on GitHub</a>
-        </p>
-      </div>
+  <section class="scene" data-scene="prune" aria-labelledby="h-prune">
+    <div class="copy">
+      <p class="kicker"><span>02</span><b>d</b> in graphene watch</p>
+      <h2 id="h-prune">Prune the guess.</h2>
+      <p>Nobody asked for new screenshots. Cut that branch now, before any work starts.</p>
+      <button class="cut" id="cut" type="button" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Cut <code>docs</code></span></button>
     </div>
+  </section>
 
-    <footer>
-      <div class="wrap">
-        <p>Graphene · All Things Agentic Hackathon · The Taskmaster</p>
-        <ul>
-          <li><a href="https://github.com/Alex-lop/Graphene">Source</a></li>
-          <li><a href="https://github.com/Alex-lop/Graphene/blob/main/LICENSE">Apache 2.0</a></li>
-          <li><a href="#top">Back to top</a></li>
-        </ul>
+  <section class="scene" data-scene="run" aria-labelledby="h-run">
+    <div class="copy">
+      <p class="kicker"><span>03</span><b>graphene run --parallel 4</b></p>
+      <h2 id="h-run">Then let them fly.</h2>
+      <p>Leaves run in parallel, each in its own worktree, held to its files. Graphene runs every check itself.</p>
+    </div>
+  </section>
+
+  <section class="scene end" data-scene="free" aria-labelledby="h-end">
+    <div class="copy">
+      <h2 id="h-end">Agent work gets cheaper every few months. Your attention doesn’t.</h2>
+      <div class="block">
+        <pre id="steps"><code><span class="ln">uv tool install git+https://github.com/Alex-lop/Graphene</span><span class="ln">cd your-repo &amp;&amp; graphene init</span><span class="ln">graphene watch</span></code></pre>
+        <button class="btn" type="button" data-copy="steps">Copy</button>
       </div>
-    </footer>
+      <p class="small" style="margin-top:22px">Works with the agent you already have: Claude Code or Codex. <code>graphene demo</code> replays a recorded run, no key needed.</p>
+      <p class="links"><a href="https://github.com/Alex-lop/Graphene">GitHub</a><a href="https://github.com/Alex-lop/Graphene/blob/main/docs/HOW_IT_WORKS.md">How it works</a></p>
+    </div>
   </section>
 </main>
 
-<script src="assets/field.js" defer></script>
-<script src="assets/mission.js" defer></script>
+<footer class="foot">
+  <span>Graphene. 400 starlings, one HTML file.</span>
+  <nav aria-label="Footer"><a href="https://github.com/Alex-lop/Graphene">Source</a><a href="https://github.com/Alex-lop/Graphene/blob/main/LICENSE">Apache-2.0</a></nav>
+</footer>
+<p class="sr-only" id="status" role="status" aria-live="polite"></p>
+
+<script>
+(() => {
+'use strict';
+const NUM = 400, TRAIL = 12, INK = '20,20,19', SKY = '#F0EEE6';
+const $ = s => document.querySelector(s);
+const cv = $('#sky'), ctx = cv.getContext('2d', { alpha: false });
+const mqReduce = matchMedia('(prefers-reduced-motion: reduce)');
+let reduce = mqReduce.matches;
+
+// Seeded, so every visit opens on the same composed sky.
+let seed = 20260929;
+const rnd = () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+
+// ---- the birds, as flat arrays ----
+const px = new Float32Array(NUM), py = new Float32Array(NUM), vx = new Float32Array(NUM), vy = new Float32Array(NUM);
+const hx = new Float32Array(NUM).fill(1), hy = new Float32Array(NUM);       // heading, unit length
+const sz = new Float32Array(NUM), pace = new Float32Array(NUM), lag = new Float32Array(NUM), lat = new Float32Array(NUM);
+let st = new Float32Array(NUM), st2 = new Float32Array(NUM);                   // startle, now and next
+const form = new Uint8Array(NUM), slotOf = new Int16Array(NUM).fill(-1);     // 1 = holding a place in the plan
+const tx = new Float32Array(NUM), ty = new Float32Array(NUM), otx = new Float32Array(NUM), oty = new Float32Array(NUM);
+const trX = new Float32Array(NUM * TRAIL), trY = new Float32Array(NUM * TRAIL);
+let trHead = 0;
+const cls = [[], [], []];                                                    // birds by size, for batched strokes
+for (let i = 0; i < NUM; i++) {
+  sz[i] = 0.74 + rnd() * 0.52;
+  pace[i] = 0.9 + rnd() * 0.2;
+  lag[i] = 11 * i / NUM + rnd() * 0.6;
+  lat[i] = (rnd() + rnd() + rnd()) / 1.5 - 1;
+  cls[sz[i] < 0.9 ? 0 : sz[i] < 1.08 ? 1 : 2].push(i);
+}
+
+// ---- viewport ----
+let W = 0, H = 0, DPR = 1, S = 1, SZ = 1, stripH = 64, narrow = false;
+let CELL = 46, GW = 1, GH = 1, gHead = new Int16Array(1);
+const gNext = new Int16Array(NUM);
+function measure() {
+  const oW = W, oH = H;
+  W = innerWidth; H = innerHeight; DPR = Math.min(2, devicePixelRatio || 1);
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  S = Math.max(0.66, Math.min(1.2, Math.min(W, H * 1.6) / 1440));
+  SZ = Math.max(0.72, Math.min(1.15, W / 1300));
+  narrow = W < 900;
+  stripH = $('.strip').offsetHeight;
+  if (oW && (oW !== W || oH !== H)) {
+    const fx = W / oW, fy = H / oH;
+    for (let i = 0; i < NUM; i++) { px[i] *= fx; py[i] *= fy; }
+    for (let k = 0; k < NUM * TRAIL; k++) { trX[k] *= fx; trY[k] *= fy; }
+  }
+  CELL = 46 * S; GW = Math.ceil(W / CELL) + 1; GH = Math.ceil(H / CELL) + 1; gHead = new Int16Array(GW * GH);
+}
+function fillGrid() {
+  gHead.fill(-1);
+  for (let i = 0; i < NUM; i++) {
+    let gx = (px[i] / CELL) | 0, gy = (py[i] / CELL) | 0;
+    gx = gx < 0 ? 0 : gx >= GW ? GW - 1 : gx; gy = gy < 0 ? 0 : gy >= GH ? GH - 1 : gy;
+    const c = gy * GW + gx; gNext[i] = gHead[c]; gHead[c] = i;
+  }
+}
+
+// ---- the person: a cursor, or a finger ----
+const P = { x: -1e4, y: -1e4, v: 0, t: 0, on: false, down: false };
+function pointAt(x, y) {
+  const now = performance.now();
+  if (P.on) { const d = Math.hypot(x - P.x, y - P.y), dt = Math.max(8, now - P.t); P.v = P.v * 0.6 + Math.min(40, d / dt * 16.7) * 0.4; }
+  P.x = x; P.y = y; P.t = now; P.on = true;
+}
+addEventListener('pointermove', e => { if (e.pointerType !== 'touch') pointAt(e.clientX, e.clientY); }, { passive: true });
+addEventListener('touchstart', e => { const t = e.touches[0]; if (t) { P.on = false; pointAt(t.clientX, t.clientY); } }, { passive: true });
+addEventListener('touchmove', e => { const t = e.touches[0]; if (t) pointAt(t.clientX, t.clientY); }, { passive: true });
+addEventListener('touchend', () => { P.on = false; }, { passive: true });
+addEventListener('blur', () => { P.on = false; P.down = false; });
+document.addEventListener('mouseout', e => { if (!e.relatedTarget) { P.on = false; P.down = false; } });
+addEventListener('pointerdown', e => {
+  if (e.pointerType === 'mouse' && e.button === 0 && !e.target.closest('a,button,.copy')) { pointAt(e.clientX, e.clientY); P.down = true; }
+});
+addEventListener('pointerup', () => { if (P.down) { P.down = false; burst(); } });
+
+// ---- the words: free birds keep out of them ----
+const copies = [...document.querySelectorAll('.copy')];
+let quiet = [];
+function rects() {
+  quiet = [];
+  const pad = 34 * S;
+  for (const el of copies) {
+    const r = el.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > H) continue;
+    // A gutter narrower than a bird's turn belongs to the words too, so nothing gets pinned in it.
+    const e = 140 * S, x0 = r.left - pad < e ? -300 : r.left - pad, x1 = r.right + pad > W - e ? W + 300 : r.right + pad;
+    const y0 = r.top - pad < stripH + e ? -300 : r.top - pad, y1 = r.bottom + pad > H - e ? H + 300 : r.bottom + pad;
+    quiet.push([x0, y0, x1, y1]);
+  }
+}
+
+// ---- the plan the birds draw ----
+const PLAN = [
+  { id: 'goal', up: null }, { id: 'theme', up: 'goal' }, { id: 'switch', up: 'goal' }, { id: 'docs', up: 'goal' },
+  { id: 'palettes', up: 'theme' }, { id: 'tokens', up: 'theme' }, { id: 'toggle', up: 'switch' }, { id: 'prefs', up: 'switch' },
+  { id: 'shots', up: 'docs' },
+];
+const node = {};
+for (const n of PLAN) {
+  node[n.id] = n;
+  n.depth = n.up ? node[n.up].depth + 1 : 0;
+  n.x = n.y = n.gx = n.gy = 0; n.done = false; n.rs = n.rd = 0; n.dx = 0; n.dy = 1;
+}
+for (const n of PLAN) n.kids = PLAN.filter(k => k.up === n.id);
+const GUESS = new Set(['docs', 'shots']);
+let scene = 'fly', cut = false, clock = 0, planA = 0;
+const live = n => !(cut && GUESS.has(n.id));
+const ballR = n => (n.depth === 0 ? 30 : n.depth === 1 ? 22 : 18) * S;
+const AWAY = { x: 0, y: 0 };
+
+function layout(snap) {
+  const leaves = PLAN.filter(n => !n.kids.length && live(n));
+  let x0, x1, y0, y1;
+  if (narrow) {
+    x0 = W * 0.1; x1 = W * 0.9;
+    y0 = stripH + Math.max(64, (H - stripH) * 0.1); y1 = stripH + (H - stripH) * 0.42;
+  } else {
+    x0 = W * 0.53; x1 = W - Math.min(96, W * 0.056) - 24 * S;
+    y0 = stripH + (H - stripH) * 0.2; y1 = stripH + (H - stripH) * 0.76;
+  }
+  leaves.forEach((n, j) => { n.gx = x0 + (x1 - x0) * (j + 0.5) / leaves.length; n.gy = y1; });
+  for (const n of PLAN) if (n.depth === 1 && live(n)) {
+    const ks = n.kids.filter(live);
+    n.gx = ks.reduce((a, k) => a + k.gx, 0) / ks.length; n.gy = y0 + (y1 - y0) * 0.47;
+  }
+  node.goal.gx = (x0 + x1) / 2; node.goal.gy = y0;
+  AWAY.x = W + 260 * S; AWAY.y = stripH - 160 * S;
+  pathGoal();
+  if (snap) for (const n of PLAN) { n.x = n.gx; n.y = n.gy; }
+}
+
+// Slots: places in the plan. A ball of birds circles each node; a two-lane stream runs along each edge.
+let slots = [];
+function shapeSlots() {
+  const out = [];
+  const ringN = n => n.depth === 0 ? 36 : n.depth === 1 ? 22 : 18;
+  for (const n of PLAN) if (live(n)) {
+    const k = ringN(n);
+    for (let j = 0; j < k; j++) out.push({ key: 'r' + n.id + j, kind: 0, n, a: j * 2.39996, r: Math.sqrt((j + 0.6) / k) });
+  }
+  for (const n of PLAN) if (n.up && live(n)) {
+    for (let j = 0; j < 26; j++) out.push({ key: 'e' + n.id + j, kind: 1, from: node[n.up], to: n, u: j / 13 + (j * 0.618 % 1) * 0.05, off: ((j * 0.7548) % 1 - 0.5) * 2.4 });
+  }
+  for (let j = out.length; j < NUM; j++) out.push({ key: 'a' + j, kind: 2, a: j * 2.39996, r: 0.35 + (j * 0.618 % 1) * 0.65 });
+  return out;
+}
+let OX = 0, OY = 0; // the out-values of the helpers below, to keep the frame free of garbage
+const TAU = Math.PI * 2;
+function bez(a, b, u) { // an S-curve from parent down to child
+  const m = (b.y - a.y) * 0.5, v = 1 - u;
+  OX = v * v * v * a.x + 3 * v * v * u * a.x + 3 * v * u * u * b.x + u * u * u * b.x;
+  OY = v * v * v * a.y + 3 * v * v * u * (a.y + m) + 3 * v * u * u * (b.y - m) + u * u * u * b.y;
+}
+function slotTarget(s, t) {
+  if (s.kind === 0) {
+    const n = s.n, R = ballR(n) * s.r, w = (1.5 - 0.7 * s.r) * (n.depth % 2 ? -1 : 1);
+    let x = n.x + Math.cos(s.a + t * w) * R, y = n.y + Math.sin(s.a + t * w) * R * 0.74;
+    if (n.rd && t > n.rs && t < n.rs + n.rd) { // the leaf is out doing its work: a loop, and home
+      let k = (t - n.rs) / n.rd; k = k * k * (3 - 2 * k);
+      const th = k * TAU, L = (narrow ? 96 : 168) * S, A = (narrow ? 34 : 50) * S;
+      const ox = n.dx * L * 0.5 * (1 - Math.cos(th)) - n.dy * A * Math.sin(th);
+      const oy = n.dy * L * 0.5 * (1 - Math.cos(th)) + n.dx * A * Math.sin(th);
+      x = n.x + ox + (x - n.x) * 0.7; y = n.y + oy + (y - n.y) * 0.7;
+    }
+    OX = x; OY = y; return;
+  }
+  if (s.kind === 1) {
+    let u = (s.u + t * 0.085) % 2; const side = u < 1 ? 1 : -1; if (u >= 1) u = 2 - u;
+    const dx = s.to.x - s.from.x, dy = s.to.y - s.from.y, l = Math.hypot(dx, dy) || 1, o = (3.6 * side + s.off) * S;
+    bez(s.from, s.to, u); OX -= dy / l * o; OY += dx / l * o; return;
+  }
+  const R = 140 * S * s.r, a = s.a + t * 0.9;
+  OX = AWAY.x + Math.cos(a) * R; OY = AWAY.y + Math.sin(a) * R * 0.6;
+}
+
+// ---- the murmuration ----
+const PC = { cx: 0, cy: 0, rx: 0, ry: 0 }, PT = { cx: 0, cy: 0, rx: 0, ry: 0 };
+function pathGoal() { // where in the sky the free flock roams: clear of the words
+  const h = H - stripH;
+  if (narrow) Object.assign(PT, { cx: W * 0.5, cy: stripH + h * 0.3, rx: W * 0.36, ry: h * 0.15 });
+  else if (scene === 'free') Object.assign(PT, { cx: W * 0.71, cy: stripH + h * 0.5, rx: W * 0.19, ry: h * 0.3 });
+  else Object.assign(PT, { cx: W * 0.56, cy: stripH + h * 0.33, rx: W * 0.36, ry: h * 0.19 });
+}
+function pathAt(t) { // the flock's wandering heart; each bird follows it a little behind the one before
+  OX = PC.cx + PC.rx * Math.sin(t * 0.21) * (0.78 + 0.22 * Math.cos(t * 0.13));
+  OY = PC.cy + PC.ry * Math.sin(t * 0.34 + 1.1) * (0.82 + 0.18 * Math.sin(t * 0.08));
+}
+function steerFlock(i, dt) {
+  const x = px[i], y = py[i], R2 = CELL * CELL, SEP = 21 * S;
+  let n = 0, ax = 0, ay = 0, cx = 0, cy = 0, sx = 0, sy = 0, smax = 0;
+  let gx = (x / CELL) | 0, gy = (y / CELL) | 0;
+  gx = gx < 0 ? 0 : gx >= GW ? GW - 1 : gx; gy = gy < 0 ? 0 : gy >= GH ? GH - 1 : gy;
+  for (let oy = gy > 0 ? -1 : 0; oy <= (gy < GH - 1 ? 1 : 0); oy++)
+    for (let ox = gx > 0 ? -1 : 0; ox <= (gx < GW - 1 ? 1 : 0); ox++)
+      for (let j = gHead[(gy + oy) * GW + gx + ox]; j !== -1; j = gNext[j]) {
+        if (j === i || form[j]) continue;
+        const dx = px[j] - x, dy = py[j] - y, d2 = dx * dx + dy * dy;
+        if (d2 > R2) continue;
+        n++; ax += vx[j]; ay += vy[j]; cx += dx; cy += dy;
+        if (st[j] > smax) smax = st[j];
+        if (d2 < SEP * SEP) { const d = Math.sqrt(d2) || 0.01, k = (SEP - d) / SEP / d; sx -= dx * k; sy -= dy * k; }
+      }
+  const sti = st[i], maxV = 3.8 * S * pace[i] * (1 + 0.6 * sti), minV = 2 * S;
+  let fx = sx * 0.34, fy = sy * 0.34;
+  if (n) {
+    const am = Math.hypot(ax, ay) || 1, coh = 0.001 * (1 - sti);
+    fx += (ax / am * maxV - vx[i]) * 0.05 + cx / n * coh;
+    fy += (ay / am * maxV - vy[i]) * 0.05 + cy / n * coh;
+  }
+  const tl = clock - lag[i];                                        // its place in the ribbon: along the path, and across it
+  pathAt(tl + 0.1); const qx = OX, qy = OY; pathAt(tl);
+  const tq = Math.hypot(qx - OX, qy - OY) || 1, band = (40 + 24 * Math.sin(tl * 0.9 + i)) * S * lat[i];
+  let dx = OX - (qy - OY) / tq * band - x, dy = OY + (qx - OX) / tq * band - y, d = Math.hypot(dx, dy) || 1, pull = Math.min(1, d / (120 * S)) * 0.085;
+  fx += dx / d * pull; fy += dy / d * pull;
+  const m = 80 * S, top = stripH + 24 * S;                          // soft walls
+  if (x < m) fx += (m - x) / m * 0.3; else if (x > W - m) fx -= (x - W + m) / m * 0.3;
+  if (y < top + m) fy += (top + m - y) / m * 0.3; else if (y > H - m) fy -= (y - H + m) / m * 0.3;
+  let s2 = Math.max(sti * Math.pow(0.95, dt), smax * 0.82);
+  if (P.on) {
+    const ex = x - P.x, ey = y - P.y, e2 = ex * ex + ey * ey;
+    if (P.down) {                                                    // held: gather into a vortex
+      const G = 320 * S;
+      if (e2 < G * G) {
+        const e = Math.sqrt(e2) || 1, inward = e > 30 * S ? 0.15 : -0.4;
+        fx += -ex / e * inward - ey / e * 0.12; fy += -ey / e * inward + ex / e * 0.12;
+      }
+    } else {                                                         // moving: the falcon
+      const R = (105 + P.v * 3) * S;
+      if (e2 < R * R) { const e = Math.sqrt(e2) || 1, k = 1 - e / R; fx += ex / e * k * k * 1.6; fy += ey / e * k * k * 1.6; if (k > s2) s2 = k; }
+    }
+  }
+  for (const q of quiet) if (x > q[0] && x < q[2] && y > q[1] && y < q[3]) { // the words stay clear: out by the
+    const l = x - q[0], r = q[2] - x, t = y - q[1], b = q[3] - y, mn = Math.min(l, r, t, b); // nearest side, sliding
+    fx *= 0.3; fy *= 0.3;                                              // the words outrank the cursor
+    if (mn === l || mn === r) { fx += mn === l ? -0.6 : 0.6; fy += Math.sign(dy) * 0.25; } // toward where it is going
+    else { fy += mn === t ? -0.6 : 0.6; fx += Math.sign(dx) * 0.25; }
+  }
+  st2[i] = sti + (s2 - sti) * Math.min(1, 0.3 * dt);
+  const fl = Math.hypot(fx, fy); if (fl > 1.8) { fx *= 1.8 / fl; fy *= 1.8 / fl; }
+  let nx = vx[i] + fx * dt, ny = vy[i] + fy * dt;
+  const sp = Math.hypot(nx, ny) || 0.001, c = sp > maxV ? maxV / sp : sp < minV ? minV / sp : 1;
+  nx *= c; ny *= c; vx[i] = nx; vy[i] = ny; px[i] = x + nx * dt; py[i] = y + ny * dt;
+  hx[i] = nx / (sp * c); hy[i] = ny / (sp * c);
+}
+function steerForm(i, dt) {
+  const x = px[i], y = py[i], dx = tx[i] - x, dy = ty[i] - y, d = Math.hypot(dx, dy);
+  const sp = Math.min(7 * S, d * 0.09), k0 = d > 0.01 ? sp / d : 0;
+  let fx = (dx * k0 + (tx[i] - otx[i]) / dt - vx[i]) * 0.16, fy = (dy * k0 + (ty[i] - oty[i]) / dt - vy[i]) * 0.16;
+  let s2 = st[i] * Math.pow(0.93, dt);
+  if (P.on && !P.down) {                                             // birds holding the plan flinch, then return
+    const ex = x - P.x, ey = y - P.y, e2 = ex * ex + ey * ey, R = 76 * S;
+    if (e2 < R * R) { const e = Math.sqrt(e2) || 1, k = 1 - e / R; fx += ex / e * k * 2.4; fy += ey / e * k * 2.4; if (k * 0.7 > s2) s2 = k * 0.7; }
+  }
+  st2[i] = s2;
+  let nx = vx[i] + fx * dt, ny = vy[i] + fy * dt;
+  const v = Math.hypot(nx, ny), vm = 10 * S; if (v > vm) { nx *= vm / v; ny *= vm / v; }
+  vx[i] = nx; vy[i] = ny; px[i] = x + nx * dt; py[i] = y + ny * dt;
+  if (v > 0.12) { hx[i] = nx / v; hy[i] = ny / v; }
+}
+function burst() {
+  if (reduce) return;
+  const R = 300 * S;
+  for (let i = 0; i < NUM; i++) if (!form[i]) {
+    const ex = px[i] - P.x, ey = py[i] - P.y, e = Math.hypot(ex, ey) || 1;
+    if (e < R) { const k = 1 - e / R; vx[i] += ex / e * 5 * S * k; vy[i] += ey / e * 5 * S * k; st[i] = Math.max(st[i], k); }
+  }
+}
+
+// ---- who holds which place ----
+const faint = new Uint8Array(NUM);
+function reshape() {
+  const next = scene === 'tree' || scene === 'prune' || scene === 'run' ? shapeSlots() : [];
+  const had = new Map();
+  for (let i = 0; i < NUM; i++) if (form[i]) had.set(slots[slotOf[i]].key, i);
+  const nextOf = new Int16Array(NUM).fill(-1), open = [];
+  next.forEach((s, k) => { const b = had.get(s.key); if (b !== undefined) nextOf[b] = k; else open.push(k); });
+  for (const k of open) {                                            // the nearest free bird takes each open place
+    slotTarget(next[k], clock);
+    let best = -1, bd = Infinity;
+    for (let i = 0; i < NUM; i++) if (nextOf[i] < 0) { const d = (px[i] - OX) ** 2 + (py[i] - OY) ** 2; if (d < bd) { bd = d; best = i; } }
+    if (best >= 0) nextOf[best] = k;
+  }
+  slots = next;
+  for (let i = 0; i < NUM; i++) {
+    const was = form[i];
+    slotOf[i] = nextOf[i]; form[i] = nextOf[i] >= 0 ? 1 : 0;
+    if (form[i]) { slotTarget(slots[slotOf[i]], clock); tx[i] = otx[i] = OX; ty[i] = oty[i] = OY; }
+    else if (was) { const a = rnd() * TAU; vx[i] += Math.cos(a) * 2.5 * S; vy[i] += Math.sin(a) * 2.5 * S - 1.2 * S; st[i] = Math.max(st[i], 0.6); }
+  }
+  for (let i = 0; i < NUM; i++) {
+    let f = 0;
+    if (form[i] && scene === 'prune' && !cut) { const s = slots[slotOf[i]], m = s.kind === 0 ? s.n : s.kind === 1 ? s.to : null; f = m && GUESS.has(m.id) ? 1 : 0; }
+    faint[i] = f;
+  }
+}
+
+// ---- the story: fly, tree, prune, run, fly ----
+function startRun() {
+  const L = PLAN.filter(n => !n.kids.length && live(n)), cx = node.goal.gx, durs = [3.2, 3.9, 2.8, 3.5, 3.0];
+  L.forEach((n, j) => {
+    n.done = false; n.rs = clock + 0.6 + j * 0.3; n.rd = durs[j % 5];
+    const dx = (n.gx - cx) / Math.max(1, W * 0.2), dy = 1.1, l = Math.hypot(dx, dy);
+    n.dx = dx / l; n.dy = dy / l;
+  });
+  for (const n of PLAN) if (n.kids.length) n.done = false;
+}
+function runTick() {
+  let changed = false;
+  for (const n of PLAN) if (n.rd && !n.done && clock >= n.rs + n.rd) { n.done = true; changed = true; }
+  if (!changed) return;
+  for (const n of PLAN) if (n.depth === 1 && live(n)) n.done = n.kids.filter(live).every(k => k.done);
+  node.goal.done = node.goal.kids.filter(live).every(k => k.done);
+  labels();
+  if (node.goal.done) say('Every check passed.');
+}
+function setScene(s) {
+  if (s === scene) return;
+  const from = scene; scene = s;
+  if (s === 'tree') cut = false;
+  if (s === 'run') cut = true;
+  for (const n of PLAN) { n.done = false; n.rd = 0; }
+  layout(from === 'fly' || from === 'free');
+  if (s === 'run') startRun();
+  reshape(); labels(); syncCut();
+  if (reduce) still();
+}
+const scenesEl = [...document.querySelectorAll('[data-scene]')];
+function pickScene() {
+  let pick = scenesEl[0];
+  for (const el of scenesEl) if (el.getBoundingClientRect().top <= H * 0.5) pick = el;
+  setScene(pick.dataset.scene);
+}
+const cutBtn = $('#cut');
+function syncCut() {
+  cutBtn.setAttribute('aria-pressed', String(cut));
+  cutBtn.querySelector('span').innerHTML = cut ? 'Put <code>docs</code> back' : 'Cut <code>docs</code>';
+}
+function togglePrune() {
+  if (scene !== 'prune') return;
+  cut = !cut; layout(false); reshape(); labels(); syncCut();
+  say(cut ? 'The docs branch is cut.' : 'The docs branch is back.');
+  if (reduce) still();
+}
+cutBtn.addEventListener('click', togglePrune);
+function nearGuess(x, y) {
+  if (scene !== 'prune' || cut) return false;
+  const a = node.docs, b = node.shots, R = 46 * S;
+  if (Math.hypot(x - a.x, y - a.y) < R || Math.hypot(x - b.x, y - b.y) < R) return true;
+  const ux = b.x - a.x, uy = b.y - a.y, l2 = ux * ux + uy * uy || 1, k = Math.max(0, Math.min(1, ((x - a.x) * ux + (y - a.y) * uy) / l2));
+  return Math.hypot(x - a.x - ux * k, y - a.y - uy * k) < R * 0.6;
+}
+document.addEventListener('click', e => { if (!e.target.closest('a,button') && nearGuess(e.clientX, e.clientY)) togglePrune(); });
+addEventListener('pointermove', e => {
+  const on = nearGuess(e.clientX, e.clientY);
+  document.body.style.cursor = on ? 'pointer' : '';
+  node.docs.el.classList.toggle('hover', on);
+}, { passive: true });
+
+// ---- labels on the plan ----
+const labelsEl = $('#labels');
+for (const n of PLAN) {
+  n.el = document.createElement('div'); n.a = 1; n.w = n.h = 0;
+  n.el.className = 'lbl' + (n.depth === 0 ? ' goal' : '');
+  n.el.innerHTML = n.depth === 0 ? '<span class="k">goal</span> dark mode that remembers' : n.id;
+  labelsEl.append(n.el);
+}
+const card = document.createElement('div');
+card.className = 'lbl card';
+card.innerHTML = '<b>toggle in settings</b><br>scope <b>src/settings/**</b><br>check <b>npm test -- settings</b>';
+labelsEl.append(card);
+function measureLabels() { for (const n of PLAN) { n.w = n.el.offsetWidth; n.h = n.el.offsetHeight; } }
+function labels() {
+  const on = scene === 'tree' || scene === 'prune' || scene === 'run';
+  for (const n of PLAN) {
+    const c = n.el.classList;
+    c.toggle('on', on && live(n)); c.toggle('gone', on && !live(n));
+    c.toggle('guess', scene === 'prune' && !cut && GUESS.has(n.id));
+    c.toggle('done', scene === 'run' && n.done);
+  }
+  card.classList.toggle('on', (scene === 'tree' || scene === 'prune') && !narrow);
+  measureLabels();
+}
+function placeLabels() {
+  for (const n of PLAN) {
+    const r = ballR(n) * 0.74; let x, y;
+    if (n.depth === 0) { x = n.x - n.w / 2; y = n.y - r - n.h - 14 * S; }
+    else if (n.depth === 1) { x = n.x + ballR(n) + 10 * S; y = n.y - n.h / 2; }
+    else { x = n.x - n.w / 2; y = n.y + r + 12 * S; }
+    n.el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
+  }
+  const t = node.toggle;
+  card.style.transform = `translate3d(${(t.x - 14 * S).toFixed(1)}px,${(t.y + ballR(t) * 0.74 + 44 * S).toFixed(1)}px,0)`;
+}
+
+// ---- the readout, in the reference's label/value voice ----
+const k1 = $('#k1'), v1 = $('#v1'), k2 = $('#k2'), v2 = $('#v2'), T0 = performance.now();
+let hudKey = '';
+function hud() {
+  let a = 'Agents', b = '400', c = 'Flying', d = ((performance.now() - T0) / 1000).toFixed(1) + ' s';
+  if (scene === 'run') {
+    const L = PLAN.filter(n => !n.kids.length && live(n)), done = L.filter(n => n.done).length;
+    if (done < L.length) { a = 'Running'; b = String(L.length - done); c = 'Checks'; d = done + ' of ' + L.length; }
+    else { a = 'Leaves'; b = String(L.length); c = 'Checks'; d = done + ' of ' + L.length + ' passed'; }
+  } else if (scene === 'tree' || scene === 'prune') {
+    a = 'Leaves'; b = cut ? '4' : '5'; c = cut ? 'Pruned' : 'Plan'; d = cut ? 'docs' : 'waiting on you';
+  }
+  const key = a + b + c + d; if (key === hudKey) return; hudKey = key;
+  k1.textContent = a; v1.textContent = b; k2.textContent = c; v2.textContent = d;
+}
+const statusEl = $('#status');
+function say(s) { statusEl.textContent = s; }
+
+// ---- drawing: dark heads, feathered streaks ----
+function pushTrail() {
+  trHead = (trHead + 1) % TRAIL;
+  const o = trHead * NUM;
+  for (let i = 0; i < NUM; i++) { trX[o + i] = px[i]; trY[o + i] = py[i]; }
+}
+const off = i => px[i] < -40 || px[i] > W + 40 || py[i] < -40 || py[i] > H + 40;
+function head(i) {
+  const L = 4.1 * SZ * sz[i] * (1 + 0.3 * st[i]), ux = hx[i], uy = hy[i], x = px[i], y = py[i];
+  const bx = x - ux * L * 0.7, by = y - uy * L * 0.7, w = L * 0.5;
+  ctx.moveTo(x + ux * L, y + uy * L);
+  ctx.lineTo(bx - uy * w, by + ux * w);
+  ctx.lineTo(x - ux * L * 0.42, y - uy * L * 0.42);
+  ctx.lineTo(bx + uy * w, by - ux * w);
+  ctx.closePath();
+}
+function draw() {
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  ctx.globalAlpha = 1; ctx.fillStyle = SKY; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = ctx.fillStyle = `rgb(${INK})`;
+  if (planA > 0.01) {                                                // the plan's hairlines
+    ctx.lineWidth = 1;
+    for (const n of PLAN) if (n.up) {
+      n.a += ((live(n) ? 1 : 0) - n.a) * 0.06;
+      const a = n.a * planA * 0.17; if (a < 0.004) continue;
+      const p = node[n.up], m = (n.y - p.y) * 0.5;
+      ctx.globalAlpha = a; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.bezierCurveTo(p.x, p.y + m, n.x, n.y - m, n.x, n.y); ctx.stroke();
+    }
+  }
+  ctx.lineCap = 'round';
+  for (let c = 0; c < 3; c++) {
+    const list = cls[c], w0 = [2.2, 2.9, 3.6][c] * SZ;
+    for (let k = 0; k < TRAIL; k++) {
+      const f = 1 - k / TRAIL, ia = ((trHead - k + 1) % TRAIL + TRAIL) % TRAIL * NUM, ib = ((trHead - k) % TRAIL + TRAIL) % TRAIL * NUM;
+      ctx.globalAlpha = 0.5 * f * Math.sqrt(f); ctx.lineWidth = w0 * (0.2 + 0.8 * f);
+      ctx.beginPath();
+      for (const i of list) {
+        if (faint[i] || off(i)) continue;
+        if (k === 0) ctx.moveTo(px[i], py[i]); else ctx.moveTo(trX[ia + i], trY[ia + i]);
+        ctx.lineTo(trX[ib + i], trY[ib + i]);
+      }
+      ctx.stroke();
+    }
+  }
+  ctx.globalAlpha = 0.94; ctx.beginPath();
+  let faintN = 0;
+  for (let i = 0; i < NUM; i++) { if (faint[i]) { faintN++; continue; } if (!off(i)) head(i); }
+  ctx.fill();
+  if (faintN) { ctx.globalAlpha = 0.3; ctx.beginPath(); for (let i = 0; i < NUM; i++) if (faint[i]) head(i); ctx.fill(); }
+}
+
+// ---- time ----
+function step(dt) {
+  clock += dt / 60;
+  const pk = 1 - Math.pow(0.985, dt);
+  PC.cx += (PT.cx - PC.cx) * pk; PC.cy += (PT.cy - PC.cy) * pk; PC.rx += (PT.rx - PC.rx) * pk; PC.ry += (PT.ry - PC.ry) * pk;
+  const kk = 1 - Math.pow(0.88, dt);
+  for (const n of PLAN) { n.x += (n.gx - n.x) * kk; n.y += (n.gy - n.y) * kk; }
+  planA += ((scene === 'tree' || scene === 'prune' || scene === 'run' ? 1 : 0) - planA) * Math.min(1, 0.05 * dt);
+  if (scene === 'run') runTick();
+  for (let i = 0; i < NUM; i++) if (form[i]) { slotTarget(slots[slotOf[i]], clock); otx[i] = tx[i]; oty[i] = ty[i]; tx[i] = OX; ty[i] = OY; }
+  fillGrid();
+  for (let i = 0; i < NUM; i++) form[i] ? steerForm(i, dt) : steerFlock(i, dt);
+  const s = st; st = st2; st2 = s;
+}
+let raf = 0, last = 0, lastTrail = 0;
+function frame(now) {
+  raf = requestAnimationFrame(frame);
+  let dt = (now - last) / 16.667; last = now;
+  if (!(dt > 0)) dt = 1; else if (dt > 3) dt = 3;
+  if (now - lastTrail >= 15) { pushTrail(); lastTrail = now; }
+  step(dt); draw(); hud();
+  if (planA > 0.01) placeLabels();
+}
+function start() { if (!raf && !reduce) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+
+// Reduced motion: one composed still per scene, and nothing moves.
+function still() {
+  if (scene === 'run') for (const n of PLAN) if (live(n)) n.done = true;
+  for (const n of PLAN) { n.x = n.gx; n.y = n.gy; n.a = live(n) ? 1 : 0; }
+  planA = scene === 'tree' || scene === 'prune' || scene === 'run' ? 1 : 0;
+  for (let i = 0; i < NUM; i++) if (form[i]) {
+    const s = slots[slotOf[i]];
+    slotTarget(s, clock - 0.25); const ax = OX, ay = OY;
+    slotTarget(s, clock); px[i] = OX; py[i] = OY;
+    const dx = OX - ax, dy = OY - ay, l = Math.hypot(dx, dy) || 1; hx[i] = dx / l; hy[i] = dy / l;
+    for (let j = 1; j <= TRAIL; j++) {
+      const o = ((trHead - j + 1) % TRAIL + TRAIL) % TRAIL * NUM + i;
+      trX[o] = px[i] - hx[i] * 1.6 * j; trY[o] = py[i] - hy[i] * 1.6 * j;
+    }
+  }
+  st.fill(0);
+  labels(); draw(); hud(); placeLabels();
+}
+
+// ---- words and buttons ----
+function fallbackCopy(t) {
+  const ta = document.createElement('textarea');
+  ta.value = t; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;opacity:0;top:0';
+  document.body.append(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+  ta.remove(); return ok;
+}
+for (const b of document.querySelectorAll('[data-copy]')) b.addEventListener('click', async () => {
+  const text = document.getElementById(b.dataset.copy).innerText.trim();
+  let ok = true;
+  try { await navigator.clipboard.writeText(text); } catch (e) { ok = fallbackCopy(text); }
+  b.textContent = ok ? 'Copied' : 'Press ⌘C';
+  say(ok ? 'Copied to the clipboard.' : '');
+  clearTimeout(b.t); b.t = setTimeout(() => { b.textContent = 'Copy'; }, 1800);
+});
+
+// ---- start ----
+function seedFlock() {
+  for (let i = 0; i < NUM; i++) {
+    pathAt(clock - lag[i]); const x = OX, y = OY;
+    pathAt(clock - lag[i] + 0.1); const dx = OX - x, dy = OY - y, l = Math.hypot(dx, dy) || 1;
+    px[i] = x + (rnd() - 0.5) * 70 * S; py[i] = y + (rnd() - 0.5) * 70 * S;
+    vx[i] = dx / l * 3 * S; vy[i] = dy / l * 3 * S; hx[i] = dx / l; hy[i] = dy / l;
+  }
+  for (let k = 0; k < NUM * TRAIL; k++) { trX[k] = px[k % NUM]; trY[k] = py[k % NUM]; }
+  for (let f = 0; f < 150; f++) { pushTrail(); step(1); }
+}
+measure(); layout(true); rects(); Object.assign(PC, PT);
+clock = 20; seedFlock();
+pickScene(); labels(); syncCut();
+if (reduce) still(); else start();
+addEventListener('scroll', () => { rects(); pickScene(); }, { passive: true });
+addEventListener('resize', () => { measure(); layout(true); rects(); labels(); pickScene(); if (reduce) still(); });
+if (document.fonts) document.fonts.ready.then(() => { measureLabels(); rects(); });
+mqReduce.addEventListener('change', e => {
+  reduce = e.matches;
+  if (reduce) { cancelAnimationFrame(raf); raf = 0; still(); } else start();
+});
+})();
+</script>
 </body>
 </html>
